@@ -1,183 +1,212 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
 import registrar from '@/routes/registrar';
+import { BreadcrumbItem, SharedData } from '@/types';
+import { DocumentRequest } from '@/types/document-request';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { FormEventHandler } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { AlertTriangle, Calendar, CheckCircle, Clock } from 'lucide-react';
 
-interface DocumentRequest {
-    id: number;
-    reference_number: string;
-    student_name: string;
-    student_id_number: string;
-    document_type: string;
-    status: 'PENDING' | 'PROCESSING' | 'DEFICIENT' | 'READY' | 'CLAIMED';
-    deficiency_remarks?: string;
-    claiming_date?: string;
-    school_id_path: string;
-    created_at: string;
-}
-
-interface Props {
+export default function RequestDetails({
+    request,
+    school_id_url,
+}: {
     request: DocumentRequest;
     school_id_url: string;
-}
-
-export default function RequestDetails({ request, school_id_url }: Props) {
+}) {
     const { data, setData, put, processing, errors } = useForm({
         status: request.status,
         deficiency_remarks: request.deficiency_remarks || '',
-        claiming_date: request.claiming_date ? request.claiming_date.split(' ')[0] : '', // Format YYYY-MM-DD
+        claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
     });
+
+     const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/dashboard',
+        },
+        {
+            title: 'Requests',
+            href: registrar.index.url(),
+        },
+        {
+            title: request.reference_number,
+            href: registrar.show.url(request.id),
+        },
+    ];
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         put(registrar.update.url(request.id));
     };
 
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'PENDING':
+                return <Badge variant="secondary">Pending</Badge>;
+            case 'PROCESSING':
+                return <Badge className="bg-blue-500 hover:bg-blue-600">Processing</Badge>;
+            case 'DEFICIENT':
+                return <Badge variant="destructive">Deficient</Badge>;
+            case 'READY':
+                return <Badge className="bg-green-500 hover:bg-green-600">Ready</Badge>;
+            case 'CLAIMED':
+                return <Badge variant="outline">Claimed</Badge>;
+            default:
+                return <Badge variant="secondary">{status}</Badge>;
+        }
+    };
+
     return (
-        <AppLayout
-            breadcrumbs={[
-                {
-                    title: 'Registrar Dashboard',
-                    href: registrar.index.url(),
-                },
-                {
-                    title: `Request ${request.reference_number}`,
-                    href: '#',
-                },
-            ]}
-        >
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Request ${request.reference_number}`} />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-medium leading-6 text-gray-900">Request Details</h3>
-                                <Link
-                                    href={registrar.index.url()}
-                                    className="text-sm text-indigo-600 hover:text-indigo-900"
-                                >
-                                    &larr; Back to Dashboard
-                                </Link>
+            <div className="flex flex-col md:flex-row gap-6 p-6">
+                <div className="w-full md:w-2/3 space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <CardTitle className="text-xl">Request Details</CardTitle>
+                                    <CardDescription>
+                                        Detailed information about the student request.
+                                    </CardDescription>
+                                </div>
+                                {getStatusBadge(request.status)}
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label className="text-muted-foreground">Reference Number</Label>
+                                    <p className="font-mono text-lg font-medium">{request.reference_number}</p>
+                                </div>
+                                <div>
+                                    <Label className="text-muted-foreground">Date Requested</Label>
+                                    <p className="text-lg">{new Date(request.created_at).toLocaleDateString()}</p>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 className="text-md font-medium text-gray-700 mb-4">Student Information</h4>
-                                    <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                                        <div className="sm:col-span-1">
-                                            <dt className="text-sm font-medium text-gray-500">Full Name</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">{request.student_name}</dd>
-                                        </div>
-                                        <div className="sm:col-span-1">
-                                            <dt className="text-sm font-medium text-gray-500">Student ID</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">{request.student_id_number}</dd>
-                                        </div>
-                                        <div className="sm:col-span-1">
-                                            <dt className="text-sm font-medium text-gray-500">Document Type</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">{request.document_type}</dd>
-                                        </div>
-                                         <div className="sm:col-span-1">
-                                            <dt className="text-sm font-medium text-gray-500">Date Requested</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">{new Date(request.created_at).toLocaleString()}</dd>
-                                        </div>
-                                        <div className="sm:col-span-2">
-                                            <dt className="text-sm font-medium text-gray-500">Reference Number</dt>
-                                            <dd className="mt-1 text-sm font-mono text-gray-900">{request.reference_number}</dd>
-                                        </div>
-                                    </dl>
+                            <Separator />
 
-                                    <div className="mt-8">
-                                        <h4 className="text-md font-medium text-gray-700 mb-4">School ID Preview</h4>
-                                        <div className="border rounded-md p-2">
-                                            <img src={school_id_url} alt="School ID" className="max-w-full h-auto rounded" />
-                                        </div>
-                                        <div className="mt-2 text-right">
-                                            <a href={school_id_url} target="_blank" rel="noopener noreferrer" className="text-sm text-indigo-600 hover:text-indigo-900">
-                                                View Full Size
-                                            </a>
-                                        </div>
+                            <div className="space-y-4">
+                                <h3 className="font-medium">Student Information</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                     <div>
+                                        <Label className="text-muted-foreground">Student Name</Label>
+                                        <p className="font-medium">{request.student_name}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Student ID</Label>
+                                        <p className="font-medium">{request.student_id_number}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Document Requested</Label>
+                                        <p className="font-medium flex items-center gap-2">
+                                            {request.document_type}
+                                        </p>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <h4 className="text-md font-medium text-gray-700 mb-4">Process Request</h4>
-                                    <form onSubmit={submit} className="space-y-6 bg-gray-50 p-6 rounded-md">
-                                        <div>
-                                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                                                Status
-                                            </label>
-                                            <select
-                                                id="status"
-                                                name="status"
-                                                required
-                                                value={data.status}
-                                                onChange={(e) => setData('status', e.target.value as any)}
-                                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                                            >
-                                                <option value="PENDING">PENDING</option>
-                                                <option value="PROCESSING">PROCESSING</option>
-                                                <option value="DEFICIENT">DEFICIENT</option>
-                                                <option value="READY">READY</option>
-                                                <option value="CLAIMED">CLAIMED</option>
-                                            </select>
-                                            {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status}</p>}
-                                        </div>
-
-                                        {data.status === 'DEFICIENT' && (
-                                            <div>
-                                                <label htmlFor="deficiency_remarks" className="block text-sm font-medium text-gray-700">
-                                                    Deficiency Remarks
-                                                </label>
-                                                <div className="mt-1">
-                                                    <textarea
-                                                        id="deficiency_remarks"
-                                                        name="deficiency_remarks"
-                                                        rows={3}
-                                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                                                        placeholder="Describe the deficiency..."
-                                                        value={data.deficiency_remarks}
-                                                        onChange={(e) => setData('deficiency_remarks', e.target.value)}
-                                                    />
-                                                </div>
-                                                {errors.deficiency_remarks && <p className="text-red-500 text-xs mt-1">{errors.deficiency_remarks}</p>}
-                                            </div>
-                                        )}
-
-                                        {data.status === 'READY' && (
-                                            <div>
-                                                <label htmlFor="claiming_date" className="block text-sm font-medium text-gray-700">
-                                                    Claiming Date
-                                                </label>
-                                                <div className="mt-1">
-                                                    <input
-                                                        type="date"
-                                                        name="claiming_date"
-                                                        id="claiming_date"
-                                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                                                        value={data.claiming_date}
-                                                        onChange={(e) => setData('claiming_date', e.target.value)}
-                                                    />
-                                                </div>
-                                                {errors.claiming_date && <p className="text-red-500 text-xs mt-1">{errors.claiming_date}</p>}
-                                            </div>
-                                        )}
-
-                                        <div className="pt-4">
-                                            <button
-                                                type="submit"
-                                                disabled={processing}
-                                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                                            >
-                                                {processing ? 'Updating...' : 'Update Status'}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                         <CardHeader>
+                            <CardTitle className="text-lg">School ID Verification</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
+                                <img
+                                    src={school_id_url}
+                                    alt="Student School ID"
+                                    className="max-h-96 object-contain rounded"
+                                />
+                            </div>
+                            <div className="mt-4 flex justify-end">
+                                <a href={school_id_url} target="_blank" rel="noreferrer">
+                                    <Button variant="outline" size="sm">
+                                        Open Full Image
+                                    </Button>
+                                </a>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="w-full md:w-1/3">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Update Status</CardTitle>
+                             <CardDescription>Process this request.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={submit} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="status">Current Status</Label>
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(value) => setData('status', value as DocumentRequest['status'])}
+                                    >
+                                        <SelectTrigger id="status">
+                                            <SelectValue placeholder="Select Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="PENDING">Pending</SelectItem>
+                                            <SelectItem value="PROCESSING">Processing</SelectItem>
+                                            <SelectItem value="DEFICIENT">Deficient (Require Info)</SelectItem>
+                                            <SelectItem value="READY">Ready for Pickup</SelectItem>
+                                            <SelectItem value="CLAIMED">Claimed</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                     {errors.status && <p className="text-red-500 text-xs">{errors.status}</p>}
+                                </div>
+
+                                {data.status === 'DEFICIENT' && (
+                                    <div className="space-y-2 p-3 bg-red-50 rounded-md border border-red-100 animate-in fade-in slide-in-from-top-2">
+                                        <Label htmlFor="deficiency_remarks" className="text-red-800 flex items-center gap-1">
+                                            <AlertTriangle className="h-3 w-3" /> Deficiency Remarks
+                                        </Label>
+                                        <textarea
+                                            id="deficiency_remarks"
+                                            className="w-full min-h-[80px] rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                            value={data.deficiency_remarks}
+                                            onChange={(e) => setData('deficiency_remarks', e.target.value)}
+                                            placeholder="Enter what is missing..."
+                                            required
+                                        />
+                                         {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
+                                    </div>
+                                )}
+
+                                {data.status === 'READY' && (
+                                    <div className="space-y-2 p-3 bg-green-50 rounded-md border border-green-100 animate-in fade-in slide-in-from-top-2">
+                                        <Label htmlFor="claiming_date" className="text-green-800 flex items-center gap-1">
+                                            <Calendar className="h-3 w-3" /> Claiming Date
+                                        </Label>
+                                        <Input
+                                            id="claiming_date"
+                                            type="date"
+                                            value={data.claiming_date}
+                                            onChange={(e) => setData('claiming_date', e.target.value)}
+                                            required
+                                        />
+                                         {errors.claiming_date && <p className="text-red-500 text-xs">{errors.claiming_date}</p>}
+                                    </div>
+                                )}
+
+                                <Button type="submit" disabled={processing} className="w-full mt-4">
+                                    {processing ? 'Saving...' : 'Update Status'}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </AppLayout>
