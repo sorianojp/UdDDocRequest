@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export default function RequestForm() {
     const { data, setData, post, processing, errors } = useForm({
-        student_name: '',
+        last_name: '',
+        first_name: '',
+        middle_name: '',
         student_id_number: '',
         document_type: '',
         school_id: null as File | null,
@@ -44,17 +46,47 @@ export default function RequestForm() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="last_name">Last Name</Label>
+                                    <Input
+                                        id="last_name"
+                                        name="last_name"
+                                        type="text"
+                                        required
+                                        value={data.last_name}
+                                        onChange={(e) => setData('last_name', e.target.value)}
+                                        placeholder="Dela Cruz"
+                                    />
+                                    {errors.last_name && <p className="text-red-500 text-xs">{errors.last_name}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="first_name">First Name</Label>
+                                    <Input
+                                        id="first_name"
+                                        name="first_name"
+                                        type="text"
+                                        required
+                                        value={data.first_name}
+                                        onChange={(e) => setData('first_name', e.target.value)}
+                                        placeholder="Juan"
+                                    />
+                                    {errors.first_name && <p className="text-red-500 text-xs">{errors.first_name}</p>}
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="student_name">Full Name</Label>
+                                <Label htmlFor="middle_name">Middle Name (Optional)</Label>
                                 <Input
-                                    id="student_name"
-                                    name="student_name"
+                                    id="middle_name"
+                                    name="middle_name"
                                     type="text"
-                                    required
-                                    value={data.student_name}
-                                    onChange={(e) => setData('student_name', e.target.value)}
+                                    value={data.middle_name}
+                                    onChange={(e) => setData('middle_name', e.target.value)}
+                                    placeholder="Santos"
                                 />
-                                {errors.student_name && <p className="text-red-500 text-xs">{errors.student_name}</p>}
+                                {errors.middle_name && <p className="text-red-500 text-xs">{errors.middle_name}</p>}
                             </div>
 
                             <div className="space-y-2">

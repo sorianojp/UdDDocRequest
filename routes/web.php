@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('requests', [DocumentRequestController::class, 'index'])->name('index');
         Route::get('requests/{id}', [DocumentRequestController::class, 'show'])->name('show');
         Route::put('requests/{id}', [DocumentRequestController::class, 'update'])->name('update');
+        Route::post('deficiencies', [\App\Http\Controllers\DeficiencyController::class, 'store'])->name('deficiencies.store');
     });
 });
 

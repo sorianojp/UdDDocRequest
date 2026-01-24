@@ -17,7 +17,9 @@ class DocumentRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'student_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
             'student_id_number' => 'required|string|max:255',
             'document_type' => 'required|string|max:255',
             'school_id' => 'required|file|image|max:10240', // 10MB max
@@ -26,7 +28,9 @@ class DocumentRequestController extends Controller
         $path = $request->file('school_id')->store('school_ids', 'public');
 
         $documentRequest = DocumentRequest::create([
-            'student_name' => $validated['student_name'],
+            'last_name' => $validated['last_name'],
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'],
             'student_id_number' => $validated['student_id_number'],
             'document_type' => $validated['document_type'],
             'school_id_path' => $path,
@@ -83,6 +87,7 @@ class DocumentRequestController extends Controller
         return Inertia::render('registrar/request-details', [
             'request' => $request,
             'school_id_url' => Storage::url($request->school_id_path),
+            'deficiencies' => \App\Models\Deficiency::all(),
         ]);
     }
 

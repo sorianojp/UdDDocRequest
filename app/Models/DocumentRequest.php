@@ -11,7 +11,9 @@ class DocumentRequest extends Model
 
     protected $fillable = [
         'reference_number',
-        'student_name',
+        'last_name',
+        'first_name',
+        'middle_name',
         'student_id_number',
         'document_type',
         'status',
@@ -23,6 +25,13 @@ class DocumentRequest extends Model
     protected $casts = [
         'claiming_date' => 'datetime',
     ];
+
+    protected $appends = ['student_name'];
+
+    public function getStudentNameAttribute()
+    {
+        return trim("{$this->last_name}, {$this->first_name} {$this->middle_name}");
+    }
 
     protected static function boot()
     {

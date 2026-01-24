@@ -1,9 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import registrar from '@/routes/registrar';
-import { BreadcrumbItem, SharedData } from '@/types';
-import { DocumentRequest } from '@/types/document-request';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { BreadcrumbItem, SharedData, DocumentRequest } from '@/types';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
+import { FormEventHandler, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,14 +10,16 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, Calendar, CheckCircle, Clock } from 'lucide-react';
+import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X } from 'lucide-react';
 
 export default function RequestDetails({
     request,
     school_id_url,
+    deficiencies,
 }: {
     request: DocumentRequest;
     school_id_url: string;
+    deficiencies: { id: number; name: string }[];
 }) {
     const { data, setData, put, processing, errors } = useForm({
         status: request.status,
@@ -26,7 +27,10 @@ export default function RequestDetails({
         claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
     });
 
-     const breadcrumbs: BreadcrumbItem[] = [
+    const [isAddingDeficiency, setIsAddingDeficiency] = useState(false);
+    const [newDeficiencyName, setNewDeficiencyName] = useState('');
+
+    const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
             href: '/dashboard',
@@ -45,6 +49,48 @@ export default function RequestDetails({
         e.preventDefault();
         put(registrar.update.url(request.id));
     };
+    
+    // Sort deficiencies alphabetically or by ID as needed, but standard ones first?
+    // For now, simple list.
+    const deficiencyOptions = deficiencies.map(d => d.name);
+
+    const getSelectedDeficiencies = (): string[] => {
+        if (!data.deficiency_remarks) return [];
+        return data.deficiency_remarks.split(',').map((s: string) => s.trim()).filter(Boolean);
+    };
+
+    const toggleDeficiency = (option: string, checked: boolean) => {
+        let current = getSelectedDeficiencies();
+        if (checked) {
+            if (!current.includes(option)) current.push(option);
+        } else {
+            current = current.filter((item: string) => item !== option);
+        }
+        setData('deficiency_remarks', current.join(', '));
+    };
+    
+    const handleAddDeficiency = () => {
+        if (!newDeficiencyName.trim()) return;
+        
+        router.post(registrar.deficiencies.store.url(), {
+            name: newDeficiencyName
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsAddingDeficiency(false);
+                setNewDeficiencyName('');
+            }
+        });
+    };
+    
+    const submitDeficiency = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleAddDeficiency();
+    }
+
+    // Derived state for formatting
+    const selectedDeficiencies = getSelectedDeficiencies();
+
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -170,17 +216,78 @@ export default function RequestDetails({
 
                                 {data.status === 'DEFICIENT' && (
                                     <div className="space-y-2 p-3 bg-red-50 rounded-md border border-red-100 animate-in fade-in slide-in-from-top-2">
-                                        <Label htmlFor="deficiency_remarks" className="text-red-800 flex items-center gap-1">
-                                            <AlertTriangle className="h-3 w-3" /> Deficiency Remarks
+                                        <Label className="text-red-800 flex items-center gap-1 mb-2">
+                                            <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
                                         </Label>
-                                        <textarea
-                                            id="deficiency_remarks"
-                                            className="w-full min-h-[80px] rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                            value={data.deficiency_remarks}
-                                            onChange={(e) => setData('deficiency_remarks', e.target.value)}
-                                            placeholder="Enter what is missing..."
-                                            required
-                                        />
+                                        
+                                        <div className="space-y-2">
+                                            {deficiencyOptions.map((option) => (
+                                                <div key={option} className="flex items-center space-x-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`deficiency-${option}`}
+                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                        checked={selectedDeficiencies.includes(option)}
+                                                        onChange={(e) => toggleDeficiency(option, e.target.checked)}
+                                                    />
+                                                    <label
+                                                        htmlFor={`deficiency-${option}`}
+                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >
+                                                        {option}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                            
+                                        </div>
+                                        
+                                        <div className="pt-2">
+                                            {isAddingDeficiency ? (
+                                                <div className="flex items-center gap-2">
+                                                    <Input 
+                                                        value={newDeficiencyName}
+                                                        onChange={(e) => setNewDeficiencyName(e.target.value)}
+                                                        placeholder="New deficiency name"
+                                                        className="h-8 text-sm bg-white"
+                                                        autoFocus
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault();
+                                                                handleAddDeficiency();
+                                                            }
+                                                        }}
+                                                    />
+                                                    <Button 
+                                                        type="button" 
+                                                        size="sm" 
+                                                        onClick={handleAddDeficiency}
+                                                        disabled={!newDeficiencyName.trim()}
+                                                        className="h-8 w-8 p-0"
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button 
+                                                        type="button" 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        onClick={() => setIsAddingDeficiency(false)}
+                                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-xs text-muted-foreground h-auto p-0 hover:text-primary flex items-center gap-1"
+                                                    onClick={() => setIsAddingDeficiency(true)}
+                                                >
+                                                    <Plus className="h-3 w-3" /> Add another deficiency type
+                                                </Button>
+                                            )}
+                                        </div>
                                          {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
                                     </div>
                                 )}

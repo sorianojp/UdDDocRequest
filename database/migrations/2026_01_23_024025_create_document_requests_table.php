@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('document_requests', function (Blueprint $table) {
             $table->id();
             $table->string('reference_number')->unique();
-            $table->string('student_name');
+            $table->string('last_name');
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
             $table->string('student_id_number');
             $table->string('document_type');
             $table->enum('status', ['PENDING', 'PROCESSING', 'DEFICIENT', 'READY', 'CLAIMED'])->default('PENDING');
