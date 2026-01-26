@@ -16,33 +16,49 @@ class DocumentRequestController extends Controller
 
     public function store(Request $request)
     {
+        $prices = config('document_pricing.prices', []);
+
         $validated = $request->validate([
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'student_id_number' => 'required|string|max:255',
-            'document_type' => 'required|string|max:255',
+            'document_types' => 'required|array|min:1',
+            'document_types.*' => 'string',
             'school_id' => 'required|file|image|max:10240', // 10MB max
         ]);
 
         $path = $request->file('school_id')->store('school_ids', 'public');
 
+        // Create the main request (summary style for document_type)
         $documentRequest = DocumentRequest::create([
             'last_name' => $validated['last_name'],
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'],
             'student_id_number' => $validated['student_id_number'],
-            'document_type' => $validated['document_type'],
+            'document_type' => count($validated['document_types']) > 1 
+                ? 'Multiple Documents' 
+                : $validated['document_types'][0],
             'school_id_path' => $path,
         ]);
 
-        return redirect()->route('request.success', ['reference_number' => $documentRequest->reference_number]);
+        // Create items
+        foreach ($validated['document_types'] as $type) {
+            $documentRequest->items()->create([
+                'document_type' => $type,
+                'price' => $prices[$type] ?? config('document_pricing.default_price', 100.00),
+            ]);
+        }
+
+        return redirect()->route('request.show-status', ['reference_number' => $documentRequest->reference_number]);
     }
 
     public function success($reference_number)
     {
+        $request = DocumentRequest::where('reference_number', $reference_number)->firstOrFail();
+        
         return Inertia::render('services/request-success', [
-            'reference_number' => $reference_number,
+            'request' => $request,
         ]);
     }
 
@@ -57,7 +73,16 @@ class DocumentRequestController extends Controller
             'reference_number' => 'required|string|exists:document_requests,reference_number',
         ]);
 
-        $documentRequest = DocumentRequest::where('reference_number', $request->reference_number)->firstOrFail();
+        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $request->reference_number)->firstOrFail();
+
+        return Inertia::render('services/track-result', [
+            'request' => $documentRequest,
+        ]);
+    }
+
+    public function showStatus($reference_number)
+    {
+        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $reference_number)->firstOrFail();
 
         return Inertia::render('services/track-result', [
             'request' => $documentRequest,
@@ -82,7 +107,7 @@ class DocumentRequestController extends Controller
 
     public function show($id)
     {
-        $request = DocumentRequest::findOrFail($id);
+        $request = DocumentRequest::with(['payment', 'items'])->findOrFail($id);
         
         return Inertia::render('registrar/request-details', [
             'request' => $request,

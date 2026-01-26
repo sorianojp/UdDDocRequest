@@ -88,6 +88,15 @@ export default function RequestDetails({
         handleAddDeficiency();
     }
 
+    const handlePaymentUpdate = (status: 'verified' | 'rejected') => {
+        if (!request.payment) return;
+        router.put(`/registrar/payments/${request.payment.id}`, { status }, {
+            onSuccess: () => {
+                // Toast handled by flash message
+            }
+        });
+    };
+
     // Derived state for formatting
     const selectedDeficiencies = getSelectedDeficiencies();
 
@@ -152,12 +161,41 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Student ID</Label>
                                         <p className="font-medium">{request.student_id_number}</p>
                                     </div>
-                                    <div>
-                                        <Label className="text-muted-foreground">Document Requested</Label>
-                                        <p className="font-medium flex items-center gap-2">
-                                            {request.document_type}
-                                        </p>
-                                    </div>
+                                </div>
+                                
+                                <Separator />
+                                
+                                <h3 className="font-medium">Requested Documents</h3>
+                                <div className="border rounded-md overflow-hidden">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Type</th>
+                                                <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {request.items && request.items.length > 0 ? (
+                                                request.items.map((item) => (
+                                                    <tr key={item.id}>
+                                                        <td className="px-4 py-2 text-sm text-gray-900">{item.document_type}</td>
+                                                        <td className="px-4 py-2 text-sm text-gray-500 text-right">₱{item.price}</td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td className="px-4 py-2 text-sm text-gray-900">{request.document_type}</td>
+                                                    <td className="px-4 py-2 text-sm text-gray-500 text-right">
+                                                        ₱{request.amount_due}
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr className="bg-gray-50 font-medium">
+                                                <td className="px-4 py-2 text-sm text-gray-900">Total</td>
+                                                <td className="px-4 py-2 text-sm text-indigo-600 text-right">₱{request.amount_due}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </CardContent>
@@ -184,6 +222,70 @@ export default function RequestDetails({
                             </div>
                         </CardContent>
                     </Card>
+
+                    {request.payment && (
+                        <Card>
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle className="text-lg">Payment Details</CardTitle>
+                                        <CardDescription>Payment information and proof.</CardDescription>
+                                    </div>
+                                    <Badge variant={
+                                        request.payment.status === 'verified' ? 'outline' : 
+                                        request.payment.status === 'rejected' ? 'destructive' : 'secondary'
+                                    } className={request.payment.status === 'verified' ? 'bg-green-100 text-green-800' : ''}>
+                                        {request.payment.status.toUpperCase()}
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label className="text-muted-foreground">Amount</Label>
+                                        <p className="font-medium">₱{request.payment.amount}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Reference</Label>
+                                        <p className="font-mono text-sm">{request.payment.reference_number}</p>
+                                    </div>
+                                </div>
+
+                                {request.payment.proof_file_path && (
+                                    <div className="space-y-2">
+                                        <Label className="text-muted-foreground">Proof of Payment</Label>
+                                        <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
+                                            <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" rel="noreferrer">
+                                                <img
+                                                    src={`/storage/${request.payment.proof_file_path}`}
+                                                    alt="Proof of Payment"
+                                                    className="max-h-64 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {request.payment.status === 'pending' && (
+                                    <div className="flex gap-2 pt-2">
+                                        <Button 
+                                            onClick={() => handlePaymentUpdate('verified')} 
+                                            className="w-full bg-green-600 hover:bg-green-700"
+                                        >
+                                            <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
+                                        </Button>
+                                        <Button 
+                                            onClick={() => handlePaymentUpdate('rejected')} 
+                                            variant="destructive"
+                                            className="w-full"
+                                        >
+                                            <X className="mr-2 h-4 w-4" /> Reject
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
 
                 <div className="w-full md:w-1/3">

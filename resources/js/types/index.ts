@@ -2,6 +2,8 @@ export type * from './auth';
 export type * from './navigation';
 export type * from './ui';
 export type * from './document-request';
+export type * from './payment';
+export type * from './request-item';
 
 import type { Auth } from './auth';
 

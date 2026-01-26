@@ -16,6 +16,10 @@ Route::post('/request', [DocumentRequestController::class, 'store'])->name('requ
 Route::get('/request/success/{reference_number}', [DocumentRequestController::class, 'success'])->name('request.success');
 Route::get('/track', [DocumentRequestController::class, 'track'])->name('request.track');
 Route::post('/track', [DocumentRequestController::class, 'checkStatus'])->name('request.check-status');
+Route::get('/track/{reference_number}', [DocumentRequestController::class, 'showStatus'])->name('request.show-status');
+
+Route::get('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'show'])->name('request.payment');
+Route::post('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'store'])->name('request.payment.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -27,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('requests/{id}', [DocumentRequestController::class, 'show'])->name('show');
         Route::put('requests/{id}', [DocumentRequestController::class, 'update'])->name('update');
         Route::post('deficiencies', [\App\Http\Controllers\DeficiencyController::class, 'store'])->name('deficiencies.store');
+        Route::put('payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payments.update');
     });
 });
 

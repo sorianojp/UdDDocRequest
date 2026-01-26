@@ -15,7 +15,9 @@ class DocumentRequest extends Model
         'first_name',
         'middle_name',
         'student_id_number',
-        'document_type',
+        'student_id_number',
+        'document_type', // Keep for backward compatibility/summary
+        'status',
         'status',
         'deficiency_remarks',
         'claiming_date',
@@ -26,11 +28,26 @@ class DocumentRequest extends Model
         'claiming_date' => 'datetime',
     ];
 
-    protected $appends = ['student_name'];
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(RequestItem::class);
+    }
+
+    protected $appends = ['student_name', 'amount_due'];
 
     public function getStudentNameAttribute()
     {
         return trim("{$this->last_name}, {$this->first_name} {$this->middle_name}");
+    }
+
+    public function getAmountDueAttribute()
+    {
+        return $this->items->sum('price');
     }
 
     protected static function boot()

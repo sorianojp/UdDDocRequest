@@ -1,3 +1,6 @@
+import { Payment } from './payment';
+import { RequestItem } from './request-item';
+
 export interface DocumentRequest {
     id: number;
     reference_number: string;
@@ -12,4 +15,7 @@ export interface DocumentRequest {
     claiming_date?: string | null;
     created_at: string;
     updated_at: string;
+    payment?: Payment;
+    items?: RequestItem[];
+    amount_due: number;
 }

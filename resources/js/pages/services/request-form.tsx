@@ -13,9 +13,31 @@ export default function RequestForm() {
         first_name: '',
         middle_name: '',
         student_id_number: '',
-        document_type: '',
+        document_types: [] as string[],
         school_id: null as File | null,
     });
+
+    const documents = [
+        { id: 'OTR', label: 'Official Transcript of Records (OTR)', price: 150 },
+        { id: 'Form 137', label: 'Form 137', price: 100 },
+        { id: 'Diploma', label: 'Diploma', price: 500 },
+        { id: 'Good Moral', label: 'Certificate of Good Moral Character', price: 100 },
+        { id: 'Cert of Grades', label: 'Certificate of Grades', price: 100 },
+    ];
+
+    const toggleDocument = (id: string, checked: boolean) => {
+        const current = [...data.document_types];
+        if (checked) {
+            setData('document_types', [...current, id]);
+        } else {
+            setData('document_types', current.filter(item => item !== id));
+        }
+    };
+
+    const totalAmount = data.document_types.reduce((sum, type) => {
+        const doc = documents.find(d => d.id === type);
+        return sum + (doc?.price || 100);
+    }, 0);
 
     const [preview, setPreview] = useState<string | null>(null);
 
@@ -102,24 +124,33 @@ export default function RequestForm() {
                                 {errors.student_id_number && <p className="text-red-500 text-xs">{errors.student_id_number}</p>}
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="document_type">Document Type</Label>
-                                <Select
-                                    value={data.document_type}
-                                    onValueChange={(value) => setData('document_type', value)}
-                                >
-                                    <SelectTrigger id="document_type">
-                                        <SelectValue placeholder="Select a document" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="OTR">Official Transcript of Records (OTR)</SelectItem>
-                                        <SelectItem value="Form 137">Form 137</SelectItem>
-                                        <SelectItem value="Diploma">Diploma</SelectItem>
-                                        <SelectItem value="Good Moral">Certificate of Good Moral Character</SelectItem>
-                                        <SelectItem value="Cert of Grades">Certificate of Grades</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {errors.document_type && <p className="text-red-500 text-xs">{errors.document_type}</p>}
+                            <div className="space-y-3">
+                                <Label>Select Document(s)</Label>
+                                <div className="grid grid-cols-1 gap-2 border rounded-md p-4 bg-white max-h-60 overflow-y-auto">
+                                    {documents.map((doc) => (
+                                        <div key={doc.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
+                                            <input
+                                                type="checkbox"
+                                                id={`doc-${doc.id}`}
+                                                className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                checked={data.document_types.includes(doc.id)}
+                                                onChange={(e) => toggleDocument(doc.id, e.target.checked)}
+                                            />
+                                            <label htmlFor={`doc-${doc.id}`} className="flex-1 cursor-pointer">
+                                                <div className="flex justify-between">
+                                                    <span className="font-medium text-sm text-gray-900">{doc.label}</span>
+                                                    <span className="text-sm text-gray-500 font-mono">₱{doc.price}</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                                {errors.document_types && <p className="text-red-500 text-xs">{errors.document_types}</p>}
+                                
+                                <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-md border border-indigo-100">
+                                    <span className="font-medium text-indigo-900">Total Amount</span>
+                                    <span className="font-bold text-xl text-indigo-700">₱{totalAmount.toFixed(2)}</span>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
