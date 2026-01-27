@@ -23,7 +23,13 @@ Route::post('/requests/{request}/payment', [App\Http\Controllers\PaymentControll
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $counts = \App\Models\DocumentRequest::selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        return Inertia::render('dashboard', [
+            'counts' => $counts
+        ]);
     })->name('dashboard');
 
     Route::prefix('registrar')->name('registrar.')->group(function () {
