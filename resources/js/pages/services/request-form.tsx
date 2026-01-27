@@ -7,7 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function RequestForm() {
+interface Pricing {
+    [key: string]: {
+        label: string;
+        price: number;
+    };
+}
+
+export default function RequestForm({ pricing }: { pricing: Pricing }) {
     const { data, setData, post, processing, errors } = useForm({
         last_name: '',
         first_name: '',
@@ -17,13 +24,11 @@ export default function RequestForm() {
         school_id: null as File | null,
     });
 
-    const documents = [
-        { id: 'OTR', label: 'Official Transcript of Records (OTR)', price: 150 },
-        { id: 'Form 137', label: 'Form 137', price: 100 },
-        { id: 'Diploma', label: 'Diploma', price: 500 },
-        { id: 'Good Moral', label: 'Certificate of Good Moral Character', price: 100 },
-        { id: 'Cert of Grades', label: 'Certificate of Grades', price: 100 },
-    ];
+    const documents = Object.entries(pricing).map(([id, details]) => ({
+        id,
+        label: details.label,
+        price: details.price,
+    }));
 
     const toggleDocument = (id: string, checked: boolean) => {
         const current = [...data.document_types];

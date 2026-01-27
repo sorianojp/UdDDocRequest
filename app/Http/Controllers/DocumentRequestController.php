@@ -11,12 +11,14 @@ class DocumentRequestController extends Controller
 {
     public function create()
     {
-        return Inertia::render('services/request-form');
+        return Inertia::render('services/request-form', [
+            'pricing' => config('document_pricing.documents', []),
+        ]);
     }
 
     public function store(Request $request)
     {
-        $prices = config('document_pricing.prices', []);
+        $documents = config('document_pricing.documents', []);
 
         $validated = $request->validate([
             'last_name' => 'required|string|max:255',
@@ -38,15 +40,15 @@ class DocumentRequestController extends Controller
             'student_id_number' => $validated['student_id_number'],
             'document_type' => count($validated['document_types']) > 1 
                 ? 'Multiple Documents' 
-                : $validated['document_types'][0],
+                : $documents[$validated['document_types'][0]]['label'] ?? $validated['document_types'][0],
             'school_id_path' => $path,
         ]);
 
         // Create items
         foreach ($validated['document_types'] as $type) {
             $documentRequest->items()->create([
-                'document_type' => $type,
-                'price' => $prices[$type] ?? config('document_pricing.default_price', 100.00),
+                'document_type' => $documents[$type]['label'] ?? $type,
+                'price' => $documents[$type]['price'] ?? config('document_pricing.default_price', 100.00),
             ]);
         }
 
