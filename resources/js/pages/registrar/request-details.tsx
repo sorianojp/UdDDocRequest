@@ -140,6 +140,10 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Student ID</Label>
                                         <p className="font-medium">{request.student_id_number}</p>
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">Email</Label>
+                                        <p className="font-medium">{request.email || 'N/A'}</p>
+                                    </div>
                                 </div>
                                 
                                 <Separator />
@@ -183,6 +187,7 @@ export default function RequestDetails({
                     <Card>
                          <CardHeader>
                             <CardTitle className="text-lg">School ID Verification</CardTitle>
+                            <CardDescription>Verify the student's identity.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
@@ -302,7 +307,7 @@ export default function RequestDetails({
                                         request.payment.status === 'verified' ? 'success' : 
                                         request.payment.status === 'rejected' ? 'destructive' : 'secondary'
                                     }>
-                                        {request.payment.status.toUpperCase()}
+                                        {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
                                     </Badge>
                                 </div>
                             </CardHeader>

@@ -19,6 +19,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
         last_name: '',
         first_name: '',
         middle_name: '',
+        email: '',
         student_id_number: '',
         document_types: [] as string[],
         school_id: null as File | null,
@@ -118,6 +119,20 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                                                 placeholder="Santos"
                                             />
                                             {errors.middle_name && <p className="text-red-500 text-xs">{errors.middle_name}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">Email Address</Label>
+                                            <Input
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                required
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                placeholder="juan@example.com"
+                                            />
+                                            {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
                                         </div>
 
                                         <div className="space-y-2">

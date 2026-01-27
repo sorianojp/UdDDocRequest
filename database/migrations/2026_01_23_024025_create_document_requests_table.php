@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
+            $table->string('email')->nullable();
             $table->string('student_id_number');
             $table->string('document_type');
             $table->enum('status', ['PENDING', 'PROCESSING', 'DEFICIENT', 'READY', 'CLAIMED'])->default('PENDING');

@@ -8,6 +8,7 @@ export interface DocumentRequest {
     last_name: string;
     first_name: string;
     middle_name?: string | null;
+    email?: string | null;
     student_id_number: string;
     document_type: string;
     status: 'PENDING' | 'PROCESSING' | 'DEFICIENT' | 'READY' | 'CLAIMED';

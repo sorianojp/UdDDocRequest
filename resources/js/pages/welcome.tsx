@@ -9,10 +9,10 @@ export default function Welcome() {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
             <Head title="Welcome" />
 
-            <div className="w-full max-w-md space-y-8">
+            <div className="w-full max-w-xl space-y-8">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-                        University Document Request
+                        Universidad de Dagupan Document Request
                     </h1>
                     <p className="mt-2 text-gray-600">
                         Select an option below to proceed

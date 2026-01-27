@@ -95,6 +95,12 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <p className="text-gray-500">Student ID</p>
                                         <p className="font-medium">{request.student_id_number}</p>
                                     </div>
+                                    {request.email && (
+                                        <div className="md:col-span-2">
+                                            <p className="text-gray-500">Email</p>
+                                            <p className="font-medium">{request.email}</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div>
@@ -165,12 +171,13 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                     <div className="space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-xl">Payment Status</CardTitle>
+                                <CardTitle className="text-lg">Payment Status</CardTitle>
+                                <CardDescription>Current status of your payment.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {request.payment ? (
                                     <div className="space-y-4">
-                                        <div className={`uppercase p-4 rounded-md border text-center ${
+                                        <div className={`p-4 rounded-md border text-center ${
                                             request.payment.status === 'verified' ? 'bg-green-50 border-green-200 text-green-800' :
                                             request.payment.status === 'rejected' ? 'bg-red-50 border-red-200 text-red-800' :
                                             'bg-blue-50 border-blue-200 text-blue-800'
@@ -180,7 +187,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                                  request.payment.status === 'rejected' ? <AlertCircle className="h-8 w-8" /> :
                                                  <Clock className="h-8 w-8" />}
                                             </div>
-                                            <p className="font-bold text-lg">{request.payment.status}</p>
+                                            <p className="font-bold text-lg">{request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}</p>
                                             {request.payment.external_reference_number && (
                                                 <p className="text-sm text-gray-600 mt-1">Ref: <span className="font-mono font-medium">{request.payment.external_reference_number}</span></p>
                                             )}
