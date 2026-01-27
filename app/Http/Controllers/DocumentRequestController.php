@@ -114,7 +114,7 @@ class DocumentRequestController extends Controller
         return Inertia::render('registrar/request-details', [
             'request' => $request,
             'school_id_url' => Storage::url($request->school_id_path),
-            'deficiencies' => \App\Models\Deficiency::all(),
+            'deficiencies' => config('deficiencies.list', []),
         ]);
     }
 

@@ -19,16 +19,13 @@ export default function RequestDetails({
 }: {
     request: DocumentRequest;
     school_id_url: string;
-    deficiencies: { id: number; name: string }[];
+    deficiencies: string[];
 }) {
     const { data, setData, put, processing, errors } = useForm({
         status: request.status,
         deficiency_remarks: request.deficiency_remarks || '',
         claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
     });
-
-    const [isAddingDeficiency, setIsAddingDeficiency] = useState(false);
-    const [newDeficiencyName, setNewDeficiencyName] = useState('');
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -52,7 +49,7 @@ export default function RequestDetails({
     
     // Sort deficiencies alphabetically or by ID as needed, but standard ones first?
     // For now, simple list.
-    const deficiencyOptions = deficiencies.map(d => d.name);
+    const deficiencyOptions = deficiencies;
 
     const getSelectedDeficiencies = (): string[] => {
         if (!data.deficiency_remarks) return [];
@@ -69,24 +66,6 @@ export default function RequestDetails({
         setData('deficiency_remarks', current.join(', '));
     };
     
-    const handleAddDeficiency = () => {
-        if (!newDeficiencyName.trim()) return;
-        
-        router.post(registrar.deficiencies.store.url(), {
-            name: newDeficiencyName
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                setIsAddingDeficiency(false);
-                setNewDeficiencyName('');
-            }
-        });
-    };
-    
-    const submitDeficiency = (e: React.FormEvent) => {
-        e.preventDefault();
-        handleAddDeficiency();
-    }
 
     const handlePaymentUpdate = (status: 'verified' | 'rejected') => {
         if (!request.payment) return;
@@ -343,53 +322,7 @@ export default function RequestDetails({
                                             
                                         </div>
                                         
-                                        <div className="pt-2">
-                                            {isAddingDeficiency ? (
-                                                <div className="flex items-center gap-2">
-                                                    <Input 
-                                                        value={newDeficiencyName}
-                                                        onChange={(e) => setNewDeficiencyName(e.target.value)}
-                                                        placeholder="New deficiency name"
-                                                        className="h-8 text-sm bg-white"
-                                                        autoFocus
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') {
-                                                                e.preventDefault();
-                                                                handleAddDeficiency();
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button 
-                                                        type="button" 
-                                                        size="sm" 
-                                                        onClick={handleAddDeficiency}
-                                                        disabled={!newDeficiencyName.trim()}
-                                                        className="h-8 w-8 p-0"
-                                                    >
-                                                        <Plus className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button 
-                                                        type="button" 
-                                                        variant="ghost" 
-                                                        size="sm" 
-                                                        onClick={() => setIsAddingDeficiency(false)}
-                                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500"
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-xs text-muted-foreground h-auto p-0 hover:text-primary flex items-center gap-1"
-                                                    onClick={() => setIsAddingDeficiency(true)}
-                                                >
-                                                    <Plus className="h-3 w-3" /> Add another deficiency type
-                                                </Button>
-                                            )}
-                                        </div>
+
                                          {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
                                     </div>
                                 )}
