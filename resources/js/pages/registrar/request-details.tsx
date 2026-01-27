@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X } from 'lucide-react';
+import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save } from 'lucide-react';
 
 export default function RequestDetails({
     request,
@@ -148,7 +148,7 @@ export default function RequestDetails({
                                 
                                 <Separator />
                                 
-                                <h3 className="font-medium">Requested Documents</h3>
+                                <h3 className="font-semibold">Requested Documents</h3>
                                 <div className="border rounded-md overflow-hidden">
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
@@ -186,20 +186,23 @@ export default function RequestDetails({
 
                     <Card>
                          <CardHeader>
-                            <CardTitle className="text-lg">School ID Verification</CardTitle>
-                            <CardDescription>Verify the student's identity.</CardDescription>
+                            <div>
+                                <CardTitle className="text-lg">School ID Verification</CardTitle>
+                                <CardDescription>Verify the student's identity.</CardDescription>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
                                 <img
                                     src={school_id_url}
                                     alt="Student School ID"
-                                    className="max-h-96 object-contain rounded"
+                                    className="max-h-48 object-contain rounded"
                                 />
                             </div>
                             <div className="mt-4 flex justify-end">
                                 <a href={school_id_url} target="_blank" rel="noreferrer">
                                     <Button variant="outline" size="sm">
+                                        <ExternalLink className="mr-2 h-4 w-4" />
                                         Open Full Image
                                     </Button>
                                 </a>
@@ -289,7 +292,11 @@ export default function RequestDetails({
                                 )}
 
                                 <Button type="submit" disabled={processing} className="w-full mt-4">
-                                    {processing ? 'Saving...' : 'Update Status'}
+                                    {processing ? 'Saving...' : (
+                                        <>
+                                            <Save className="mr-2 h-4 w-4" /> Update Status
+                                        </>
+                                    )}
                                 </Button>
                             </form>
                         </CardContent>
@@ -317,9 +324,13 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Amount</Label>
                                         <p className="font-medium">₱{request.payment.amount}</p>
                                     </div>
-                                    <div>
+                                    <div className="md:col-span-2">
                                         <Label className="text-muted-foreground">Reference</Label>
                                         <p className="font-mono text-sm">{request.payment.reference_number}</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">External Reference No.</Label>
+                                        <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
                                     </div>
                                 </div>
 
@@ -331,7 +342,7 @@ export default function RequestDetails({
                                                 <img
                                                     src={`/storage/${request.payment.proof_file_path}`}
                                                     alt="Proof of Payment"
-                                                    className="max-h-64 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
+                                                    className="max-h-48 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
                                                 />
                                             </a>
                                         </div>

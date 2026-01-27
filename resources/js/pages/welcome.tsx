@@ -11,6 +11,7 @@ export default function Welcome() {
 
             <div className="w-full max-w-xl space-y-8">
                 <div className="text-center">
+                    <img src="/images/logo.png" alt="UdD Logo" className="mx-auto h-32 w-auto mb-4" />
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
                         Universidad de Dagupan Document Request
                     </h1>

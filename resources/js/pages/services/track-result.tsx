@@ -4,7 +4,7 @@ import { DocumentRequest } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, FileText, User, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Calendar, FileText, User, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { FormEventHandler, useState } from 'react';
 import { Label } from '@/components/ui/label';

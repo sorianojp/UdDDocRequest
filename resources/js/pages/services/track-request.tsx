@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Search, Loader2 } from 'lucide-react';
 
 export default function TrackRequest() {
     const { data, setData, post, processing, errors } = useForm({
@@ -45,8 +46,18 @@ export default function TrackRequest() {
                                 {errors.reference_number && <p className="text-red-500 text-xs">{errors.reference_number}</p>}
                             </div>
 
-                            <Button type="submit" disabled={processing} className="w-full">
-                                {processing ? 'Checking...' : 'Check Status'}
+                            <Button type="submit" className="w-full" disabled={processing}>
+                                {processing ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Checking...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Search className="mr-2 h-4 w-4" />
+                                        Track Request
+                                    </>
+                                )}
                             </Button>
                         </form>
                     </CardContent>
