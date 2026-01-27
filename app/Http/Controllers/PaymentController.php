@@ -22,6 +22,7 @@ class PaymentController extends Controller
     {
         $httpRequest->validate([
             'proof' => ['required', 'image', 'max:10240'], // 10MB
+            'reference_number' => ['required', 'string', 'max:255'],
         ]);
 
         $path = $httpRequest->file('proof')->store('payments', 'public');
@@ -30,6 +31,7 @@ class PaymentController extends Controller
             ['document_request_id' => $request->id],
             [
                 'reference_number' => 'PAY-' . strtoupper(uniqid()),
+                'external_reference_number' => $httpRequest->reference_number,
                 'amount' => $request->amount_due,
                 'payment_method' => 'manual',
                 'status' => 'pending',

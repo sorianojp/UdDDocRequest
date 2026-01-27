@@ -50,14 +50,6 @@ export default function TrackRequest() {
                             </Button>
                         </form>
                     </CardContent>
-                    <CardFooter className="flex justify-center flex-col space-y-4">
-                        <div className="w-full border-t border-gray-200" />
-                        <div className="w-full text-center">
-                            <a href={request.create.url()} className="text-sm font-medium text-gray-500 hover:text-gray-900">
-                                Request a New Document
-                            </a>
-                        </div>
-                    </CardFooter>
                 </Card>
             </div>
         </div>

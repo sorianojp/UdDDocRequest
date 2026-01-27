@@ -2,6 +2,7 @@ export interface Payment {
     id: number;
     document_request_id: number;
     reference_number: string;
+    external_reference_number: string;
     amount: number;
     payment_method: string;
     status: 'pending' | 'verified' | 'rejected';

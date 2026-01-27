@@ -11,6 +11,7 @@ class Payment extends Model
     protected $fillable = [
         'document_request_id',
         'reference_number',
+        'external_reference_number',
         'amount',
         'payment_method',
         'status',
