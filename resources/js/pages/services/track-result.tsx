@@ -16,11 +16,11 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
             case 'PROCESSING':
-                return <Badge className="bg-blue-500 hover:bg-blue-600">Processing</Badge>;
+                return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':
                 return <Badge variant="destructive">Deficient</Badge>;
             case 'READY':
-                return <Badge className="bg-green-500 hover:bg-green-600">Ready to Claim</Badge>;
+                return <Badge variant="success">Ready to Claim</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
             default:
@@ -82,9 +82,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             Reference Number: <span className="font-mono font-medium text-gray-900">{request.reference_number}</span>
                                         </CardDescription>
                                     </div>
-                                    <Badge className={`${getStatusColor(request.status)}`}>
-                                        {request.status}
-                                    </Badge>
+                                    {getStatusBadge(request.status)}
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-6">

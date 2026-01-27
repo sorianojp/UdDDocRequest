@@ -85,11 +85,11 @@ export default function RequestDetails({
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
             case 'PROCESSING':
-                return <Badge className="bg-blue-500 hover:bg-blue-600">Processing</Badge>;
+                return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':
                 return <Badge variant="destructive">Deficient</Badge>;
             case 'READY':
-                return <Badge className="bg-green-500 hover:bg-green-600">Ready</Badge>;
+                return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
             default:
@@ -107,7 +107,7 @@ export default function RequestDetails({
                         <CardHeader>
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <CardTitle className="text-xl">Request Details</CardTitle>
+                                    <CardTitle className="text-lg">Request Details</CardTitle>
                                     <CardDescription>
                                         Detailed information about the student request.
                                     </CardDescription>
@@ -202,72 +202,10 @@ export default function RequestDetails({
                         </CardContent>
                     </Card>
 
-                    {request.payment && (
-                        <Card>
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className="text-lg">Payment Details</CardTitle>
-                                        <CardDescription>Payment information and proof.</CardDescription>
-                                    </div>
-                                    <Badge variant={
-                                        request.payment.status === 'verified' ? 'outline' : 
-                                        request.payment.status === 'rejected' ? 'destructive' : 'secondary'
-                                    } className={request.payment.status === 'verified' ? 'bg-green-100 text-green-800' : ''}>
-                                        {request.payment.status.toUpperCase()}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <Label className="text-muted-foreground">Amount</Label>
-                                        <p className="font-medium">₱{request.payment.amount}</p>
-                                    </div>
-                                    <div>
-                                        <Label className="text-muted-foreground">Reference</Label>
-                                        <p className="font-mono text-sm">{request.payment.reference_number}</p>
-                                    </div>
-                                </div>
 
-                                {request.payment.proof_file_path && (
-                                    <div className="space-y-2">
-                                        <Label className="text-muted-foreground">Proof of Payment</Label>
-                                        <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
-                                            <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" rel="noreferrer">
-                                                <img
-                                                    src={`/storage/${request.payment.proof_file_path}`}
-                                                    alt="Proof of Payment"
-                                                    className="max-h-64 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
-                                                />
-                                            </a>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {request.payment.status === 'pending' && (
-                                    <div className="flex gap-2 pt-2">
-                                        <Button 
-                                            onClick={() => handlePaymentUpdate('verified')} 
-                                            className="w-full bg-green-600 hover:bg-green-700"
-                                        >
-                                            <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
-                                        </Button>
-                                        <Button 
-                                            onClick={() => handlePaymentUpdate('rejected')} 
-                                            variant="destructive"
-                                            className="w-full"
-                                        >
-                                            <X className="mr-2 h-4 w-4" /> Reject
-                                        </Button>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    )}
                 </div>
 
-                <div className="w-full md:w-1/3">
+                <div className="w-full md:w-1/3 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Update Status</CardTitle>
@@ -349,6 +287,70 @@ export default function RequestDetails({
                             </form>
                         </CardContent>
                     </Card>
+
+                    {request.payment && (
+                        <Card>
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle className="text-lg">Payment Details</CardTitle>
+                                        <CardDescription>Payment information and proof.</CardDescription>
+                                    </div>
+                                    <Badge variant={
+                                        request.payment.status === 'verified' ? 'success' : 
+                                        request.payment.status === 'rejected' ? 'destructive' : 'secondary'
+                                    }>
+                                        {request.payment.status.toUpperCase()}
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label className="text-muted-foreground">Amount</Label>
+                                        <p className="font-medium">₱{request.payment.amount}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Reference</Label>
+                                        <p className="font-mono text-sm">{request.payment.reference_number}</p>
+                                    </div>
+                                </div>
+
+                                {request.payment.proof_file_path && (
+                                    <div className="space-y-2">
+                                        <Label className="text-muted-foreground">Proof of Payment</Label>
+                                        <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
+                                            <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" rel="noreferrer">
+                                                <img
+                                                    src={`/storage/${request.payment.proof_file_path}`}
+                                                    alt="Proof of Payment"
+                                                    className="max-h-64 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {request.payment.status === 'pending' && (
+                                    <div className="flex gap-2 pt-2">
+                                        <Button 
+                                            onClick={() => handlePaymentUpdate('verified')} 
+                                            className="w-full bg-green-600 hover:bg-green-700"
+                                        >
+                                            <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
+                                        </Button>
+                                        <Button 
+                                            onClick={() => handlePaymentUpdate('rejected')} 
+                                            variant="destructive"
+                                            className="w-full"
+                                        >
+                                            <X className="mr-2 h-4 w-4" /> Reject
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             </div>
         </AppLayout>
