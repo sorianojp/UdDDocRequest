@@ -33,7 +33,6 @@ class PaymentController extends Controller
                 'reference_number' => 'PAY-' . strtoupper(uniqid()),
                 'external_reference_number' => $httpRequest->reference_number,
                 'amount' => $request->amount_due,
-                'payment_method' => 'manual',
                 'status' => 'pending',
                 'proof_file_path' => $path,
                 'paid_at' => null, // Pending verification

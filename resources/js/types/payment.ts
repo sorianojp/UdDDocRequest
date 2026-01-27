@@ -4,7 +4,6 @@ export interface Payment {
     reference_number: string;
     external_reference_number: string;
     amount: number;
-    payment_method: string;
     status: 'pending' | 'verified' | 'rejected';
     proof_file_path?: string;
     paid_at?: string;

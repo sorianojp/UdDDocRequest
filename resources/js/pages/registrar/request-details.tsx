@@ -208,8 +208,10 @@ export default function RequestDetails({
                 <div className="w-full md:w-1/3 space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Update Status</CardTitle>
-                             <CardDescription>Process this request.</CardDescription>
+                            <div>
+                                <CardTitle className="text-lg">Update Status</CardTitle>
+                                <CardDescription>Process this request.</CardDescription>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={submit} className="space-y-4">
