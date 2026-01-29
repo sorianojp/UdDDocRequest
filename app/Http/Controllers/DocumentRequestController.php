@@ -134,11 +134,21 @@ class DocumentRequestController extends Controller
             'claiming_date' => 'nullable|required_if:status,READY|date',
         ]);
 
-        $documentRequest->update([
+        $updateData = [
             'status' => $validated['status'],
             'deficiency_remarks' => $validated['status'] === 'DEFICIENT' ? $validated['deficiency_remarks'] : null,
-            'claiming_date' => $validated['status'] === 'READY' ? $validated['claiming_date'] : null,
-        ]);
+            'claimed_date' => $validated['status'] === 'CLAIMED' ? now() : null,
+        ];
+
+        // Only update claiming_date if status is READY (set it) or if status is NOT CLAIMED (clear it).
+        // If status IS CLAIMED, we want to Keep the existing claiming_date.
+        if ($validated['status'] === 'READY') {
+            $updateData['claiming_date'] = $validated['claiming_date'];
+        } elseif ($validated['status'] !== 'CLAIMED') {
+            $updateData['claiming_date'] = null;
+        }
+
+        $documentRequest->update($updateData);
 
         return redirect()->back();
     }

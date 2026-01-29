@@ -20,11 +20,13 @@ class DocumentRequest extends Model
         'status',
         'deficiency_remarks',
         'claiming_date',
+        'claimed_date',
         'school_id_path',
     ];
 
     protected $casts = [
         'claiming_date' => 'datetime',
+        'claimed_date' => 'datetime',
     ];
 
     public function payment()

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('status', ['PENDING', 'PROCESSING', 'DEFICIENT', 'READY', 'CLAIMED', 'REJECTED'])->default('PENDING');
             $table->text('deficiency_remarks')->nullable();
             $table->dateTime('claiming_date')->nullable();
+            $table->dateTime('claimed_date')->nullable();
             $table->string('school_id_path');
             $table->timestamps();
         });
