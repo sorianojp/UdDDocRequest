@@ -61,7 +61,7 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
                     {stats.map((stat) => (
                         <Card key={stat.label}>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
+                                <CardTitle>
                                     {stat.label}
                                 </CardTitle>
                                 <div className={`p-2 rounded-full ${stat.bg}`}>

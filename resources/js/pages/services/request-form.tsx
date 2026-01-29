@@ -68,7 +68,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
             <div className="sm:mx-auto sm:w-full sm:max-w-4xl">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-center text-xl">Request a Document</CardTitle>
+                        <CardTitle className="text-center">Request a Document</CardTitle>
                         <CardDescription className="text-center">
                             Fill in the details below to submit your request.
                         </CardDescription>

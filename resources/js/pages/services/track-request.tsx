@@ -24,7 +24,7 @@ export default function TrackRequest() {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-center text-lg">Track Your Request</CardTitle>
+                        <CardTitle className="text-center">Track Your Request</CardTitle>
                         <CardDescription className="text-center">
                             Enter your reference number to check the status of your document.
                         </CardDescription>

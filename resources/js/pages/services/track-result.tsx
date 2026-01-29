@@ -77,7 +77,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <CardTitle className="text-xl">Request Details</CardTitle>
+                                        <CardTitle>Request Details</CardTitle>
                                         <CardDescription>
                                             Reference Number: <span className="font-mono font-medium text-gray-900">{request.reference_number}</span>
                                         </CardDescription>
@@ -171,7 +171,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                     <div className="space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-lg">Payment Status</CardTitle>
+                                <CardTitle>Payment Status</CardTitle>
                                 <CardDescription>Current status of your payment.</CardDescription>
                             </CardHeader>
                             <CardContent>

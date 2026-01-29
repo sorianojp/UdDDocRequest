@@ -53,6 +53,10 @@ class PaymentController extends Controller
             'paid_at' => $httpRequest->status === 'verified' ? now() : null,
         ]);
 
+        if ($httpRequest->status === 'verified') {
+            $payment->documentRequest->update(['status' => 'PROCESSING']);
+        }
+
         return back()->with('success', 'Payment status updated.');
     }
 }

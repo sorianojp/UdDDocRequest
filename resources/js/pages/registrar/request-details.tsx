@@ -8,9 +8,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save, Eye } from 'lucide-react';
 
 export default function RequestDetails({
     request,
@@ -27,6 +35,8 @@ export default function RequestDetails({
         claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
     });
 
+
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -42,11 +52,6 @@ export default function RequestDetails({
         },
     ];
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-        put(registrar.update.url(request.id));
-    };
-    
     // Sort deficiencies alphabetically or by ID as needed, but standard ones first?
     // For now, simple list.
     const deficiencyOptions = deficiencies;
@@ -56,6 +61,19 @@ export default function RequestDetails({
         return data.deficiency_remarks.split(',').map((s: string) => s.trim()).filter(Boolean);
     };
 
+    const autoSave = (updates: Partial<typeof data>) => {
+        const newData = { ...data, ...updates };
+        setData(newData);
+        
+        router.put(registrar.update.url(request.id), newData, {
+            preserveScroll: true,
+            onError: (errors) => {
+                // Ideally handle errors, but for auto-save maybe just console or toast
+                console.error("Auto-save failed", errors);
+            }
+        });
+    };
+
     const toggleDeficiency = (option: string, checked: boolean) => {
         let current = getSelectedDeficiencies();
         if (checked) {
@@ -63,9 +81,9 @@ export default function RequestDetails({
         } else {
             current = current.filter((item: string) => item !== option);
         }
-        setData('deficiency_remarks', current.join(', '));
+        const newRemarks = current.join(', ');
+        autoSave({ deficiency_remarks: newRemarks });
     };
-    
 
     const handlePaymentUpdate = (status: 'verified' | 'rejected') => {
         if (!request.payment) return;
@@ -78,8 +96,8 @@ export default function RequestDetails({
 
     // Derived state for formatting
     const selectedDeficiencies = getSelectedDeficiencies();
-
-
+    
+    // Status Badge Helper
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'PENDING':
@@ -101,13 +119,96 @@ export default function RequestDetails({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Request ${request.reference_number}`} />
 
-            <div className="flex flex-col md:flex-row gap-6 p-6">
+            <div className="flex flex-col gap-6 p-6">
+                {request.payment && (
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <CardTitle>Payment Details</CardTitle>
+                                    <CardDescription>Payment information and proof.</CardDescription>
+                                </div>
+                                <Badge variant={
+                                    request.payment.status === 'verified' ? 'success' : 
+                                    request.payment.status === 'rejected' ? 'destructive' : 'secondary'
+                                }>
+                                    {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
+                                </Badge>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+                                <div>
+                                    <Label className="text-muted-foreground">Amount</Label>
+                                    <p className="font-medium">₱{request.payment.amount}</p>
+                                </div>
+                                <div>
+                                    <Label className="text-muted-foreground">Reference</Label>
+                                    <p className="font-mono text-sm">{request.payment.reference_number}</p>
+                                </div>
+                                <div>
+                                    <Label className="text-muted-foreground">Ext. Ref</Label>
+                                    <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
+                                </div>
+                                <div>
+                                    <Label className="text-muted-foreground">Proof of Payment</Label>
+                                    {request.payment.proof_file_path ? (
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" size="sm" className="w-full mt-1">
+                                                    <Eye className="mr-2 h-4 w-4" /> View Proof
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-3xl">
+                                                <DialogHeader>
+                                                    <DialogTitle>Proof of Payment</DialogTitle>
+                                                    <DialogDescription>
+                                                        Reference: {request.payment.external_reference_number}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+                                                    <img
+                                                        src={`/storage/${request.payment.proof_file_path}`}
+                                                        alt="Proof of Payment"
+                                                        className="max-h-[80vh] object-contain rounded"
+                                                    />
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    ) : (
+                                        <p className="text-sm text-gray-500">No proof uploaded</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {request.payment.status === 'pending' && (
+                                <div className="flex gap-2 pt-2">
+                                    <Button 
+                                        onClick={() => handlePaymentUpdate('verified')} 
+                                        className="w-full bg-green-600 hover:bg-green-700"
+                                    >
+                                        <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
+                                    </Button>
+                                    <Button 
+                                        onClick={() => handlePaymentUpdate('rejected')} 
+                                        variant="destructive"
+                                        className="w-full"
+                                    >
+                                        <X className="mr-2 h-4 w-4" /> Reject
+                                    </Button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
+
+                <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-2/3 space-y-6">
                     <Card>
                         <CardHeader>
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <CardTitle className="text-lg">Request Details</CardTitle>
+                                    <CardTitle>Request Details</CardTitle>
                                     <CardDescription>
                                         Detailed information about the student request.
                                     </CardDescription>
@@ -140,9 +241,34 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Student ID</Label>
                                         <p className="font-medium">{request.student_id_number}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">School ID</Label>
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" size="sm" className="w-full mt-1">
+                                                    <Eye className="mr-2 h-4 w-4" /> View ID
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-3xl">
+                                                <DialogHeader>
+                                                    <DialogTitle>School ID Verification</DialogTitle>
+                                                    <DialogDescription>
+                                                        Student ID: {request.student_id_number}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+                                                    <img
+                                                        src={school_id_url}
+                                                        alt="Student School ID"
+                                                        className="max-h-[80vh] object-contain rounded"
+                                                    />
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 </div>
                                 
@@ -184,192 +310,107 @@ export default function RequestDetails({
                         </CardContent>
                     </Card>
 
-                    <Card>
-                         <CardHeader>
-                            <div>
-                                <CardTitle className="text-lg">School ID Verification</CardTitle>
-                                <CardDescription>Verify the student's identity.</CardDescription>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
-                                <img
-                                    src={school_id_url}
-                                    alt="Student School ID"
-                                    className="max-h-48 object-contain rounded"
-                                />
-                            </div>
-                            <div className="mt-4 flex justify-end">
-                                <a href={school_id_url} target="_blank" rel="noreferrer">
-                                    <Button variant="outline" size="sm">
-                                        <ExternalLink className="mr-2 h-4 w-4" />
-                                        Open Full Image
-                                    </Button>
-                                </a>
-                            </div>
-                        </CardContent>
-                    </Card>
+
 
 
                 </div>
 
                 <div className="w-full md:w-1/3 space-y-6">
+                    {/* Deficiency Card */}
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
+                            <Checkbox 
+                                id="has_deficiency" 
+                                checked={data.status === 'DEFICIENT'}
+                                onCheckedChange={(checked) => {
+                                    if (checked) {
+                                        autoSave({ status: 'DEFICIENT', claiming_date: '' });
+                                    } else {
+                                        const newStatus = request.payment?.status === 'verified' ? 'PROCESSING' : 'PENDING';
+                                        autoSave({ status: newStatus, deficiency_remarks: '' });
+                                    }
+                                }}
+                            />
                             <div>
-                                <CardTitle className="text-lg">Update Status</CardTitle>
-                                <CardDescription>Process this request.</CardDescription>
+                                <CardTitle>Has deficiency?</CardTitle>
+                                <CardDescription>Check if documents are missing.</CardDescription>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <form onSubmit={submit} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="status">Current Status</Label>
-                                    <Select
-                                        value={data.status}
-                                        onValueChange={(value) => setData('status', value as DocumentRequest['status'])}
-                                    >
-                                        <SelectTrigger id="status">
-                                            <SelectValue placeholder="Select Status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="PENDING">Pending</SelectItem>
-                                            <SelectItem value="PROCESSING">Processing</SelectItem>
-                                            <SelectItem value="DEFICIENT">Deficient (Require Info)</SelectItem>
-                                            <SelectItem value="READY">Ready for Pickup</SelectItem>
-                                            <SelectItem value="CLAIMED">Claimed</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                     {errors.status && <p className="text-red-500 text-xs">{errors.status}</p>}
+                        {data.status === 'DEFICIENT' && (
+                            <CardContent className="pt-0 animate-in slide-in-from-top-2 fade-in">
+                                <div className="space-y-3 pt-4 border-t">
+                                    <Label className="text-red-800 flex items-center gap-1">
+                                        <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
+                                    </Label>
+                                    <div className="space-y-2">
+                                        {deficiencyOptions.map((option) => (
+                                            <div key={option} className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id={`deficiency-${option}`}
+                                                    checked={selectedDeficiencies.includes(option)}
+                                                    onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
+                                                />
+                                                <label
+                                                    htmlFor={`deficiency-${option}`}
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    {option}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
                                 </div>
+                            </CardContent>
+                        )}
+                    </Card>
 
-                                {data.status === 'DEFICIENT' && (
-                                    <div className="space-y-2 p-3 bg-red-50 rounded-md border border-red-100 animate-in fade-in slide-in-from-top-2">
-                                        <Label className="text-red-800 flex items-center gap-1 mb-2">
-                                            <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
-                                        </Label>
-                                        
-                                        <div className="space-y-2">
-                                            {deficiencyOptions.map((option) => (
-                                                <div key={option} className="flex items-center space-x-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        id={`deficiency-${option}`}
-                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                                        checked={selectedDeficiencies.includes(option)}
-                                                        onChange={(e) => toggleDeficiency(option, e.target.checked)}
-                                                    />
-                                                    <label
-                                                        htmlFor={`deficiency-${option}`}
-                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        {option}
-                                                    </label>
-                                                </div>
-                                            ))}
-                                            
-                                        </div>
-                                        
-
-                                         {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
-                                    </div>
-                                )}
-
-                                {data.status === 'READY' && (
-                                    <div className="space-y-2 p-3 bg-green-50 rounded-md border border-green-100 animate-in fade-in slide-in-from-top-2">
-                                        <Label htmlFor="claiming_date" className="text-green-800 flex items-center gap-1">
-                                            <Calendar className="h-3 w-3" /> Claiming Date
-                                        </Label>
-                                        <Input
-                                            id="claiming_date"
-                                            type="date"
-                                            value={data.claiming_date}
-                                            onChange={(e) => setData('claiming_date', e.target.value)}
-                                            required
-                                        />
-                                         {errors.claiming_date && <p className="text-red-500 text-xs">{errors.claiming_date}</p>}
-                                    </div>
-                                )}
-
-                                <Button type="submit" disabled={processing} className="w-full mt-4">
-                                    {processing ? 'Saving...' : (
-                                        <>
-                                            <Save className="mr-2 h-4 w-4" /> Update Status
-                                        </>
-                                    )}
-                                </Button>
-                            </form>
+                    {/* Ready for Pickup Card */}
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle>Ready for pickup</CardTitle>
+                            <CardDescription>Set a date for claiming.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2">
+                                <Label htmlFor="claiming_date">Claiming Date</Label>
+                                <Input 
+                                    id="claiming_date"
+                                    type="date" 
+                                    value={data.claiming_date}
+                                    onChange={(e) => {
+                                        const date = e.target.value;
+                                        autoSave({
+                                            claiming_date: date,
+                                            status: date ? 'READY' : (request.payment?.status === 'verified' ? 'PROCESSING' : 'PENDING'),
+                                            deficiency_remarks: date ? '' : data.deficiency_remarks
+                                        });
+                                    }}
+                                />
+                                {errors.claiming_date && <p className="text-red-500 text-xs">{errors.claiming_date}</p>}
+                            </div>
                         </CardContent>
                     </Card>
 
-                    {request.payment && (
-                        <Card>
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className="text-lg">Payment Details</CardTitle>
-                                        <CardDescription>Payment information and proof.</CardDescription>
-                                    </div>
-                                    <Badge variant={
-                                        request.payment.status === 'verified' ? 'success' : 
-                                        request.payment.status === 'rejected' ? 'destructive' : 'secondary'
-                                    }>
-                                        {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <Label className="text-muted-foreground">Amount</Label>
-                                        <p className="font-medium">₱{request.payment.amount}</p>
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <Label className="text-muted-foreground">Reference</Label>
-                                        <p className="font-mono text-sm">{request.payment.reference_number}</p>
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <Label className="text-muted-foreground">External Reference No.</Label>
-                                        <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
-                                    </div>
-                                </div>
+                    {/* Claimed Card */}
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle>Claimed?</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Button 
+                                variant={data.status === 'CLAIMED' ? 'secondary' : 'outline'}
+                                className="w-full"
+                                onClick={() => autoSave({ status: 'CLAIMED' })}
+                                disabled={data.status === 'CLAIMED'}
+                            >
+                                {data.status === 'CLAIMED' ? 'Status: Claimed' : 'Mark as Claimed'}
+                            </Button>
+                        </CardContent>
+                    </Card>
 
-                                {request.payment.proof_file_path && (
-                                    <div className="space-y-2">
-                                        <Label className="text-muted-foreground">Proof of Payment</Label>
-                                        <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
-                                            <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" rel="noreferrer">
-                                                <img
-                                                    src={`/storage/${request.payment.proof_file_path}`}
-                                                    alt="Proof of Payment"
-                                                    className="max-h-48 object-contain rounded hover:opacity-90 transition-opacity cursor-pointer"
-                                                />
-                                            </a>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {request.payment.status === 'pending' && (
-                                    <div className="flex gap-2 pt-2">
-                                        <Button 
-                                            onClick={() => handlePaymentUpdate('verified')} 
-                                            className="w-full bg-green-600 hover:bg-green-700"
-                                        >
-                                            <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
-                                        </Button>
-                                        <Button 
-                                            onClick={() => handlePaymentUpdate('rejected')} 
-                                            variant="destructive"
-                                            className="w-full"
-                                        >
-                                            <X className="mr-2 h-4 w-4" /> Reject
-                                        </Button>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    )}
                 </div>
+            </div>
             </div>
         </AppLayout>
     );

@@ -43,7 +43,7 @@ export default function PaymentPage({ request, amount }: Props) {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-center text-xl">Payment Required</CardTitle>
+                        <CardTitle className="text-center">Payment Required</CardTitle>
                         <CardDescription className="text-center">
                             Please upload your proof of payment to proceed.
                         </CardDescription>
