@@ -93,11 +93,13 @@ class DocumentRequestController extends Controller
         ]);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $status = null)
     {
         $query = DocumentRequest::query();
 
-        if ($request->has('status') && $request->status !== 'ALL') {
+        if ($status) {
+            $query->where('status', strtoupper($status));
+        } elseif ($request->has('status') && $request->status !== 'ALL') {
              $query->where('status', $request->status);
         }
 
@@ -105,7 +107,9 @@ class DocumentRequestController extends Controller
 
         return Inertia::render('registrar/dashboard', [
             'requests' => $requests,
-            'filters' => $request->only(['status']),
+            'filters' => [
+                'status' => $status ? strtoupper($status) : ($request->status ?? null),
+            ],
         ]);
     }
 

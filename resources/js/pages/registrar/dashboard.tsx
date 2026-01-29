@@ -59,28 +59,11 @@ export default function RegistrarDashboard({
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                       <CardTitle>All Requests</CardTitle>
-                       <div className="flex items-center gap-2">
-                           <Filter className="h-4 w-4 text-muted-foreground" />
-                           <Select
-                                value={filters.status || 'ALL'}
-                                onValueChange={(value) => {
-                                    window.location.href = registrar.index.url({ query: { status: value } });
-                                }}
-                            >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Filter by Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ALL">All Statuses</SelectItem>
-                                    <SelectItem value="PENDING">Pending</SelectItem>
-                                    <SelectItem value="PROCESSING">Processing</SelectItem>
-                                    <SelectItem value="DEFICIENT">Deficient</SelectItem>
-                                    <SelectItem value="READY">Ready</SelectItem>
-                                    <SelectItem value="CLAIMED">Claimed</SelectItem>
-                                </SelectContent>
-                            </Select>
-                       </div>
+                       <CardTitle>
+                           {filters.status 
+                               ? `${filters.status.charAt(0).toUpperCase() + filters.status.slice(1).toLowerCase()} Requests`
+                               : 'All Requests'}
+                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="rounded-md border">

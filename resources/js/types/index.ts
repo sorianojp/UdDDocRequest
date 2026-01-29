@@ -11,5 +11,6 @@ export type SharedData = {
     name: string;
     auth: Auth;
     sidebarOpen: boolean;
+    sidebarCounts: Record<string, number>;
     [key: string]: unknown;
 };

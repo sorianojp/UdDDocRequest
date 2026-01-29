@@ -35,6 +35,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $counts = [];
+
+        if ($request->user()) {
+            $counts = \App\Models\DocumentRequest::selectRaw('status, count(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->mapWithKeys(function ($item, $key) {
+                    return [strtolower($key) => $item];
+                })
+                ->toArray();
+            
+            // Calculate total excluding claimed if needed, or just sum all
+             $counts['all'] = array_sum($counts);
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -42,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarCounts' => $counts,
         ];
     }
 }
