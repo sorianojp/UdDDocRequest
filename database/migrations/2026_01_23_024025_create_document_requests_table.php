@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('student_id_number');
             $table->string('document_type');
-            $table->enum('status', ['PENDING', 'PROCESSING', 'DEFICIENT', 'READY', 'CLAIMED'])->default('PENDING');
+            $table->enum('status', ['PENDING', 'PROCESSING', 'DEFICIENT', 'READY', 'CLAIMED', 'REJECTED'])->default('PENDING');
             $table->text('deficiency_remarks')->nullable();
             $table->dateTime('claiming_date')->nullable();
             $table->string('school_id_path');

@@ -110,101 +110,120 @@ export default function RequestDetails({
                 return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
+            case 'REJECTED':
+                return <Badge variant="destructive">Rejected</Badge>;
             default:
                 return <Badge variant="secondary">{status}</Badge>;
         }
     };
+    
+    // Disable actions if payment is pending or rejected
+    const isActionsDisabled = request.payment && (request.payment.status === 'pending' || request.payment.status === 'rejected');
+
+    const renderPaymentDetails = () => (
+        request.payment && (
+            <Card className={
+                request.payment.status === 'rejected' ? 'border-red-500 border-2' : 
+                request.payment.status === 'verified' ? 'border-green-500 border-2' : ''
+            }>
+                <CardHeader>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <CardTitle>Payment Details</CardTitle>
+                            <CardDescription>Payment information and proof.</CardDescription>
+                        </div>
+                        <Badge variant={
+                            request.payment.status === 'verified' ? 'success' : 
+                            request.payment.status === 'rejected' ? 'destructive' : 'secondary'
+                        }>
+                            {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
+                        </Badge>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+                        <div>
+                            <Label className="text-muted-foreground">Amount</Label>
+                            <p className="font-medium">₱{request.payment.amount}</p>
+                        </div>
+                        <div>
+                            <Label className="text-muted-foreground">Reference</Label>
+                            <p className="font-mono text-sm">{request.payment.reference_number}</p>
+                        </div>
+                        <div>
+                            <Label className="text-muted-foreground">Ext. Ref</Label>
+                            <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
+                        </div>
+                        <div>
+                            <Label className="text-muted-foreground">Proof of Payment</Label>
+                            {request.payment.proof_file_path ? (
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="w-full mt-1">
+                                            <Eye className="mr-2 h-4 w-4" /> View Proof
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-3xl">
+                                        <DialogHeader>
+                                            <DialogTitle>Proof of Payment</DialogTitle>
+                                            <DialogDescription>
+                                                Reference: {request.payment.external_reference_number}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+                                            <img
+                                                src={`/storage/${request.payment.proof_file_path}`}
+                                                alt="Proof of Payment"
+                                                className="max-h-[80vh] object-contain rounded"
+                                            />
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                            ) : (
+                                <p className="text-sm text-gray-500">No proof uploaded</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {request.payment.status === 'pending' && (
+                        <div className="flex gap-2 pt-2">
+                            <Button 
+                                onClick={() => handlePaymentUpdate('verified')} 
+                                className="w-full bg-green-600 hover:bg-green-700"
+                            >
+                                <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
+                            </Button>
+                            <Button 
+                                onClick={() => handlePaymentUpdate('rejected')} 
+                                variant="destructive"
+                                className="w-full"
+                            >
+                                <X className="mr-2 h-4 w-4" /> Reject
+                            </Button>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        )
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Request ${request.reference_number}`} />
 
             <div className="flex flex-col gap-6 p-6">
-                {request.payment && (
-                    <Card>
-                        <CardHeader>
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <CardTitle>Payment Details</CardTitle>
-                                    <CardDescription>Payment information and proof.</CardDescription>
-                                </div>
-                                <Badge variant={
-                                    request.payment.status === 'verified' ? 'success' : 
-                                    request.payment.status === 'rejected' ? 'destructive' : 'secondary'
-                                }>
-                                    {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
-                                </Badge>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
-                                <div>
-                                    <Label className="text-muted-foreground">Amount</Label>
-                                    <p className="font-medium">₱{request.payment.amount}</p>
-                                </div>
-                                <div>
-                                    <Label className="text-muted-foreground">Reference</Label>
-                                    <p className="font-mono text-sm">{request.payment.reference_number}</p>
-                                </div>
-                                <div>
-                                    <Label className="text-muted-foreground">Ext. Ref</Label>
-                                    <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
-                                </div>
-                                <div>
-                                    <Label className="text-muted-foreground">Proof of Payment</Label>
-                                    {request.payment.proof_file_path ? (
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="outline" size="sm" className="w-full mt-1">
-                                                    <Eye className="mr-2 h-4 w-4" /> View Proof
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-3xl">
-                                                <DialogHeader>
-                                                    <DialogTitle>Proof of Payment</DialogTitle>
-                                                    <DialogDescription>
-                                                        Reference: {request.payment.external_reference_number}
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
-                                                    <img
-                                                        src={`/storage/${request.payment.proof_file_path}`}
-                                                        alt="Proof of Payment"
-                                                        className="max-h-[80vh] object-contain rounded"
-                                                    />
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                    ) : (
-                                        <p className="text-sm text-gray-500">No proof uploaded</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {request.payment.status === 'pending' && (
-                                <div className="flex gap-2 pt-2">
-                                    <Button 
-                                        onClick={() => handlePaymentUpdate('verified')} 
-                                        className="w-full bg-green-600 hover:bg-green-700"
-                                    >
-                                        <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
-                                    </Button>
-                                    <Button 
-                                        onClick={() => handlePaymentUpdate('rejected')} 
-                                        variant="destructive"
-                                        className="w-full"
-                                    >
-                                        <X className="mr-2 h-4 w-4" /> Reject
-                                    </Button>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                )}
+                {/* Show at top if pending */}
+                {request.payment && request.payment.status === 'pending' && renderPaymentDetails()}
 
                 <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-2/3 space-y-6">
-                    <Card>
+                    <Card className={
+                        data.status === 'DEFICIENT' ? 'border-red-500 border-2' : 
+                        data.status === 'READY' ? 'border-green-500 border-2' : 
+                        data.status === 'CLAIMED' ? 'border-slate-500 border-2' : 
+                        data.status === 'REJECTED' ? 'border-red-500 border-2' : 
+                        data.status === 'PROCESSING' ? 'border-blue-500 border-2' : ''
+                    }>
                         <CardHeader>
                             <div className="flex justify-between items-start">
                                 <div>
@@ -311,17 +330,17 @@ export default function RequestDetails({
                     </Card>
 
 
-
-
                 </div>
 
                 <div className="w-full md:w-1/3 space-y-6">
                     {/* Deficiency Card */}
-                    <Card>
+                    {/* Deficiency Card */}
+                    <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
                         <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
                             <Checkbox 
                                 id="has_deficiency" 
                                 checked={data.status === 'DEFICIENT'}
+                                disabled={isActionsDisabled}
                                 onCheckedChange={(checked) => {
                                     if (checked) {
                                         autoSave({ status: 'DEFICIENT', claiming_date: '' });
@@ -348,6 +367,7 @@ export default function RequestDetails({
                                                 <Checkbox
                                                     id={`deficiency-${option}`}
                                                     checked={selectedDeficiencies.includes(option)}
+                                                    disabled={isActionsDisabled}
                                                     onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
                                                 />
                                                 <label
@@ -366,7 +386,8 @@ export default function RequestDetails({
                     </Card>
 
                     {/* Ready for Pickup Card */}
-                    <Card>
+                    {/* Ready for Pickup Card */}
+                    <Card className={`${data.status === 'READY' ? 'border-green-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
                         <CardHeader className="pb-3">
                             <CardTitle>Ready for pickup</CardTitle>
                             <CardDescription>Set a date for claiming.</CardDescription>
@@ -378,6 +399,7 @@ export default function RequestDetails({
                                     id="claiming_date"
                                     type="date" 
                                     value={data.claiming_date}
+                                    disabled={isActionsDisabled}
                                     onChange={(e) => {
                                         const date = e.target.value;
                                         autoSave({
@@ -393,7 +415,8 @@ export default function RequestDetails({
                     </Card>
 
                     {/* Claimed Card */}
-                    <Card>
+                    {/* Claimed Card */}
+                    <Card className={`${data.status === 'CLAIMED' ? 'border-slate-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
                         <CardHeader className="pb-3">
                             <CardTitle>Claimed?</CardTitle>
                         </CardHeader>
@@ -402,7 +425,7 @@ export default function RequestDetails({
                                 variant={data.status === 'CLAIMED' ? 'secondary' : 'outline'}
                                 className="w-full"
                                 onClick={() => autoSave({ status: 'CLAIMED' })}
-                                disabled={data.status === 'CLAIMED'}
+                                disabled={data.status === 'CLAIMED' || isActionsDisabled}
                             >
                                 {data.status === 'CLAIMED' ? 'Status: Claimed' : 'Mark as Claimed'}
                             </Button>
@@ -411,6 +434,8 @@ export default function RequestDetails({
 
                 </div>
             </div>
+            
+            {request.payment && request.payment.status !== 'pending' && renderPaymentDetails()}
             </div>
         </AppLayout>
     );

@@ -38,7 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('status', '^(pending|processing|deficient|ready|claimed)$');
         Route::get('requests/{id}', [DocumentRequestController::class, 'show'])->name('show');
         Route::put('requests/{id}', [DocumentRequestController::class, 'update'])->name('update');
-        Route::post('deficiencies', [\App\Http\Controllers\DeficiencyController::class, 'store'])->name('deficiencies.store');
         Route::put('payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payments.update');
     });
 });

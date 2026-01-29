@@ -33,13 +33,15 @@ export default function RegistrarDashboard({
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
             case 'PROCESSING':
-                return <Badge className="bg-blue-500 hover:bg-blue-600">Processing</Badge>;
+                return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':
                 return <Badge variant="destructive">Deficient</Badge>;
             case 'READY':
-                return <Badge className="bg-green-500 hover:bg-green-600">Ready</Badge>;
+                return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
+            case 'REJECTED':
+                return <Badge variant="destructive">Rejected</Badge>;
             default:
                 return <Badge variant="secondary">{status}</Badge>;
         }

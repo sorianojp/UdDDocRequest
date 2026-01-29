@@ -20,9 +20,11 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
             case 'DEFICIENT':
                 return <Badge variant="destructive">Deficient</Badge>;
             case 'READY':
-                return <Badge variant="success">Ready to Claim</Badge>;
+                return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
+            case 'REJECTED':
+                return <Badge variant="destructive">Rejected</Badge>;
             default:
                 return <Badge variant="secondary">{status}</Badge>;
         }
@@ -73,7 +75,13 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left Column: Request Details */}
                     <div className="space-y-6">
-                        <Card>
+                        <Card className={
+                            request.status === 'DEFICIENT' ? 'border-red-500 border-2' : 
+                            request.status === 'READY' ? 'border-green-500 border-2' : 
+                            request.status === 'CLAIMED' ? 'border-slate-500 border-2' : 
+                            request.status === 'REJECTED' ? 'border-red-500 border-2' : 
+                            request.status === 'PROCESSING' ? 'border-blue-500 border-2' : ''
+                        }>
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <div>
@@ -169,27 +177,39 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
 
                     {/* Right Column: Payment Status (Takes up 1 col) */}
                     <div className="space-y-6">
-                        <Card>
+                        <Card className={
+                            request.payment && (
+                                request.payment.status === 'verified' ? 'border-green-500 border-2' : 
+                                request.payment.status === 'rejected' ? 'border-red-500 border-2' : ''
+                            )
+                        }>
                             <CardHeader>
-                                <CardTitle>Payment Status</CardTitle>
-                                <CardDescription>Current status of your payment.</CardDescription>
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle>Payment Status</CardTitle>
+                                        <CardDescription>Current status of your payment.</CardDescription>
+                                    </div>
+                                    {request.payment && (
+                                        <Badge variant={
+                                            request.payment.status === 'verified' ? 'success' : 
+                                            request.payment.status === 'rejected' ? 'destructive' : 'secondary'
+                                        }>
+                                            {request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}
+                                        </Badge>
+                                    )}
+                                </div>
                             </CardHeader>
                             <CardContent>
                                 {request.payment ? (
                                     <div className="space-y-4">
-                                        <div className={`p-4 rounded-md border text-center ${
-                                            request.payment.status === 'verified' ? 'bg-green-50 border-green-200 text-green-800' :
-                                            request.payment.status === 'rejected' ? 'bg-red-50 border-red-200 text-red-800' :
-                                            'bg-blue-50 border-blue-200 text-blue-800'
-                                        }`}>
-                                            <div className="flex justify-center mb-2">
-                                                {request.payment.status === 'verified' ? <CheckCircle2 className="h-8 w-8" /> :
-                                                 request.payment.status === 'rejected' ? <AlertCircle className="h-8 w-8" /> :
-                                                 <Clock className="h-8 w-8" />}
-                                            </div>
-                                            <p className="font-bold text-lg">{request.payment.status.charAt(0).toUpperCase() + request.payment.status.slice(1)}</p>
-                                            {request.payment.external_reference_number && (
-                                                <p className="text-sm text-gray-600 mt-1">Ref: <span className="font-mono font-medium">{request.payment.external_reference_number}</span></p>
+                                        <div className="p-4 rounded-md border text-center bg-gray-50 border-gray-200">
+                                            {request.payment.external_reference_number ? (
+                                                <>
+                                                    <Label className="text-muted-foreground block mb-1">Reference Number</Label>
+                                                    <p className="font-mono font-medium text-lg">{request.payment.external_reference_number}</p>
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500 italic">No reference number</p>
                                             )}
                                         </div>
 

@@ -55,6 +55,8 @@ class PaymentController extends Controller
 
         if ($httpRequest->status === 'verified') {
             $payment->documentRequest->update(['status' => 'PROCESSING']);
+        } elseif ($httpRequest->status === 'rejected') {
+            $payment->documentRequest->update(['status' => 'REJECTED']); // Use 'REJECTED' or 'CANCELLED'? User said "REJECTE" -> REJECTED
         }
 
         return back()->with('success', 'Payment status updated.');

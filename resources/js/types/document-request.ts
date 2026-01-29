@@ -11,7 +11,7 @@ export interface DocumentRequest {
     email?: string | null;
     student_id_number: string;
     document_type: string;
-    status: 'PENDING' | 'PROCESSING' | 'DEFICIENT' | 'READY' | 'CLAIMED';
+    status: 'PENDING' | 'PROCESSING' | 'DEFICIENT' | 'READY' | 'CLAIMED' | 'REJECTED';
     deficiency_remarks?: string | null;
     claiming_date?: string | null;
     created_at: string;
