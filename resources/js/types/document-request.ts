@@ -14,6 +14,7 @@ export interface DocumentRequest {
     status: 'PENDING' | 'PROCESSING' | 'DEFICIENT' | 'READY' | 'CLAIMED' | 'REJECTED';
     deficiency_remarks?: string | null;
     claiming_date?: string | null;
+    claimed_date?: string | null;
     created_at: string;
     updated_at: string;
     payment?: Payment;

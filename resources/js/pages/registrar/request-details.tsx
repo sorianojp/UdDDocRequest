@@ -89,7 +89,12 @@ export default function RequestDetails({
         if (!request.payment) return;
         router.put(`/registrar/payments/${request.payment.id}`, { status }, {
             onSuccess: () => {
-                // Toast handled by flash message
+                // Update local status to reflect the backend automation
+                if (status === 'verified') {
+                    setData('status', 'PROCESSING');
+                } else if (status === 'rejected') {
+                    setData('status', 'REJECTED');
+                }
             }
         });
     };
@@ -429,6 +434,11 @@ export default function RequestDetails({
                             >
                                 {data.status === 'CLAIMED' ? 'Status: Claimed' : 'Mark as Claimed'}
                             </Button>
+                            {data.status === 'CLAIMED' && request.claimed_date && (
+                                <p className="text-sm text-center text-slate-600 mt-2">
+                                    Claimed on: <span className="font-medium">{new Date(request.claimed_date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
 

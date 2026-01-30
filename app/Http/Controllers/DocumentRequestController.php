@@ -129,7 +129,7 @@ class DocumentRequestController extends Controller
         $documentRequest = DocumentRequest::findOrFail($id);
 
         $validated = $request->validate([
-            'status' => 'required|in:PENDING,PROCESSING,DEFICIENT,READY,CLAIMED',
+            'status' => 'required|in:PENDING,PROCESSING,DEFICIENT,READY,CLAIMED,REJECTED',
             'deficiency_remarks' => 'nullable|required_if:status,DEFICIENT|string',
             'claiming_date' => 'nullable|required_if:status,READY|date',
         ]);

@@ -14,7 +14,7 @@ import { dashboard } from '@/routes';
 import registrar from '@/routes/registrar';
 import type { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck } from 'lucide-react';
+import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle } from 'lucide-react';
 import AppLogo from './app-logo';
 
 import { usePage } from '@inertiajs/react';
@@ -64,6 +64,12 @@ export function AppSidebar() {
             href: registrar.index.url('claimed'),
             icon: FileCheck,
             badge: sidebarCounts?.claimed,
+        },
+        {
+            title: 'Rejected',
+            href: registrar.index.url('rejected'),
+            icon: XCircle,
+            badge: sidebarCounts?.rejected,
         },
     ];
 

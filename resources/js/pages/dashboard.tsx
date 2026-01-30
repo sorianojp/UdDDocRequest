@@ -12,7 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, Loader2, AlertTriangle, CheckCircle, FileCheck } from 'lucide-react';
+import { Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle } from 'lucide-react';
 
 export default function Dashboard({ counts }: { counts: Record<string, number> }) {
     const stats = [
@@ -51,13 +51,20 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
             color: 'text-gray-500',
             bg: 'bg-gray-50',
         },
+        {
+            label: 'Rejected',
+            value: counts.REJECTED || 0,
+            icon: XCircle,
+            color: 'text-red-900',
+            bg: 'bg-red-100',
+        },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid gap-4 md:grid-cols-5">
+                <div className="grid gap-4 md:grid-cols-6">
                     {stats.map((stat) => (
                         <Card key={stat.label}>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
