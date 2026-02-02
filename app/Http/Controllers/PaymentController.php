@@ -6,6 +6,8 @@ use App\Models\DocumentRequest;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentProofSubmitted;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -38,6 +40,11 @@ class PaymentController extends Controller
                 'paid_at' => null, // Pending verification
             ]
         );
+
+        // Send email notification
+        if ($request->email) {
+            Mail::to($request->email)->send(new PaymentProofSubmitted($request));
+        }
 
         return back()->with('success', 'Payment proof uploaded successfully. Please wait for verification.');
     }

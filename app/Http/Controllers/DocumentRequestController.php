@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\DocumentRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentRequestStatusUpdated;
+use App\Mail\DocumentRequestSubmitted;
 
 class DocumentRequestController extends Controller
 {
@@ -52,6 +55,12 @@ class DocumentRequestController extends Controller
                 'document_type' => $documents[$type]['label'] ?? $type,
                 'price' => $documents[$type]['price'] ?? config('document_pricing.default_price', 100.00),
             ]);
+        }
+
+
+        // Send email notification
+        if ($validated['email']) {
+            Mail::to($validated['email'])->send(new DocumentRequestSubmitted($documentRequest));
         }
 
         return redirect()->route('request.show-status', ['reference_number' => $documentRequest->reference_number]);
@@ -149,6 +158,11 @@ class DocumentRequestController extends Controller
         }
 
         $documentRequest->update($updateData);
+
+        // Send email notification
+        if ($documentRequest->email) {
+            Mail::to($documentRequest->email)->send(new DocumentRequestStatusUpdated($documentRequest));
+        }
 
         return redirect()->back();
     }
