@@ -122,8 +122,8 @@ export default function RequestDetails({
         }
     };
     
-    // Disable actions if payment is pending or rejected
-    const isActionsDisabled = request.payment && (request.payment.status === 'pending' || request.payment.status === 'rejected');
+    // Disable actions if payment is missing, pending, or rejected
+    const isActionsDisabled = !request.payment || request.payment.status === 'pending' || request.payment.status === 'rejected';
 
     const renderPaymentDetails = () => (
         request.payment && (
@@ -152,11 +152,11 @@ export default function RequestDetails({
                             <p className="font-medium">₱{request.payment.amount}</p>
                         </div>
                         <div>
-                            <Label className="text-muted-foreground">Reference</Label>
+                            <Label className="text-muted-foreground">Payment Reference Number</Label>
                             <p className="font-mono text-sm">{request.payment.reference_number}</p>
                         </div>
                         <div>
-                            <Label className="text-muted-foreground">Ext. Ref</Label>
+                            <Label className="text-muted-foreground">Your GCash/Maya Ref. No.</Label>
                             <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
                         </div>
                         <div>
@@ -219,6 +219,19 @@ export default function RequestDetails({
             <div className="flex flex-col gap-6 p-6">
                 {/* Show at top if pending */}
                 {request.payment && request.payment.status === 'pending' && renderPaymentDetails()}
+
+                {/* Show if no payment - Added for Admin visibility */}
+                {!request.payment && (
+                    <Card className="border-amber-400 border-dashed border-2 bg-amber-50">
+                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 p-4">
+                             <AlertTriangle className="h-5 w-5 text-amber-600" />
+                             <div>
+                                <CardTitle className="text-amber-900 text-base">Not Yet Paid</CardTitle>
+                                <CardDescription className="text-amber-700">Student has not submitted any payment proof yet.</CardDescription>
+                             </div>
+                        </CardHeader>
+                    </Card>
+                )}
 
                 <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-2/3 space-y-6">
@@ -338,7 +351,6 @@ export default function RequestDetails({
                 </div>
 
                 <div className="w-full md:w-1/3 space-y-6">
-                    {/* Deficiency Card */}
                     {/* Deficiency Card */}
                     <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
                         <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">

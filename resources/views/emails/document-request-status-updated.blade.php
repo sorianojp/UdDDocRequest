@@ -88,6 +88,10 @@
         <div class="footer">
             <p>Thank you for using our service.</p>
             <p>Universidad de Dagupan</p>
+            <p style="margin-top: 10px; font-size: 0.8em; color: #999;">
+                For inquiries, please contact the Registrar's Office:<br>
+                Email: registrar@udd.edu.ph | Phone: (075) 522-8295
+            </p>
         </div>
     </div>
 </body>

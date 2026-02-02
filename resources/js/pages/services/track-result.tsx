@@ -205,7 +205,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <div className="p-4 rounded-md border text-center bg-gray-50 border-gray-200">
                                             {request.payment.external_reference_number ? (
                                                 <>
-                                                    <Label className="text-muted-foreground block mb-1">Reference Number</Label>
+                                                    <Label className="text-muted-foreground block mb-1">Your GCash/Maya Ref. No.</Label>
                                                     <p className="font-mono font-medium text-lg">{request.payment.external_reference_number}</p>
                                                 </>
                                             ) : (
@@ -312,6 +312,22 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
             
             <div className="mt-8 text-center text-sm text-gray-500">
                  Submitted on {new Date(request.created_at).toLocaleDateString()}
+            </div>
+
+            <div className="mt-8 border-t pt-8 pb-4">
+                <div className="text-center space-y-2">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Registrar's Office Contact Information</h3>
+                    <div className="text-sm text-gray-600">
+                        <p className="mt-1">
+                            Email: <a href="mailto:registrar@udd.edu.ph" className="text-blue-600 hover:text-blue-500">registrar@udd.edu.ph</a>
+                        </p>
+                        <p>
+                            Phone: <span className="font-medium">(075) 522-8295</span>
+                        </p>
+                        <p>Universidad de Dagupan</p>
+                        <p>Arellano St., Dagupan City</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
