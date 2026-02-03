@@ -100,6 +100,12 @@ export default function RequestDetails({
         });
     };
 
+    const handleRejectRequest = () => {
+        if (confirm('Are you sure you want to REJECT this entire request? This action cannot be undone.')) {
+            autoSave({ status: 'REJECTED' });
+        }
+    };
+
     const handlePriceChange = (id: number, newPrice: string) => {
         const updatedItems = data.items.map((item: any) => 
             item.id === id ? { ...item, price: newPrice } : item
@@ -141,7 +147,8 @@ export default function RequestDetails({
     };
     
     // Disable actions if payment is missing, pending, or rejected
-    const isActionsDisabled = !request.payment || request.payment.status === 'pending' || request.payment.status === 'rejected';
+    const isReadOnly = data.status === 'REJECTED';
+    const isActionsDisabled = isReadOnly || !request.payment || request.payment.status === 'pending' || request.payment.status === 'rejected';
 
     const renderPaymentDetails = () => (
         request.payment && (
@@ -208,7 +215,7 @@ export default function RequestDetails({
                         </div>
                     </div>
 
-                    {request.payment.status === 'pending' && (
+                    {request.payment.status === 'pending' && !isReadOnly && (
                         <div className="flex gap-2 pt-2">
                             <Button 
                                 onClick={() => handlePaymentUpdate('verified')} 
@@ -316,6 +323,19 @@ export default function RequestDetails({
                                                 </div>
                                             </DialogContent>
                                         </Dialog>
+
+                                    </div>
+                                    <div className="col-span-2"> 
+                                        {data.status === 'PENDING' && !isReadOnly && (
+                                            <Button 
+                                                variant="destructive" 
+                                                size="sm" 
+                                                className="w-full mt-2"
+                                                onClick={handleRejectRequest}
+                                            >
+                                                <X className="mr-2 h-4 w-4" /> Reject Request
+                                            </Button>
+                                        )}  
                                     </div>
                                 </div>
                                 
@@ -387,7 +407,7 @@ export default function RequestDetails({
                                             </p>
                                         </div>
                                      </div>
-                                     {data.status === 'PENDING' && (
+                                     {data.status === 'PENDING' && !isReadOnly && (
                                          <Button onClick={verifyAndSetPayment} className="bg-amber-600 hover:bg-amber-700 text-white">
                                              Verify & Set Amount
                                          </Button>
@@ -403,11 +423,15 @@ export default function RequestDetails({
                 <div className="w-full md:w-1/3 space-y-6">
                     {renderPaymentDetails()}
                     {/* Deficiency Card */}
-                    <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''}`}>
-                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
-                            <Checkbox 
-                                id="has_deficiency" 
-                                checked={data.status === 'DEFICIENT'}
+                    {(() => {
+                        const isDeficiencyDisabled = isReadOnly || (data.status !== 'PENDING' && data.status !== 'DEFICIENT');
+                        return (
+                            <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''} ${isDeficiencyDisabled ? 'bg-gray-100' : ''}`}>
+                                <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
+                                    <Checkbox 
+                                        id="has_deficiency" 
+                                        checked={data.status === 'DEFICIENT'}
+                                        disabled={isDeficiencyDisabled}
                                 // Always enabled to allow reporting deficiencies at any stage
                                 onCheckedChange={(checked) => {
                                     if (checked) {
@@ -436,6 +460,7 @@ export default function RequestDetails({
                                                 <Checkbox
                                                     id={`deficiency-${option}`}
                                                     checked={selectedDeficiencies.includes(option)}
+                                                    disabled={isReadOnly}
                                                     onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
                                                 />
                                                 <label
@@ -452,6 +477,8 @@ export default function RequestDetails({
                             </CardContent>
                         )}
                     </Card>
+                        );
+                    })()}
 
                     {/* Ready for Pickup Card */}
                     {/* Ready for Pickup Card */}
