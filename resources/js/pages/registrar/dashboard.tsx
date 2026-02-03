@@ -32,6 +32,10 @@ export default function RegistrarDashboard({
         switch (status) {
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
+            case 'WAITING_FOR_PAYMENT':
+                return <Badge variant="warning">Waiting Payment</Badge>;
+            case 'VERIFYING_PAYMENT':
+                return <Badge variant="orange">Verify Payment</Badge>;
             case 'PROCESSING':
                 return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':

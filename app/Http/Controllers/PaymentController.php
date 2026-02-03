@@ -32,14 +32,17 @@ class PaymentController extends Controller
         $payment = Payment::updateOrCreate(
             ['document_request_id' => $request->id],
             [
-                'reference_number' => 'PAY-' . strtoupper(uniqid()),
-                'external_reference_number' => $httpRequest->reference_number,
+                'reference_number' => $httpRequest->reference_number,
+                'external_reference_number' => $httpRequest->reference_number, // User input ref number
                 'amount' => $request->amount_due,
-                'status' => 'pending',
                 'proof_file_path' => $path,
-                'paid_at' => null, // Pending verification
+                'status' => 'pending',
+                'paid_at' => null, // Reset if previously paid/verified (though uncommon for rejection flow)
             ]
         );
+
+        // Update request status to VERIFYING_PAYMENT
+        $request->update(['status' => 'VERIFYING_PAYMENT']);
 
         // Send email notification
         if ($request->email) {
@@ -63,7 +66,7 @@ class PaymentController extends Controller
         if ($httpRequest->status === 'verified') {
             $payment->documentRequest->update(['status' => 'PROCESSING']);
         } elseif ($httpRequest->status === 'rejected') {
-            $payment->documentRequest->update(['status' => 'REJECTED']); // Use 'REJECTED' or 'CANCELLED'? User said "REJECTE" -> REJECTED
+            $payment->documentRequest->update(['status' => 'WAITING_FOR_PAYMENT']);
         }
 
         return back()->with('success', 'Payment status updated.');

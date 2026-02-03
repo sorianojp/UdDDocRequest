@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('registrar')->name('registrar.')->group(function () {
         Route::get('requests/{status?}', [DocumentRequestController::class, 'index'])
             ->name('index')
-            ->where('status', '^(pending|processing|deficient|ready|claimed|rejected)$');
+            ->where('status', '^(pending|waiting_for_payment|verifying_payment|processing|deficient|ready|claimed|rejected)$');
         Route::get('requests/{id}', [DocumentRequestController::class, 'show'])->name('show');
         Route::put('requests/{id}', [DocumentRequestController::class, 'update'])->name('update');
         Route::put('payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payments.update');

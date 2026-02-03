@@ -50,10 +50,11 @@ class DocumentRequestController extends Controller
         ]);
 
         // Create items
+        // Create items
         foreach ($validated['document_types'] as $type) {
             $documentRequest->items()->create([
                 'document_type' => $documents[$type]['label'] ?? $type,
-                'price' => $documents[$type]['price'] ?? config('document_pricing.default_price', 100.00),
+                'price' => 0.00, // Registrar sets this later
             ]);
         }
 
@@ -107,7 +108,8 @@ class DocumentRequestController extends Controller
         $query = DocumentRequest::query();
 
         if ($status) {
-            $query->where('status', strtoupper($status));
+            $normalizedStatus = strtoupper($status);
+            $query->where('status', $normalizedStatus);
         } elseif ($request->has('status') && $request->status !== 'ALL') {
              $query->where('status', $request->status);
         }
@@ -138,10 +140,24 @@ class DocumentRequestController extends Controller
         $documentRequest = DocumentRequest::findOrFail($id);
 
         $validated = $request->validate([
-            'status' => 'required|in:PENDING,PROCESSING,DEFICIENT,READY,CLAIMED,REJECTED',
+            'status' => 'required|in:PENDING,WAITING_FOR_PAYMENT,VERIFYING_PAYMENT,PROCESSING,DEFICIENT,READY,CLAIMED,REJECTED',
             'deficiency_remarks' => 'nullable|required_if:status,DEFICIENT|string',
             'claiming_date' => 'nullable|required_if:status,READY|date',
+            'items' => 'nullable|array',
+            'items.*.id' => 'required|exists:request_items,id',
+            'items.*.price' => 'required|numeric|min:0',
         ]);
+
+        // Update items prices if provided
+        if (isset($validated['items'])) {
+            foreach ($validated['items'] as $itemData) {
+                // Ensure the item belongs to this request
+                $item = $documentRequest->items()->where('id', $itemData['id'])->first();
+                if ($item) {
+                    $item->update(['price' => $itemData['price']]);
+                }
+            }
+        }
 
         $updateData = [
             'status' => $validated['status'],

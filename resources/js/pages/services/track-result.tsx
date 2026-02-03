@@ -15,6 +15,10 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
         switch (status) {
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
+            case 'WAITING_FOR_PAYMENT':
+                return <Badge variant="warning">Waiting Payment</Badge>;
+            case 'VERIFYING_PAYMENT':
+                return <Badge variant="orange">Verifying Payment</Badge>;
             case 'PROCESSING':
                 return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':
@@ -33,6 +37,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'PENDING': return 'bg-gray-100 text-gray-800';
+            case 'WAITING_FOR_PAYMENT': return 'bg-orange-100 text-orange-800';
+            case 'VERIFYING_PAYMENT': return 'bg-amber-100 text-amber-800';
             case 'PROCESSING': return 'bg-blue-100 text-blue-800';
             case 'DEFICIENT': return 'bg-red-100 text-red-800';
             case 'READY': return 'bg-green-100 text-green-800';
@@ -76,6 +82,9 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                     {/* Left Column: Request Details */}
                     <div className="space-y-6">
                         <Card className={
+                            request.status === 'PENDING' ? 'border-gray-500 border-2' : 
+                            request.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2' : 
+                            request.status === 'VERIFYING_PAYMENT' ? 'border-orange-500 border-2' : 
                             request.status === 'DEFICIENT' ? 'border-red-500 border-2' : 
                             request.status === 'READY' ? 'border-green-500 border-2' : 
                             request.status === 'CLAIMED' ? 'border-slate-500 border-2' : 
@@ -200,7 +209,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                {request.payment ? (
+                                {request.payment && request.status !== 'WAITING_FOR_PAYMENT' ? (
                                     <div className="space-y-4">
                                         <div className="p-4 rounded-md border text-center bg-gray-50 border-gray-200">
                                             {request.payment.external_reference_number ? (
@@ -232,6 +241,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         )}
                                     </div>
                                 ) : (
+                                    // Show upload form if no payment OR if status is WAITING_FOR_PAYMENT (re-upload)
+                                    (request.status === 'WAITING_FOR_PAYMENT') ? (
                                     <div className="rounded-md">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="bg-blue-50 p-4 rounded-md border border-blue-100">
@@ -250,7 +261,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             </div>
                                         </div>
                                         {isPaymentRejected && (
-                                            <div className="bg-red-50 p-3 rounded-md border border-red-200 flex items-center gap-2 text-red-800 text-sm mb-2">
+                                            <div className="bg-red-50 p-3 rounded-md border border-red-200 flex items-center gap-2 text-red-800 text-sm mb-2 mt-4">
                                                 <AlertCircle className="h-4 w-4" />
                                                 <p>Previous payment was rejected. Please upload a new proof.</p>
                                             </div>
@@ -303,6 +314,16 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             </Button>
                                         </form>
                                     </div>
+                                    ) : (
+                                        <div className="bg-amber-50 p-6 rounded-md border border-amber-200 text-center space-y-3">
+                                            <Clock className="h-12 w-12 text-amber-500 mx-auto" />
+                                            <h4 className="text-lg font-medium text-amber-900">Waiting for Verification</h4>
+                                            <p className="text-amber-800">
+                                                Your request is currently being verified by the Registrar's Office. 
+                                                Once verified, the total amount will be computed and you will be able to upload your payment proof here.
+                                            </p>
+                                        </div>
+                                    )
                                 )}
                             </CardContent>
                         </Card>

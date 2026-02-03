@@ -11,7 +11,6 @@ import { Send, Loader2 } from 'lucide-react';
 interface Pricing {
     [key: string]: {
         label: string;
-        price: number;
     };
 }
 
@@ -29,7 +28,6 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
     const documents = Object.entries(pricing).map(([id, details]) => ({
         id,
         label: details.label,
-        price: details.price,
     }));
 
     const toggleDocument = (id: string, checked: boolean) => {
@@ -40,11 +38,6 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
             setData('document_types', current.filter(item => item !== id));
         }
     };
-
-    const totalAmount = data.document_types.reduce((sum, type) => {
-        const doc = documents.find(d => d.id === type);
-        return sum + (doc?.price || 100);
-    }, 0);
 
     const [preview, setPreview] = useState<string | null>(null);
 
@@ -206,7 +199,6 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                                                     <label htmlFor={`doc-${doc.id}`} className="flex-1 cursor-pointer">
                                                         <div className="flex justify-between">
                                                             <span className="font-medium text-sm text-gray-900">{doc.label}</span>
-                                                            <span className="text-sm text-gray-500 font-mono">₱{doc.price}</span>
                                                         </div>
                                                     </label>
                                                 </div>
@@ -214,10 +206,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                                         </div>
                                         {errors.document_types && <p className="text-red-500 text-xs">{errors.document_types}</p>}
                                         
-                                        <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-md border border-indigo-100">
-                                            <span className="font-medium text-indigo-900">Total Amount</span>
-                                            <span className="font-bold text-xl text-indigo-700">₱{totalAmount.toFixed(2)}</span>
-                                        </div>
+
                                     </div>
 
 

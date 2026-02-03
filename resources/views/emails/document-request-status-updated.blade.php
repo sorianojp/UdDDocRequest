@@ -36,13 +36,7 @@
             color: white;
             font-weight: bold;
             background-color: #007bff; /* Default Blue */
-        }
-        .status-PENDING { background-color: #ffc107; color: #000; }
-        .status-PROCESSING { background-color: #17a2b8; }
-        .status-DEFICIENT { background-color: #dc3545; }
-        .status-READY { background-color: #28a745; }
-        .status-CLAIMED { background-color: #6c757d; }
-        .status-REJECTED { background-color: #343a40; }
+        .status-WAITING_FOR_PAYMENT, .status-VERIFYING_PAYMENT { background-color: #fd7e14; }
     </style>
 </head>
 <body>
@@ -58,12 +52,26 @@
             <p>
                 <strong>New Status:</strong> 
                 <span class="status-badge status-{{ $documentRequest->status }}">
-                    {{ $documentRequest->status }}
+                    {{ str_replace('_', ' ', ucwords(strtolower($documentRequest->status))) }}
                 </span>
             </p>
 
-            @if($documentRequest->status === 'DEFICIENT' && $documentRequest->deficiency_remarks)
+            @if($documentRequest->status === 'WAITING_FOR_PAYMENT')
                 <div style="background-color: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                    <strong>Action Required:</strong><br>
+                    Please upload your proof of payment to proceed with your request.
+                </div>
+            @endif
+
+            @if($documentRequest->status === 'VERIFYING_PAYMENT')
+                <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                    <strong>Payment Verification:</strong><br>
+                    We have received your proof of payment. Please wait while we verify it.
+                </div>
+            @endif
+
+            @if($documentRequest->status === 'DEFICIENT' && $documentRequest->deficiency_remarks)
+                <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-top: 10px;">
                     <strong>Deficiency Remarks:</strong><br>
                     {{ $documentRequest->deficiency_remarks }}
                 </div>

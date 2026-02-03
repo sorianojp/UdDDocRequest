@@ -33,6 +33,7 @@ export default function RequestDetails({
         status: request.status,
         deficiency_remarks: request.deficiency_remarks || '',
         claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
+        items: (request.items || []) as any[], // Add items to form state
     });
 
 
@@ -93,10 +94,23 @@ export default function RequestDetails({
                 if (status === 'verified') {
                     setData('status', 'PROCESSING');
                 } else if (status === 'rejected') {
-                    setData('status', 'REJECTED');
+                    setData('status', 'WAITING_FOR_PAYMENT');
                 }
             }
         });
+    };
+
+    const handlePriceChange = (id: number, newPrice: string) => {
+        const updatedItems = data.items.map((item: any) => 
+            item.id === id ? { ...item, price: newPrice } : item
+        );
+        setData('items', updatedItems);
+        // We defer saving until the "Verify" button is clicked or use onBlur if needed
+    };
+
+    const verifyAndSetPayment = () => {
+         // This sets status to WAITING_FOR_PAYMENT and saves items prices
+         autoSave({ status: 'WAITING_FOR_PAYMENT', items: data.items });
     };
 
     // Derived state for formatting
@@ -107,6 +121,10 @@ export default function RequestDetails({
         switch (status) {
             case 'PENDING':
                 return <Badge variant="secondary">Pending</Badge>;
+            case 'WAITING_FOR_PAYMENT':
+                return <Badge variant="warning">Waiting Payment</Badge>;
+            case 'VERIFYING_PAYMENT':
+                return <Badge variant="orange">Verify Payment</Badge>;
             case 'PROCESSING':
                 return <Badge variant="info">Processing</Badge>;
             case 'DEFICIENT':
@@ -146,13 +164,13 @@ export default function RequestDetails({
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+                    <div className="grid grid-cols-1 gap-4 items-start">
                         <div>
                             <Label className="text-muted-foreground">Amount</Label>
                             <p className="font-medium">₱{request.payment.amount}</p>
                         </div>
                         <div>
-                            <Label className="text-muted-foreground">Payment Reference Number</Label>
+                            <Label className="text-muted-foreground">Payment Ref. No.</Label>
                             <p className="font-mono text-sm">{request.payment.reference_number}</p>
                         </div>
                         <div>
@@ -217,21 +235,11 @@ export default function RequestDetails({
             <Head title={`Request ${request.reference_number}`} />
 
             <div className="flex flex-col gap-6 p-6">
-                {/* Show at top if pending */}
-                {request.payment && request.payment.status === 'pending' && renderPaymentDetails()}
+                {/* Show at top if pending - REMOVED */ }
+
 
                 {/* Show if no payment - Added for Admin visibility */}
-                {!request.payment && (
-                    <Card className="border-amber-400 border-dashed border-2 bg-amber-50">
-                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 p-4">
-                             <AlertTriangle className="h-5 w-5 text-amber-600" />
-                             <div>
-                                <CardTitle className="text-amber-900 text-base">Not Yet Paid</CardTitle>
-                                <CardDescription className="text-amber-700">Student has not submitted any payment proof yet.</CardDescription>
-                             </div>
-                        </CardHeader>
-                    </Card>
-                )}
+
 
                 <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-2/3 space-y-6">
@@ -240,6 +248,8 @@ export default function RequestDetails({
                         data.status === 'READY' ? 'border-green-500 border-2' : 
                         data.status === 'CLAIMED' ? 'border-slate-500 border-2' : 
                         data.status === 'REJECTED' ? 'border-red-500 border-2' : 
+                        data.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2' : 
+                        data.status === 'VERIFYING_PAYMENT' ? 'border-orange-500 border-2' : 
                         data.status === 'PROCESSING' ? 'border-blue-500 border-2' : ''
                     }>
                         <CardHeader>
@@ -321,11 +331,25 @@ export default function RequestDetails({
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {request.items && request.items.length > 0 ? (
-                                                request.items.map((item) => (
+                                            {data.items && data.items.length > 0 ? (
+                                                data.items.map((item: any) => (
                                                     <tr key={item.id}>
                                                         <td className="px-4 py-2 text-sm text-gray-900">{item.document_type}</td>
-                                                        <td className="px-4 py-2 text-sm text-gray-500 text-right">₱{item.price}</td>
+                                                        <td className="px-4 py-2 text-sm text-gray-500 text-right">
+                                                            {data.status === 'PENDING' ? (
+                                                                <div className="flex items-center justify-end gap-1">
+                                                                    <span>₱</span>
+                                                                    <Input 
+                                                                        type="number" 
+                                                                        className="w-24 text-right h-8" 
+                                                                        value={item.price}
+                                                                        onChange={(e) => handlePriceChange(item.id, e.target.value)}
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                `₱${Number(item.price).toFixed(2)}`
+                                                            )}
+                                                        </td>
                                                     </tr>
                                                 ))
                                             ) : (
@@ -338,12 +362,38 @@ export default function RequestDetails({
                                             )}
                                             <tr className="bg-gray-50 font-medium">
                                                 <td className="px-4 py-2 text-sm text-gray-900">Total</td>
-                                                <td className="px-4 py-2 text-sm text-indigo-600 text-right">₱{request.amount_due}</td>
+                                                <td className="px-4 py-2 text-sm text-indigo-600 text-right">
+                                                    ₱{data.items.reduce((sum: number, item: any) => sum + Number(item.price), 0).toFixed(2)}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+
+                            {/* Verification Section */}
+                             {!request.payment && (data.status === 'PENDING' || data.status === 'WAITING_FOR_PAYMENT') && (
+                                <div className="mt-6 p-4 rounded-md border-amber-400 border-dashed border-2 bg-amber-50 flex flex-row items-center justify-between">
+                                     <div className="flex flex-row items-center gap-3">
+                                        <AlertTriangle className="h-5 w-5 text-amber-600" />
+                                        <div>
+                                            <h4 className="text-amber-900 font-semibold">
+                                                {data.status === 'PENDING' ? 'Verification Required' : 'Waiting for Payment'}
+                                            </h4>
+                                            <p className="text-amber-700 text-sm">
+                                                {data.status === 'PENDING' 
+                                                    ? 'Please verify the documents and set the correct prices before proceeding.' 
+                                                    : 'Waiting for student to upload payment proof.'}
+                                            </p>
+                                        </div>
+                                     </div>
+                                     {data.status === 'PENDING' && (
+                                         <Button onClick={verifyAndSetPayment} className="bg-amber-600 hover:bg-amber-700 text-white">
+                                             Verify & Set Amount
+                                         </Button>
+                                     )}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -351,17 +401,19 @@ export default function RequestDetails({
                 </div>
 
                 <div className="w-full md:w-1/3 space-y-6">
+                    {renderPaymentDetails()}
                     {/* Deficiency Card */}
-                    <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
+                    <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''}`}>
                         <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
                             <Checkbox 
                                 id="has_deficiency" 
                                 checked={data.status === 'DEFICIENT'}
-                                disabled={isActionsDisabled}
+                                // Always enabled to allow reporting deficiencies at any stage
                                 onCheckedChange={(checked) => {
                                     if (checked) {
                                         autoSave({ status: 'DEFICIENT', claiming_date: '' });
                                     } else {
+                                        // Revert to previous appropriate status
                                         const newStatus = request.payment?.status === 'verified' ? 'PROCESSING' : 'PENDING';
                                         autoSave({ status: newStatus, deficiency_remarks: '' });
                                     }
@@ -384,7 +436,6 @@ export default function RequestDetails({
                                                 <Checkbox
                                                     id={`deficiency-${option}`}
                                                     checked={selectedDeficiencies.includes(option)}
-                                                    disabled={isActionsDisabled}
                                                     onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
                                                 />
                                                 <label
@@ -457,7 +508,7 @@ export default function RequestDetails({
                 </div>
             </div>
             
-            {request.payment && request.payment.status !== 'pending' && renderPaymentDetails()}
+            {/* request.payment check removed from here */}
             </div>
         </AppLayout>
     );
