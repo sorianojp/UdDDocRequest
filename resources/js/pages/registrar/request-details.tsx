@@ -438,7 +438,12 @@ export default function RequestDetails({
                                         autoSave({ status: 'DEFICIENT', claiming_date: '' });
                                     } else {
                                         // Revert to previous appropriate status
-                                        const newStatus = request.payment?.status === 'verified' ? 'PROCESSING' : 'PENDING';
+                                        let newStatus: DocumentRequest['status'] = 'PENDING';
+                                        if (request.payment) {
+                                            if (request.payment.status === 'verified') newStatus = 'PROCESSING';
+                                            else if (request.payment.status === 'pending') newStatus = 'VERIFYING_PAYMENT';
+                                            else if (request.payment.status === 'rejected') newStatus = 'WAITING_FOR_PAYMENT';
+                                        }
                                         autoSave({ status: newStatus, deficiency_remarks: '' });
                                     }
                                 }}

@@ -186,7 +186,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
 
                                     <div className="space-y-3">
                                         <Label>Select Document(s)</Label>
-                                        <div className="grid grid-cols-1 gap-2 border rounded-md p-4 bg-white max-h-60 overflow-y-auto">
+                                        <div className="grid grid-cols-1 gap-2 border rounded-md p-4 bg-white max-h-96 overflow-y-auto">
                                             {documents.map((doc) => (
                                                 <div key={doc.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
                                                     <input
