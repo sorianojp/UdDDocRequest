@@ -153,8 +153,8 @@ export default function RequestDetails({
     const renderPaymentDetails = () => (
         request.payment && (
             <Card className={
-                request.payment.status === 'rejected' ? 'border-red-500 border-2' : 
-                request.payment.status === 'verified' ? 'border-green-500 border-2' : ''
+                request.payment.status === 'rejected' ? 'border-red-500 border-2 dark:border-red-700' : 
+                request.payment.status === 'verified' ? 'border-green-500 border-2 dark:border-green-700' : ''
             }>
                 <CardHeader>
                     <div className="flex justify-between items-start">
@@ -196,7 +196,7 @@ export default function RequestDetails({
                                                 Reference: {request.payment.reference_number}
                                             </DialogDescription>
                                         </DialogHeader>
-                                        <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+                                        <div className="flex justify-center p-4 bg-muted/50 rounded-lg">
                                             <img
                                                 src={`/storage/${request.payment.proof_file_path}`}
                                                 alt="Proof of Payment"
@@ -206,7 +206,7 @@ export default function RequestDetails({
                                     </DialogContent>
                                 </Dialog>
                             ) : (
-                                <p className="text-sm text-gray-500">No proof uploaded</p>
+                                <p className="text-sm text-muted-foreground">No proof uploaded</p>
                             )}
                         </div>
                     </div>
@@ -215,7 +215,7 @@ export default function RequestDetails({
                         <div className="flex gap-2 pt-2">
                             <Button 
                                 onClick={() => handlePaymentUpdate('verified')} 
-                                className="w-full bg-green-600 hover:bg-green-700"
+                                className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
                             >
                                 <CheckCircle className="mr-2 h-4 w-4" /> Verify Payment
                             </Button>
@@ -247,13 +247,13 @@ export default function RequestDetails({
                 <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-2/3 space-y-6">
                     <Card className={
-                        data.status === 'DEFICIENT' ? 'border-red-500 border-2' : 
-                        data.status === 'READY' ? 'border-green-500 border-2' : 
-                        data.status === 'CLAIMED' ? 'border-slate-500 border-2' : 
-                        data.status === 'REJECTED' ? 'border-red-500 border-2' : 
-                        data.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2' : 
-                        data.status === 'VERIFYING_PAYMENT' ? 'border-orange-500 border-2' : 
-                        data.status === 'PROCESSING' ? 'border-blue-500 border-2' : ''
+                        data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : 
+                        data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : 
+                        data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : 
+                        data.status === 'REJECTED' ? 'border-red-500 border-2 dark:border-red-700' : 
+                        data.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2 dark:border-yellow-700' : 
+                        data.status === 'VERIFYING_PAYMENT' ? 'border-orange-500 border-2 dark:border-orange-700' : 
+                        data.status === 'PROCESSING' ? 'border-blue-500 border-2 dark:border-blue-700' : ''
                     }>
                         <CardHeader>
                             <div className="flex justify-between items-start">
@@ -310,7 +310,7 @@ export default function RequestDetails({
                                                         Student ID: {request.student_id_number}
                                                     </DialogDescription>
                                                 </DialogHeader>
-                                                <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+                                                <div className="flex justify-center p-4 bg-muted/50 rounded-lg">
                                                     <img
                                                         src={school_id_url}
                                                         alt="Student School ID"
@@ -336,20 +336,20 @@ export default function RequestDetails({
                                 <Separator />
                                 
                                 <h3 className="font-semibold">Requested Documents</h3>
-                                <div className="border rounded-md overflow-hidden">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
+                                <div className="border rounded-md overflow-hidden dark:border-border">
+                                    <table className="min-w-full divide-y divide-border">
+                                        <thead className="bg-muted/50">
                                             <tr>
-                                                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Type</th>
-                                                <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Document Type</th>
+                                                <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Price</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="bg-card divide-y divide-border">
                                             {data.items && data.items.length > 0 ? (
                                                 data.items.map((item: any) => (
                                                     <tr key={item.id}>
-                                                        <td className="px-4 py-2 text-sm text-gray-900">{item.document_type}</td>
-                                                        <td className="px-4 py-2 text-sm text-gray-500 text-right">
+                                                        <td className="px-4 py-2 text-sm text-foreground">{item.document_type}</td>
+                                                        <td className="px-4 py-2 text-sm text-muted-foreground text-right">
                                                             {data.status === 'PENDING' ? (
                                                                 <div className="flex items-center justify-end gap-1">
                                                                     <span>₱</span>
@@ -368,15 +368,15 @@ export default function RequestDetails({
                                                 ))
                                             ) : (
                                                 <tr>
-                                                    <td className="px-4 py-2 text-sm text-gray-900">{request.document_type}</td>
-                                                    <td className="px-4 py-2 text-sm text-gray-500 text-right">
+                                                    <td className="px-4 py-2 text-sm text-foreground">{request.document_type}</td>
+                                                    <td className="px-4 py-2 text-sm text-muted-foreground text-right">
                                                         ₱{request.amount_due}
                                                     </td>
                                                 </tr>
                                             )}
-                                            <tr className="bg-gray-50 font-medium">
-                                                <td className="px-4 py-2 text-sm text-gray-900">Total</td>
-                                                <td className="px-4 py-2 text-sm text-indigo-600 text-right">
+                                            <tr className="bg-muted/50 font-medium">
+                                                <td className="px-4 py-2 text-sm text-foreground">Total</td>
+                                                <td className="px-4 py-2 text-sm text-indigo-600 dark:text-indigo-400 text-right">
                                                     ₱{data.items.reduce((sum: number, item: any) => sum + Number(item.price), 0).toFixed(2)}
                                                 </td>
                                             </tr>
@@ -387,14 +387,14 @@ export default function RequestDetails({
 
                             {/* Verification Section */}
                              {!request.payment && (data.status === 'PENDING' || data.status === 'WAITING_FOR_PAYMENT') && (
-                                <div className="mt-6 p-4 rounded-md border-amber-400 border-dashed border-2 bg-amber-50 flex flex-row items-center justify-between">
+                                <div className="mt-6 p-4 rounded-md border-amber-400 dark:border-amber-600 border-dashed border-2 bg-amber-50 dark:bg-amber-900/20 flex flex-row items-center justify-between">
                                      <div className="flex flex-row items-center gap-3">
-                                        <AlertTriangle className="h-5 w-5 text-amber-600" />
+                                        <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-500" />
                                         <div>
-                                            <h4 className="text-amber-900 font-semibold">
+                                            <h4 className="text-amber-900 dark:text-amber-200 font-semibold">
                                                 {data.status === 'PENDING' ? 'Verification Required' : 'Waiting for Payment'}
                                             </h4>
-                                            <p className="text-amber-700 text-sm">
+                                            <p className="text-amber-700 dark:text-amber-300 text-sm">
                                                 {data.status === 'PENDING' 
                                                     ? 'Please verify the documents and set the correct prices before proceeding.' 
                                                     : 'Waiting for student to upload payment proof.'}
@@ -402,7 +402,7 @@ export default function RequestDetails({
                                         </div>
                                      </div>
                                      {data.status === 'PENDING' && !isReadOnly && (
-                                         <Button onClick={verifyAndSetPayment} className="bg-amber-600 hover:bg-amber-700 text-white">
+                                         <Button onClick={verifyAndSetPayment} className="bg-amber-600 hover:bg-amber-700 text-white dark:bg-amber-700 dark:hover:bg-amber-600">
                                              Verify & Set Amount
                                          </Button>
                                      )}
@@ -420,7 +420,7 @@ export default function RequestDetails({
                     {(() => {
                         const isDeficiencyDisabled = isReadOnly || (data.status !== 'PENDING' && data.status !== 'DEFICIENT');
                         return (
-                            <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2' : ''} ${isDeficiencyDisabled ? 'bg-gray-100' : ''}`}>
+                            <Card className={`${data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : ''} ${isDeficiencyDisabled ? 'bg-muted/50' : ''}`}>
                                 <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-2">
                                     <Checkbox 
                                         id="has_deficiency" 
@@ -450,7 +450,7 @@ export default function RequestDetails({
                         {data.status === 'DEFICIENT' && (
                             <CardContent className="pt-0 animate-in slide-in-from-top-2 fade-in">
                                 <div className="space-y-3 pt-4 border-t">
-                                    <Label className="text-red-800 flex items-center gap-1">
+                                    <Label className="text-red-800 dark:text-red-300 flex items-center gap-1">
                                         <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
                                     </Label>
                                     <div className="space-y-2">
@@ -481,7 +481,7 @@ export default function RequestDetails({
 
                     {/* Ready for Pickup Card */}
                     {/* Ready for Pickup Card */}
-                    <Card className={`${data.status === 'READY' ? 'border-green-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
+                    <Card className={`${data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : ''} ${isActionsDisabled ? 'bg-muted/50' : ''}`}>
                         <CardHeader className="pb-3">
                             <CardTitle>Ready for pickup</CardTitle>
                             <CardDescription>Set a date for claiming.</CardDescription>
@@ -510,7 +510,7 @@ export default function RequestDetails({
 
                     {/* Claimed Card */}
                     {/* Claimed Card */}
-                    <Card className={`${data.status === 'CLAIMED' ? 'border-slate-500 border-2' : ''} ${isActionsDisabled ? 'bg-gray-100' : ''}`}>
+                    <Card className={`${data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : ''} ${isActionsDisabled ? 'bg-muted/50' : ''}`}>
                         <CardHeader className="pb-3">
                             <CardTitle>Claimed?</CardTitle>
                         </CardHeader>
@@ -524,7 +524,7 @@ export default function RequestDetails({
                                 {data.status === 'CLAIMED' ? 'Status: Claimed' : 'Mark as Claimed'}
                             </Button>
                             {data.status === 'CLAIMED' && request.claimed_date && (
-                                <p className="text-sm text-center text-slate-600 mt-2">
+                                <p className="text-sm text-center text-muted-foreground mt-2">
                                     Claimed on: <span className="font-medium">{new Date(request.claimed_date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
                                 </p>
                             )}

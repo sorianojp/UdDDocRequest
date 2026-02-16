@@ -23,43 +23,43 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
             label: 'Pending',
             value: counts.PENDING || 0,
             icon: Clock,
-            color: 'text-orange-500',
-            bg: 'bg-orange-50',
+            color: 'text-orange-500 dark:text-orange-400',
+            bg: 'bg-orange-50 dark:bg-orange-900/20',
         },
         {
             label: 'Processing',
             value: counts.PROCESSING || 0,
             icon: Loader2,
-            color: 'text-blue-500',
-            bg: 'bg-blue-50',
+            color: 'text-blue-500 dark:text-blue-400',
+            bg: 'bg-blue-50 dark:bg-blue-900/20',
         },
         {
             label: 'Deficient',
             value: counts.DEFICIENT || 0,
             icon: AlertTriangle,
-            color: 'text-red-500',
-            bg: 'bg-red-50',
+            color: 'text-red-500 dark:text-red-400',
+            bg: 'bg-red-50 dark:bg-red-900/20',
         },
         {
             label: 'Ready',
             value: counts.READY || 0,
             icon: CheckCircle,
-            color: 'text-green-500',
-            bg: 'bg-green-50',
+            color: 'text-green-500 dark:text-green-400',
+            bg: 'bg-green-50 dark:bg-green-900/20',
         },
         {
             label: 'Claimed',
             value: counts.CLAIMED || 0,
             icon: FileCheck,
-            color: 'text-gray-500',
-            bg: 'bg-gray-50',
+            color: 'text-gray-500 dark:text-gray-400',
+            bg: 'bg-gray-50 dark:bg-gray-800/50',
         },
         {
             label: 'Rejected',
             value: counts.REJECTED || 0,
             icon: XCircle,
-            color: 'text-red-900',
-            bg: 'bg-red-100',
+            color: 'text-red-900 dark:text-red-300',
+            bg: 'bg-red-100 dark:bg-red-900/30',
         },
     ];
 
@@ -87,9 +87,9 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
                 </div>
 
                 <div className="max-w-full">
-                     <Card className="border-blue-200 bg-blue-50/50 shadow-md">
+                     <Card className="border-blue-200 bg-blue-50/50 shadow-md dark:bg-blue-900/10 dark:border-blue-800">
                         <CardHeader className="pb-4">
-                            <CardTitle className="text-2xl text-blue-900 flex items-center gap-2">
+                            <CardTitle className="text-2xl text-blue-900 flex items-center gap-2 dark:text-blue-100">
                                 <FileCheck className="h-6 w-6" />
                                 Quick Claim
                             </CardTitle>
@@ -113,7 +113,7 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
                                 <Input 
                                     name="reference_number" 
                                     placeholder="R000000" 
-                                    className="bg-white text-4xl md:text-4xl font-mono tracking-widest h-20 text-center uppercase"
+                                    className="bg-white dark:bg-background text-4xl md:text-4xl font-mono tracking-widest h-20 text-center uppercase"
                                     required
                                     autoFocus
                                     maxLength={7}
@@ -126,8 +126,8 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
 
                             {/* Flash Messages */}
                             {usePage<SharedData>().props.flash?.success && (
-                                <Alert className="mt-4 border-green-200 bg-green-50 text-green-900">
-                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                <Alert className="mt-4 border-green-200 bg-green-50 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-100">
+                                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                                     <AlertTitle>Success</AlertTitle>
                                     <AlertDescription>
                                         {usePage<SharedData>().props.flash.success}
