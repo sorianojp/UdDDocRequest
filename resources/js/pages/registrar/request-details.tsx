@@ -177,12 +177,8 @@ export default function RequestDetails({
                             <p className="font-medium">₱{request.payment.amount}</p>
                         </div>
                         <div>
-                            <Label className="text-muted-foreground">Payment Ref. No.</Label>
-                            <p className="font-mono text-sm">{request.payment.reference_number}</p>
-                        </div>
-                        <div>
                             <Label className="text-muted-foreground">Bank Reference No.</Label>
-                            <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
+                            <p className="font-mono text-sm font-medium">{request.payment.reference_number}</p>
                         </div>
                         <div>
                             <Label className="text-muted-foreground">Proof of Payment</Label>
@@ -197,7 +193,7 @@ export default function RequestDetails({
                                         <DialogHeader>
                                             <DialogTitle>Proof of Payment</DialogTitle>
                                             <DialogDescription>
-                                                Reference: {request.payment.external_reference_number}
+                                                Reference: {request.payment.reference_number}
                                             </DialogDescription>
                                         </DialogHeader>
                                         <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
@@ -304,7 +300,7 @@ export default function RequestDetails({
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" size="sm" className="w-full mt-1">
-                                                    <Eye className="mr-2 h-4 w-4" /> View ID
+                                                    <Eye className="mr-2 h-4 w-4" /> Verify ID
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="max-w-3xl">
@@ -323,9 +319,7 @@ export default function RequestDetails({
                                                 </div>
                                             </DialogContent>
                                         </Dialog>
-
-                                    </div>
-                                    <div className="col-span-2"> 
+                                        
                                         {data.status === 'PENDING' && !isReadOnly && (
                                             <Button 
                                                 variant="destructive" 
@@ -333,9 +327,9 @@ export default function RequestDetails({
                                                 className="w-full mt-2"
                                                 onClick={handleRejectRequest}
                                             >
-                                                <X className="mr-2 h-4 w-4" /> Reject Request
+                                                <X className="mr-2 h-4 w-4" /> Reject
                                             </Button>
-                                        )}  
+                                        )}
                                     </div>
                                 </div>
                                 

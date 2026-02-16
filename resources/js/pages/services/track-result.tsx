@@ -81,25 +81,6 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left Column: Request Details */}
                     <div className="space-y-6">
-                        <Card className="bg-blue-50 border-blue-200 border-2 shadow-sm">
-                            <CardContent className="pt-6">
-                                <div className="text-center space-y-4">
-                                    <div className="space-y-1">
-                                        <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wider">Reference Number</h3>
-                                        <p className="text-3xl sm:text-4xl font-mono font-bold text-blue-900 tracking-widest select-all">
-                                            {request.reference_number}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center justify-center gap-2 text-sm text-blue-800 bg-blue-100/50 p-3 rounded-md mx-auto max-w-md">
-                                        <div className="bg-blue-200 p-1 rounded-full">
-                                            <Info className="w-4 h-4 text-blue-800" />
-                                        </div>
-                                        <span className="font-medium">Please save this number or take a screenshot for tracking purposes.</span>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
                         <Card className={
                             request.status === 'PENDING' ? 'border-gray-500 border-2' : 
                             request.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2' : 
@@ -194,9 +175,17 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             <CheckCircle className="h-4 w-4 mr-2" />
                                             Ready for Pickup
                                         </h4>
-                                        <p className="text-sm text-green-700">
+                                        <p className="text-sm text-green-700 mb-3">
                                             You can claim your document on <strong>{new Date(request.claiming_date).toLocaleDateString()}</strong>.
                                         </p>
+                                        <Button 
+                                            size="sm" 
+                                            className="w-full bg-green-600 hover:bg-green-700 text-white"
+                                            onClick={() => window.open(`/request/${request.reference_number}/print-stub`, '_blank')}
+                                        >
+                                            <FileText className="h-4 w-4 mr-2" />
+                                            Print Claim Stub
+                                        </Button>
                                     </div>
                                 )}
                             </CardContent>
@@ -205,6 +194,25 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
 
                     {/* Right Column: Payment Status (Takes up 1 col) */}
                     <div className="space-y-6">
+                        <Card className="bg-blue-50 border-blue-200 border-2 shadow-sm">
+                            <CardContent className="pt-6">
+                                <div className="text-center space-y-4">
+                                    <div className="space-y-1">
+                                        <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wider">Reference Number</h3>
+                                        <p className="text-3xl sm:text-4xl font-mono font-bold text-blue-900 tracking-widest select-all">
+                                            {request.reference_number}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2 text-sm text-blue-800 bg-blue-100/50 p-3 rounded-md mx-auto max-w-md">
+                                        <div className="bg-blue-200 p-1 rounded-full">
+                                            <Info className="w-4 h-4 text-blue-800" />
+                                        </div>
+                                        <span className="font-medium">Please save this number or take a screenshot for tracking purposes.</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         <Card className={
                             request.payment && (
                                 request.payment.status === 'verified' ? 'border-green-500 border-2' : 
@@ -231,10 +239,10 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 {request.payment && request.status !== 'WAITING_FOR_PAYMENT' ? (
                                     <div className="space-y-4">
                                         <div className="p-4 rounded-md border text-center bg-gray-50 border-gray-200">
-                                            {request.payment.external_reference_number ? (
+                                            {request.payment.reference_number ? (
                                                 <>
                                                     <Label className="text-muted-foreground block mb-1">Bank Reference No.</Label>
-                                                    <p className="font-mono font-medium text-lg">{request.payment.external_reference_number}</p>
+                                                    <p className="font-mono font-medium text-lg">{request.payment.reference_number}</p>
                                                 </>
                                             ) : (
                                                 <p className="text-gray-500 italic">No reference number</p>
@@ -287,7 +295,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         )}
                                         <form onSubmit={submitPayment} className="space-y-4 pt-2">
                                             <div className="space-y-2">
-                                                <Label htmlFor="reference_number">Reference Number</Label>
+                                                <Label htmlFor="reference_number">Bank Reference Number</Label>
                                                 <Input
                                                     id="reference_number"
                                                     value={data.reference_number}

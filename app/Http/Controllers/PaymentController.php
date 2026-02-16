@@ -33,7 +33,6 @@ class PaymentController extends Controller
             ['document_request_id' => $request->id],
             [
                 'reference_number' => $httpRequest->reference_number,
-                'external_reference_number' => $httpRequest->reference_number, // User input ref number
                 'amount' => $request->amount_due,
                 'proof_file_path' => $path,
                 'status' => 'pending',

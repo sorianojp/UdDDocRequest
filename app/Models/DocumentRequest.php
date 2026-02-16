@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class DocumentRequest extends Model
 {
@@ -57,7 +58,7 @@ class DocumentRequest extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->reference_number = strtoupper(uniqid('REQ-'));
+            $model->reference_number = 'R' . strtoupper(Str::random(6));
         });
     }
 }

@@ -29,7 +29,21 @@
 
             <p><strong>Total Amount Due:</strong> ₱{{ number_format($documentRequest->amount_due, 2) }}</p>
 
-            <p>To proceed, please ensure you upload your payment proof (if you haven't already).</p>
+            <p>To proceed, please pay the amount due to any of the following accounts:</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <p style="margin: 0 0 10px 0;"><strong>BPI</strong></p>
+                <p style="margin: 0;">Account No: <strong>0555233884</strong></p>
+                <p style="margin: 0;">Account Name: <strong>UNIVERSIDAD DE DAGUPAN, INC.</strong></p>
+                
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+                
+                <p style="margin: 0 0 10px 0;"><strong>LAND BANK</strong></p>
+                <p style="margin: 0;">Account No: <strong>0822108474</strong></p>
+                <p style="margin: 0;">Account Name: <strong>UNIVERSIDAD DE DAGUPAN, INC.</strong></p>
+            </div>
+
+            <p>After payment, please upload your proof of payment using the link below.</p>
 
             <p>You can track your request and upload payment proof here:</p>
             <p>

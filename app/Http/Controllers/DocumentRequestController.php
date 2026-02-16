@@ -116,12 +116,22 @@ class DocumentRequestController extends Controller
              $query->where('status', $request->status);
         }
 
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('reference_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('student_id_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('mobile_number', 'like', '%' . $request->search . '%');
+            });
+        }
+
         $requests = $query->latest()->paginate(10)->withQueryString();
 
         return Inertia::render('registrar/dashboard', [
             'requests' => $requests,
             'filters' => [
                 'status' => $status ? strtoupper($status) : ($request->status ?? null),
+                'search' => $request->search,
             ],
         ]);
     }
@@ -183,5 +193,52 @@ class DocumentRequestController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function printStub($reference_number)
+    {
+        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $reference_number)->firstOrFail();
+
+        if ($documentRequest->status !== 'READY' && $documentRequest->status !== 'CLAIMED') {
+            abort(403, 'Claim stub is only available for ready or claimed requests.');
+        }
+
+        return view('services.print-stub', [
+            'request' => $documentRequest,
+        ]);
+    }
+
+    public function quickClaim(Request $request)
+    {
+        // Normalize input to uppercase before validation
+        if ($request->has('reference_number')) {
+            $request->merge(['reference_number' => strtoupper($request->reference_number)]);
+        }
+
+        $validated = $request->validate([
+            'reference_number' => 'required|string|exists:document_requests,reference_number',
+        ]);
+
+        $documentRequest = DocumentRequest::where('reference_number', $validated['reference_number'])->first();
+
+        if ($documentRequest->status === 'CLAIMED') {
+            return redirect()->back()->with('error', 'Request is already claimed.');
+        }
+
+        // Optional: specific statuses only? For flexibility, we might allow any status, 
+        // but typically it should be READY. The prompt implies a direct action. 
+        // Let's restrict to READY or PROCESSING to be safe, or just READY.
+        // Prompt says "student present the claim stub... enter the req number then the status will be claimed".
+        // Usually claim stub is given when READY. 
+        if ($documentRequest->status !== 'READY') {
+             return redirect()->back()->with('error', 'Request is not yet marked as READY. Current status: ' . $documentRequest->status);
+        }
+
+        $documentRequest->update([
+            'status' => 'CLAIMED',
+            'claiming_date' => now(), // Ensure claiming date is set/preserved
+        ]);
+
+        return redirect()->back()->with('success', 'Request ' . $documentRequest->reference_number . ' marked as CLAIMED.');
     }
 }

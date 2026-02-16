@@ -12,5 +12,10 @@ export type SharedData = {
     auth: Auth;
     sidebarOpen: boolean;
     sidebarCounts: Record<string, number>;
+    flash: {
+        success: string | null;
+        error: string | null;
+    };
+    errors: Record<string, string>;
     [key: string]: unknown;
 };

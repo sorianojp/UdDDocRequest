@@ -1,3 +1,6 @@
+import { router } from '@inertiajs/react';
+import { Input } from '@/components/ui/input';
+import { useState, useEffect } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import registrar from '@/routes/registrar';
 import { BreadcrumbItem, DocumentRequest, SharedData } from '@/types';
@@ -24,9 +27,25 @@ export default function RegistrarDashboard({
     filters,
 }: {
     requests: { data: DocumentRequest[]; links: any[] };
-    filters: { status?: string };
+    filters: { status?: string; search?: string };
 }) {
     const { auth } = usePage<SharedData>().props;
+    const [search, setSearch] = useState(filters.search || '');
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (search !== (filters.search || '')) {
+                router.get(
+                    '/registrar/requests',
+                    { status: filters.status, search: search },
+                    { preserveState: true, preserveScroll: true, replace: true }
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [search, filters.status]);
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -63,15 +82,26 @@ export default function RegistrarDashboard({
                     </div>
                 </div>
 
+
                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                    <CardHeader className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 pb-4">
                        <CardTitle>
                            {filters.status 
                                ? `${filters.status.charAt(0).toUpperCase() + filters.status.slice(1).toLowerCase()} Requests`
                                : 'All Requests'}
                        </CardTitle>
+                       <div className="w-full sm:w-auto">
+                           <Input 
+                               type="search" 
+                               placeholder="Search name, ID, or ref..." 
+                               value={search}
+                               onChange={(e) => setSearch(e.target.value)}
+                               className="max-w-xs"
+                           />
+                       </div>
                     </CardHeader>
                     <CardContent>
+                        {/* ... (existing table) */}
                         <div className="rounded-md border">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/50 text-muted-foreground font-medium">

@@ -17,6 +17,7 @@ Route::get('/request/success/{reference_number}', [DocumentRequestController::cl
 Route::get('/track', [DocumentRequestController::class, 'track'])->name('request.track');
 Route::post('/track', [DocumentRequestController::class, 'checkStatus'])->name('request.check-status');
 Route::get('/track/{reference_number}', [DocumentRequestController::class, 'showStatus'])->name('request.show-status');
+Route::get('/request/{reference_number}/print-stub', [DocumentRequestController::class, 'printStub'])->name('request.print-stub');
 
 Route::get('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'show'])->name('request.payment');
 Route::post('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'store'])->name('request.payment.store');
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('requests/{id}', [DocumentRequestController::class, 'show'])->name('show');
         Route::put('requests/{id}', [DocumentRequestController::class, 'update'])->name('update');
         Route::put('payments/{payment}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payments.update');
+        Route::post('quick-claim', [DocumentRequestController::class, 'quickClaim'])->name('quick-claim');
     });
 });
 

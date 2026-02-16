@@ -47,7 +47,14 @@
         <div class="content">
             <p>Dear {{ $documentRequest->student_name }},</p>
             
-            <p>This is to inform you that the status of your document request (Reference No: <strong>{{ $documentRequest->reference_number }}</strong>) has been updated.</p>
+            <p>This is to inform you that the status of your document request has been updated.</p>
+            
+            <div style="text-align: center; margin: 20px 0; background-color: #e9ecef; padding: 15px; border-radius: 5px;">
+                <p style="margin: 0; font-size: 0.9em; text-transform: uppercase; color: #6c757d;">Reference Number</p>
+                <p style="margin: 5px 0 0 0; font-size: 1.8em; font-weight: bold; letter-spacing: 2px; color: #333;">
+                    {{ $documentRequest->reference_number }}
+                </p>
+            </div>
 
             <p>
                 <strong>New Status:</strong> 
