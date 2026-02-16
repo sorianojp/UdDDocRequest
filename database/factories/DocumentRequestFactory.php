@@ -12,7 +12,11 @@ class DocumentRequestFactory extends Factory
     public function definition()
     {
         return [
-            'student_name' => $this->faker->name,
+            'last_name' => $this->faker->lastName,
+            'first_name' => $this->faker->firstName,
+            'middle_name' => $this->faker->firstName,
+            'email' => $this->faker->email,
+            'mobile_number' => $this->faker->phoneNumber,
             'student_id_number' => $this->faker->unique()->numerify('##########'),
             'document_type' => $this->faker->randomElement(['OTR', 'Form 137', 'Diploma', 'Good Moral', 'Cert of Grades']),
             'status' => 'PENDING',

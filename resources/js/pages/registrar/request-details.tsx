@@ -181,7 +181,7 @@ export default function RequestDetails({
                             <p className="font-mono text-sm">{request.payment.reference_number}</p>
                         </div>
                         <div>
-                            <Label className="text-muted-foreground">Your GCash/Maya Ref. No.</Label>
+                            <Label className="text-muted-foreground">Bank Reference No.</Label>
                             <p className="font-mono text-sm font-medium">{request.payment.external_reference_number}</p>
                         </div>
                         <div>

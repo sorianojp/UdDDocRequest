@@ -49,7 +49,8 @@ class PaymentController extends Controller
             Mail::to($request->email)->send(new PaymentProofSubmitted($request));
         }
 
-        return back()->with('success', 'Payment proof uploaded successfully. Please wait for verification.');
+        return redirect()->route('request.show-status', ['reference_number' => $request->reference_number])
+            ->with('success', 'Payment proof uploaded successfully. Please wait for verification.');
     }
 
     public function update(Request $httpRequest, Payment $payment)

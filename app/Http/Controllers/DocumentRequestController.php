@@ -28,6 +28,7 @@ class DocumentRequestController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'email' => 'required|email|max:255',
+            'mobile_number' => 'required|string|max:20',
             'student_id_number' => 'required|string|max:255',
             'document_types' => 'required|array|min:1',
             'document_types.*' => 'string',
@@ -42,6 +43,7 @@ class DocumentRequestController extends Controller
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'],
             'email' => $validated['email'],
+            'mobile_number' => $validated['mobile_number'],
             'student_id_number' => $validated['student_id_number'],
             'document_type' => count($validated['document_types']) > 1 
                 ? 'Multiple Documents' 

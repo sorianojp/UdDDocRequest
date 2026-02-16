@@ -81,6 +81,25 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left Column: Request Details */}
                     <div className="space-y-6">
+                        <Card className="bg-blue-50 border-blue-200 border-2 shadow-sm">
+                            <CardContent className="pt-6">
+                                <div className="text-center space-y-4">
+                                    <div className="space-y-1">
+                                        <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wider">Reference Number</h3>
+                                        <p className="text-3xl sm:text-4xl font-mono font-bold text-blue-900 tracking-widest select-all">
+                                            {request.reference_number}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2 text-sm text-blue-800 bg-blue-100/50 p-3 rounded-md mx-auto max-w-md">
+                                        <div className="bg-blue-200 p-1 rounded-full">
+                                            <Info className="w-4 h-4 text-blue-800" />
+                                        </div>
+                                        <span className="font-medium">Please save this number or take a screenshot for tracking purposes.</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         <Card className={
                             request.status === 'PENDING' ? 'border-gray-500 border-2' : 
                             request.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2' : 
@@ -96,7 +115,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     <div>
                                         <CardTitle>Request Details</CardTitle>
                                         <CardDescription>
-                                            Reference Number: <span className="font-mono font-medium text-gray-900">{request.reference_number}</span>
+                                            Detailed information about your request.
                                         </CardDescription>
                                     </div>
                                     {getStatusBadge(request.status)}
@@ -214,7 +233,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <div className="p-4 rounded-md border text-center bg-gray-50 border-gray-200">
                                             {request.payment.external_reference_number ? (
                                                 <>
-                                                    <Label className="text-muted-foreground block mb-1">Your GCash/Maya Ref. No.</Label>
+                                                    <Label className="text-muted-foreground block mb-1">Bank Reference No.</Label>
                                                     <p className="font-mono font-medium text-lg">{request.payment.external_reference_number}</p>
                                                 </>
                                             ) : (
@@ -245,18 +264,18 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     (request.status === 'WAITING_FOR_PAYMENT') ? (
                                     <div className="rounded-md">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div className="bg-blue-50 p-4 rounded-md border border-blue-100">
-                                                <h4 className="font-semibold text-blue-900 mb-2">GCash</h4>
-                                                <div className="text-sm text-blue-800">
-                                                    <p className="font-mono text-lg font-semibold">0927 360 0035</p>
-                                                    <p className="text-xs opacity-75">John Paul Soriano</p>
+                                            <div className="bg-red-50 p-4 rounded-md border border-red-100">
+                                                <h4 className="font-semibold text-red-900 mb-2">BPI</h4>
+                                                <div className="text-sm text-red-800">
+                                                    <p className="font-mono text-lg font-semibold">0555233884</p>
+                                                    <p className="text-xs opacity-75">UNIVERSIDAD DE DAGUPAN, INC.</p>
                                                 </div>
                                             </div>
                                             <div className="bg-green-50 p-4 rounded-md border border-green-100">
-                                                <h4 className="font-semibold text-green-900 mb-2">Maya</h4>
+                                                <h4 className="font-semibold text-green-900 mb-2">LAND BANK</h4>
                                                 <div className="text-sm text-green-800">
-                                                    <p className="font-mono text-lg font-semibold">0927 360 0035</p>
-                                                    <p className="text-xs opacity-75">John Paul Soriano</p>
+                                                    <p className="font-mono text-lg font-semibold">0822108474</p>
+                                                    <p className="text-xs opacity-75">UNIVERSIDAD DE DAGUPAN, INC.</p>
                                                 </div>
                                             </div>
                                         </div>

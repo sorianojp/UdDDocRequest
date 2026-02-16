@@ -21,39 +21,46 @@ class DocumentRequestTest extends TestCase
         $file = UploadedFile::fake()->image('id.jpg');
 
         $response = $this->post(route('request.store'), [
-            'student_name' => 'John Doe',
+            'last_name' => 'Doe',
+            'first_name' => 'John',
+            'middle_name' => 'D',
+            'email' => 'john@example.com',
             'student_id_number' => '12345678',
-            'document_type' => 'OTR',
+            'document_types' => ['OTR'],
+            'mobile_number' => '09123456789',
             'school_id' => $file,
         ]);
 
         $request = DocumentRequest::first();
 
         $this->assertNotNull($request);
-        $this->assertEquals('John Doe', $request->student_name);
+        $this->assertEquals('Doe, John D', $request->student_name);
+        $this->assertEquals('09123456789', $request->mobile_number);
         $this->assertEquals('PENDING', $request->status);
         Storage::disk('public')->assertExists($request->school_id_path);
 
-        $response->assertRedirect(route('request.success', $request->reference_number));
+        $response->assertRedirect(route('request.show-status', ['reference_number' => $request->reference_number])); // Pass param explicitly if needed, or route helper might handle it if defined with parameter
     }
 
     public function test_student_can_track_request()
     {
         $request = DocumentRequest::create([
             'reference_number' => 'REQ-TEST',
-            'student_name' => 'Jane Doe',
+            'last_name' => 'Doe',
+            'first_name' => 'Jane',
+            'email' => 'jane@example.com',
             'student_id_number' => '87654321',
             'document_type' => 'Diploma',
             'school_id_path' => 'path/to/id.jpg',
         ]);
 
         $response = $this->post(route('request.check-status'), [
-            'reference_number' => 'REQ-TEST',
+            'reference_number' => $request->reference_number,
         ]);
 
         $response->assertInertia(fn ($page) => $page
             ->component('services/track-result')
-            ->where('request.student_name', 'Jane Doe')
+            ->where('request.last_name', 'Doe')
         );
     }
 
@@ -62,7 +69,9 @@ class DocumentRequestTest extends TestCase
         $user = User::factory()->create();
 
         $request = DocumentRequest::create([
-            'student_name' => 'Test Student',
+            'last_name' => 'Student',
+            'first_name' => 'Test',
+            'email' => 'test@example.com',
             'student_id_number' => '00000',
             'document_type' => 'Form 137',
             'school_id_path' => 'path.jpg',
@@ -82,7 +91,9 @@ class DocumentRequestTest extends TestCase
         $user = User::factory()->create();
 
         $request = DocumentRequest::create([
-            'student_name' => 'Test Student',
+            'last_name' => 'Student',
+            'first_name' => 'Test',
+            'email' => 'test@example.com',
             'student_id_number' => '00000',
             'document_type' => 'Form 137',
             'status' => 'PENDING',
@@ -102,7 +113,9 @@ class DocumentRequestTest extends TestCase
         $user = User::factory()->create();
 
         $request = DocumentRequest::create([
-            'student_name' => 'Test Student',
+            'last_name' => 'Student',
+            'first_name' => 'Test',
+            'email' => 'test@example.com',
             'student_id_number' => '00000',
             'document_type' => 'Form 137',
             'status' => 'PENDING',

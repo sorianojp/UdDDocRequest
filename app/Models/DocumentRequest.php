@@ -15,6 +15,7 @@ class DocumentRequest extends Model
         'first_name',
         'middle_name',
         'email',
+        'mobile_number',
         'student_id_number',
         'document_type', // Keep for backward compatibility/summary
         'status',

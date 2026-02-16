@@ -20,6 +20,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
         first_name: '',
         middle_name: '',
         email: '',
+        mobile_number: '',
         student_id_number: '',
         document_types: [] as string[],
         school_id: null as File | null,
@@ -127,6 +128,20 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                                                 placeholder="juan@example.com"
                                             />
                                             {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="mobile_number">Mobile Number</Label>
+                                            <Input
+                                                id="mobile_number"
+                                                name="mobile_number"
+                                                type="tel"
+                                                required
+                                                value={data.mobile_number}
+                                                onChange={(e) => setData('mobile_number', e.target.value)}
+                                                placeholder="09123456789"
+                                            />
+                                            {errors.mobile_number && <p className="text-red-500 text-xs">{errors.mobile_number}</p>}
                                         </div>
 
                                         <div className="space-y-2">
