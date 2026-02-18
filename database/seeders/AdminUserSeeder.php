@@ -16,7 +16,7 @@ class AdminUserSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'admin@udd.edu.ph',
             'email_verified_at' => now(),
-            'password' => 'Arcrector2022!',
+            'password' => 'Arcreactor2022!',
             'role' => 'super_admin',
         ]);
     }
