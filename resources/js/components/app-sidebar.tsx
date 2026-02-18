@@ -11,17 +11,18 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import admin from '@/routes/admin';
 import registrar from '@/routes/registrar';
 import type { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle, CreditCard, Banknote } from 'lucide-react';
+import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle, CreditCard, Banknote, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 import { usePage } from '@inertiajs/react';
 import type { SharedData } from '@/types';
 
 export function AppSidebar() {
-    const { sidebarCounts } = usePage<SharedData>().props;
+    const { sidebarCounts, auth } = usePage<SharedData>().props;
 
     const mainNavItems: NavItem[] = [
         {
@@ -84,6 +85,14 @@ export function AppSidebar() {
             badge: sidebarCounts?.rejected,
         },
     ];
+
+    if (auth.user.role === 'super_admin') {
+        mainNavItems.push({
+            title: 'Users',
+            href: admin.users.index.url(),
+            icon: Users,
+        });
+    }
 
     const footerNavItems: NavItem[] = [];
 
