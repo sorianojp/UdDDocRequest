@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
-import { store } from '@/routes/register';
+// import { store } from '@/routes/register';
 import { Form, Head } from '@inertiajs/react';
 
 export default function Register() {
@@ -17,7 +17,7 @@ export default function Register() {
         >
             <Head title="Register" />
             <Form
-                {...store.form()}
+                // {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
                 className="flex flex-col gap-6"
