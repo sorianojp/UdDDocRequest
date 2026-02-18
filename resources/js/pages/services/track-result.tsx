@@ -135,18 +135,33 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                                     request.items.map((item) => (
                                                         <tr key={item.id}>
                                                             <td className="px-4 py-3 text-sm text-foreground">{item.document_type}</td>
-                                                            <td className="px-4 py-3 text-sm text-foreground text-right">₱{Number(item.price).toFixed(2)}</td>
+                                                            <td className="px-4 py-3 text-sm text-foreground text-right">
+                                                                {Number(item.price) > 0 
+                                                                    ? `₱${Number(item.price).toFixed(2)}` 
+                                                                    : <span className="text-muted-foreground italic text-xs">Computing...</span>
+                                                                }
+                                                            </td>
                                                         </tr>
                                                     ))
                                                 ) : (
                                                     <tr>
                                                         <td className="px-4 py-3 text-sm text-foreground">{request.document_type}</td>
-                                                        <td className="px-4 py-3 text-sm text-foreground text-right">₱{Number(request.amount_due).toFixed(2)}</td>
+                                                        <td className="px-4 py-3 text-sm text-foreground text-right">
+                                                            {Number(request.amount_due) > 0 
+                                                                ? `₱${Number(request.amount_due).toFixed(2)}` 
+                                                                : <span className="text-muted-foreground italic text-xs">Computing...</span>
+                                                            }
+                                                        </td>
                                                     </tr>
                                                 )}
                                                 <tr className="bg-muted/50">
                                                     <td className="px-4 py-3 text-sm font-bold text-foreground text-right">Total Amount</td>
-                                                    <td className="px-4 py-3 text-sm font-bold text-foreground text-right">₱{Number(request.amount_due).toFixed(2)}</td>
+                                                    <td className="px-4 py-3 text-sm font-bold text-foreground text-right">
+                                                        {Number(request.amount_due) > 0 
+                                                            ? `₱${Number(request.amount_due).toFixed(2)}` 
+                                                            : <span className="text-muted-foreground italic text-xs">Computing...</span>
+                                                        }
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
