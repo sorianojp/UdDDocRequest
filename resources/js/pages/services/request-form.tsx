@@ -56,7 +56,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <Head title="Request Document" />
 
             <div className="sm:mx-auto sm:w-full sm:max-w-4xl">
@@ -72,7 +72,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {/* Left Column: Personal Information and Upload */}
                                 <div className="space-y-4">
-                                    <h3 className="font-medium text-gray-900 border-b pb-2">Student Information</h3>
+                                    <h3 className="font-medium border-b pb-2">Student Information</h3>
                                     
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="space-y-2">
@@ -197,11 +197,11 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
 
                                 {/* Right Column: Document Selection */}
                                 <div className="space-y-4">
-                                    <h3 className="font-medium text-gray-900 border-b pb-2">Document Selection</h3>
+                                    <h3 className="font-medium border-b pb-2">Document Selection</h3>
 
                                     <div className="space-y-3">
                                         <Label>Select Document(s)</Label>
-                                        <div className="grid grid-cols-1 gap-2 border rounded-md p-4 bg-white max-h-96 overflow-y-auto">
+                                        <div className="grid grid-cols-1 gap-2 border rounded-md p-4 max-h-96 overflow-y-auto">
                                             {documents.map((doc) => (
                                                 <div key={doc.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
                                                     <input

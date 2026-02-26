@@ -329,7 +329,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             <tr key={item.id} className="bg-card">
                                                 <td className="px-4 py-2">{item.document_type}</td>
                                                 <td className="px-4 py-2 text-right">
-                                                    {Number(item.price) > 0 ? `₱${Number(item.price).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
+                                                    {Number(item.price) > 0 || request.status !== 'PENDING' ? `₱${Number(item.price).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                                 </td>
                                             </tr>
                                         ))
@@ -337,14 +337,14 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <tr className="bg-card">
                                             <td className="px-4 py-2">{request.document_type}</td>
                                             <td className="px-4 py-2 text-right">
-                                                {Number(request.amount_due) > 0 ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
+                                                {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                             </td>
                                         </tr>
                                     )}
                                      <tr className="bg-muted/20 font-medium">
                                         <td className="px-4 py-2 text-right">Total</td>
                                         <td className="px-4 py-2 text-right">
-                                            {Number(request.amount_due) > 0 ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
+                                            {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                         </td>
                                     </tr>
                                 </tbody>

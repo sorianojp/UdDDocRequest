@@ -6,21 +6,21 @@ import request from '@/routes/request';
 
 export default function Welcome() {
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+        <div className="min-h-screen flex flex-col justify-center items-center p-4">
             <Head title="Welcome" />
 
             <div className="w-full max-w-xl space-y-8">
                 <div className="text-center">
                     <img src="/images/logo.png" alt="UdD Logo" className="mx-auto h-32 w-auto mb-4" />
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                    <h1 className="text-3xl font-bold tracking-tight">
                         Universidad de Dagupan Document Request
                     </h1>
-                    <p className="mt-2 text-gray-600">
+                    <p className="mt-2">
                         Select an option below to proceed
                     </p>
                 </div>
 
-                <Card className="border-0 shadow-lg">
+                <Card>
                     <CardHeader className="sr-only">
                         <CardTitle>Menu</CardTitle>
                         <CardDescription>Main Navigation</CardDescription>
@@ -33,17 +33,8 @@ export default function Welcome() {
                             </Button>
                         </Link>
 
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t border-gray-200" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-gray-500">Or</span>
-                            </div>
-                        </div>
-
                         <Link href={request.track.url()} className="block w-full">
-                            <Button variant="outline" className="w-full h-16 text-lg" size="lg">
+                            <Button variant="secondary" className="w-full h-16 text-lg" size="lg">
                                 <Search className="mr-2 h-6 w-6" />
                                 Track Status
                             </Button>
@@ -51,7 +42,7 @@ export default function Welcome() {
                     </CardContent>
                 </Card>
 
-                <p className="text-center text-sm text-gray-400">
+                <p className="text-center text-sm">
                     &copy; {new Date().getFullYear()} Universidad de Dagupan. All rights reserved.
                 </p>
             </div>

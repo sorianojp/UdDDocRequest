@@ -18,10 +18,10 @@ export default function TrackRequest() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <Head title="Track Request" />
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-center">Track Your Request</CardTitle>
