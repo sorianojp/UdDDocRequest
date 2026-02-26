@@ -4,9 +4,12 @@ import request from '@/routes/request';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Send, Loader2 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Pricing {
     [key: string]: {
@@ -56,195 +59,266 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/50 via-background to-primary/50 dark:from-zinc-950 dark:to-zinc-900 py-12 px-4 sm:px-6 lg:px-8">
             <Head title="Request Document" />
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-4xl">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-center">Request a Document</CardTitle>
-                        <CardDescription className="text-center">
-                            Fill in the details below to submit your request.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={submit} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {/* Left Column: Personal Information and Upload */}
-                                <div className="space-y-4">
-                                    <h3 className="font-medium border-b pb-2">Student Information</h3>
-                                    
-                                    <div className="grid grid-cols-1 gap-4">
+            <div className="mx-auto max-w-full">
+                <div className="mb-8 text-center text-foreground">
+                    <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
+                        Document Request Services
+                    </h1>
+                    <p className="text-md text-muted-foreground">
+                        Official document requests made simple and efficient.
+                    </p>
+                </div>
+
+                <form onSubmit={submit} className="space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Left Section: Information */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <Card>
+                                <CardHeader className="pb-4">
+                                    <div className="flex items-center gap-2 text-foreground">
+                                        <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                            <User className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle>Student Information</CardTitle>
+                                            <CardDescription>Enter your personal and academic details</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-6 text-foreground">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <Label htmlFor="last_name">Last Name</Label>
-                                            <Input
-                                                id="last_name"
-                                                name="last_name"
-                                                type="text"
-                                                required
-                                                value={data.last_name}
-                                                onChange={(e) => setData('last_name', e.target.value)}
-                                                placeholder="Dela Cruz"
-                                            />
-                                            {errors.last_name && <p className="text-red-500 text-xs">{errors.last_name}</p>}
+                                            <Label htmlFor="first_name">First Name</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="first_name"
+                                                    value={data.first_name}
+                                                    onChange={(e) => setData('first_name', e.target.value)}
+                                                    placeholder="Juan"
+                                                    className={cn("pl-9", errors.first_name && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {errors.first_name && <p className="text-red-500 text-xs font-medium">{errors.first_name}</p>}
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="first_name">First Name</Label>
-                                            <Input
-                                                id="first_name"
-                                                name="first_name"
-                                                type="text"
-                                                required
-                                                value={data.first_name}
-                                                onChange={(e) => setData('first_name', e.target.value)}
-                                                placeholder="Juan"
-                                            />
-                                            {errors.first_name && <p className="text-red-500 text-xs">{errors.first_name}</p>}
+                                            <Label htmlFor="last_name">Last Name</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="last_name"
+                                                    value={data.last_name}
+                                                    onChange={(e) => setData('last_name', e.target.value)}
+                                                    placeholder="Dela Cruz"
+                                                    className={cn("pl-9", errors.last_name && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {errors.last_name && <p className="text-red-500 text-xs font-medium">{errors.last_name}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="middle_name">Middle Name (Optional)</Label>
                                             <Input
                                                 id="middle_name"
-                                                name="middle_name"
-                                                type="text"
                                                 value={data.middle_name}
                                                 onChange={(e) => setData('middle_name', e.target.value)}
                                                 placeholder="Santos"
+                                                className="bg-transparent"
                                             />
-                                            {errors.middle_name && <p className="text-red-500 text-xs">{errors.middle_name}</p>}
                                         </div>
+
+                                        <Separator className="md:hidden opacity-50" />
 
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email Address</Label>
-                                            <Input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                required
-                                                value={data.email}
-                                                onChange={(e) => setData('email', e.target.value)}
-                                                placeholder="juan@example.com"
-                                            />
-                                            {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+                                            <div className="relative">
+                                                <Input
+                                                    id="email"
+                                                    type="email"
+                                                    value={data.email}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                    placeholder="juan@example.com"
+                                                    className={cn("pl-9", errors.email && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {errors.email && <p className="text-red-500 text-xs font-medium">{errors.email}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="mobile_number">Mobile Number</Label>
-                                            <Input
-                                                id="mobile_number"
-                                                name="mobile_number"
-                                                type="tel"
-                                                required
-                                                value={data.mobile_number}
-                                                onChange={(e) => setData('mobile_number', e.target.value)}
-                                                placeholder="09123456789"
-                                            />
-                                            {errors.mobile_number && <p className="text-red-500 text-xs">{errors.mobile_number}</p>}
+                                            <div className="relative">
+                                                <Input
+                                                    id="mobile_number"
+                                                    type="tel"
+                                                    value={data.mobile_number}
+                                                    onChange={(e) => setData('mobile_number', e.target.value)}
+                                                    placeholder="09123456789"
+                                                    className={cn("pl-9", errors.mobile_number && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {errors.mobile_number && <p className="text-red-500 text-xs font-medium">{errors.mobile_number}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="student_id_number">Student ID Number</Label>
-                                            <Input
-                                                id="student_id_number"
-                                                name="student_id_number"
-                                                type="text"
-                                                required
-                                                value={data.student_id_number}
-                                                onChange={(e) => setData('student_id_number', e.target.value)}
-                                            />
-                                            {errors.student_id_number && <p className="text-red-500 text-xs">{errors.student_id_number}</p>}
+                                            <div className="relative">
+                                                <Input
+                                                    id="student_id_number"
+                                                    value={data.student_id_number}
+                                                    onChange={(e) => setData('student_id_number', e.target.value)}
+                                                    placeholder="2023-12345"
+                                                    className={cn("pl-9", errors.student_id_number && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <IdCard className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {errors.student_id_number && <p className="text-red-500 text-xs font-medium">{errors.student_id_number}</p>}
                                         </div>
                                     </div>
+                                </CardContent>
+                            </Card>
 
-                                    <div className="space-y-2">
-                                        <Label>Upload School ID</Label>
-                                        <label htmlFor="file-upload" className="mt-1 flex flex-col items-center justify-center pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:bg-indigo-100 transition-colors cursor-pointer">
-                                            <div className="space-y-1 text-center">
-                                                {preview ? (
-                                                    <img src={preview} alt="ID Preview" className="mx-auto h-32 object-contain mb-4" />
-                                                ) : (
-                                                    <svg
-                                                        className="mx-auto h-12 w-12 text-gray-400 mb-4"
-                                                        stroke="currentColor"
-                                                        fill="none"
-                                                        viewBox="0 0 48 48"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                            strokeWidth={2}
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        />
-                                                    </svg>
-                                                )}
-                                                <div className="flex text-sm text-gray-600 justify-center">
-                                                    <div
-                                                        className="relative rounded-md font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-                                                    >
-                                                        <span>Upload a file</span>
-                                                        <input id="file-upload" name="school_id" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" />
+                            {/* ID Upload Card */}
+                            <Card>
+                                <CardHeader className="pb-4">
+                                     <div className="flex items-center gap-2 text-foreground">
+                                        <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                            <IdCard className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle>Identity Verification</CardTitle>
+                                            <CardDescription>Upload a clear copy of your School ID</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="relative">
+                                        <Label
+                                            htmlFor="file-upload"
+                                            className={cn(
+                                                "flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed rounded-xl cursor-pointer transition-colors bg-muted/20 hover:bg-muted/50",
+                                                errors.school_id ? "border-red-300" : "border-muted-foreground/25"
+                                            )}
+                                        >
+                                            {preview ? (
+                                                <div className="relative group">
+                                                    <img src={preview} alt="ID Preview" className="h-40 w-auto rounded-lg shadow-md object-cover" />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg text-white font-medium text-xs">
+                                                        Change File
                                                     </div>
                                                 </div>
-                                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                            </div>
-                                        </label>
-                                        {errors.school_id && <p className="text-red-500 text-xs">{errors.school_id}</p>}
-                                    </div>
-                                </div>
-
-                                {/* Right Column: Document Selection */}
-                                <div className="space-y-4">
-                                    <h3 className="font-medium border-b pb-2">Document Selection</h3>
-
-                                    <div className="space-y-3">
-                                        <Label>Select Document(s)</Label>
-                                        <div className="grid grid-cols-1 gap-2 border rounded-md p-4 max-h-96 overflow-y-auto">
-                                            {documents.map((doc) => (
-                                                <div key={doc.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
-                                                    <input
-                                                        type="checkbox"
-                                                        id={`doc-${doc.id}`}
-                                                        className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                        checked={data.document_types.includes(doc.id)}
-                                                        onChange={(e) => toggleDocument(doc.id, e.target.checked)}
-                                                    />
-                                                    <label htmlFor={`doc-${doc.id}`} className="flex-1 cursor-pointer">
-                                                        <div className="flex justify-between">
-                                                            <span className="font-medium text-sm text-gray-900">{doc.label}</span>
-                                                        </div>
-                                                    </label>
+                                            ) : (
+                                                <div className="text-center space-y-2">
+                                                    <Upload className="mx-auto h-8 w-8 text-muted-foreground/50" />
+                                                    <div className="text-sm font-medium text-primary">Click to upload or drag and drop</div>
+                                                    <p className="text-xs text-muted-foreground">PNG, JPG or PDF (MAX. 10MB)</p>
                                                 </div>
-                                            ))}
-                                        </div>
-                                        {errors.document_types && <p className="text-red-500 text-xs">{errors.document_types}</p>}
-                                        
+                                            )}
+                                            <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept="image/*,.pdf" />
+                                        </Label>
+                                    </div>
+                                    {errors.school_id && <p className="mt-2 text-red-500 text-xs font-medium text-center">{errors.school_id}</p>}
+                                </CardContent>
+                            </Card>
+                        </div>
 
+                        {/* Right Section: Document Selection */}
+                        <div className="space-y-6">
+                            <Card>
+                                <CardHeader className="pb-4">
+                                    <div className="flex items-center gap-2 text-foreground">
+                                        <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                            <IdCard className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle>Requirements</CardTitle>
+                                            <CardDescription>Select the documents you wish to request.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <Badge>
+                                        {data.document_types.length} Selected
+                                    </Badge>
+                                    <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {documents.map((doc) => {
+                                            const isSelected = data.document_types.includes(doc.id);
+                                            return (
+                                                <div
+                                                    key={doc.id}
+                                                    className={cn(
+                                                        "flex items-center space-x-2 p-2 rounded-lg",
+                                                        isSelected
+                                                            ? "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80"
+                                                            : "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"
+                                                    )}
+                                                >
+                                                    <Checkbox
+                                                        id={`doc-${doc.id}`}
+                                                        checked={isSelected}
+                                                        onCheckedChange={(checked) => toggleDocument(doc.id, checked === true)}
+                                                    />
+                                                    <Label htmlFor={`doc-${doc.id}`}>{doc.label}</Label>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
 
+                                    {errors.document_types && (
+                                        <p className="text-red-300 text-xs font-medium bg-red-950/30 p-2 rounded-md border border-red-500/50">
+                                            {errors.document_types}
+                                        </p>
+                                    )}
 
-                                </div>
-                            </div>
-
-                            <Button type="submit" disabled={processing} className="w-full">
-                                {processing ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Submitting...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send className="mr-2 h-4 w-4" />
-                                        Submit Request
-                                    </>
-                                )}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
+                                    <div className="">
+                                        <Button
+                                            type="submit"
+                                            disabled={processing || data.document_types.length === 0}
+                                            className="w-full"
+                                        >
+                                            {processing ? (
+                                                <div className="flex items-center gap-2">
+                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                    <span>Processing...</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <Send className="h-5 w-5" />
+                                                    <span>Submit Request</span>
+                                                </div>
+                                            )}
+                                        </Button>
+                                        <p className="text-xs text-center mt-4">
+                                            By submitting, you agree to the processing of your data for document verification purposes.
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </form>
             </div>
+
+            <style dangerouslySetInnerHTML={{ __html: `
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+            ` }} />
         </div>
     );
 }

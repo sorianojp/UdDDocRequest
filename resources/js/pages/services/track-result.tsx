@@ -126,8 +126,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                 </div>
 
                 {/* HERO STATUS CARD */}
-                <Card className="border-2 shadow-sm relative overflow-hidden">
-                    {request.status === 'PENDING' && (
+                <Card>
+                    {/* {request.status === 'PENDING' && (
                         <div className="bg-blue-500/5 absolute inset-0 pointer-events-none" />
                     )}
                     {request.status === 'WAITING_FOR_PAYMENT' && (
@@ -150,7 +150,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                     )}
                     {request.status === 'REJECTED' && (
                         <div className="bg-red-500/10 absolute inset-0 pointer-events-none" />
-                    )}
+                    )} */}
                     
                     <CardHeader className="text-center pb-2">
                         <div className="mx-auto mb-4">
@@ -163,16 +163,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'REJECTED' && <AlertTriangle className="h-12 w-12 text-red-500" />}
                             {request.status === 'DEFICIENT' && <AlertCircle className="h-12 w-12 text-red-500" />}
                         </div>
-                        <CardTitle className={cn("text-2xl font-bold", 
-                            request.status === 'PENDING' && "text-blue-700 dark:text-blue-400",
-                            request.status === 'WAITING_FOR_PAYMENT' && "text-orange-700 dark:text-orange-400",
-                            request.status === 'VERIFYING_PAYMENT' && "text-amber-700 dark:text-amber-400",
-                            request.status === 'PROCESSING' && "text-indigo-700 dark:text-indigo-400",
-                            request.status === 'READY' && "text-green-700 dark:text-green-400",
-                            request.status === 'CLAIMED' && "text-slate-700 dark:text-slate-400",
-                            request.status === 'REJECTED' && "text-red-700 dark:text-red-400",
-                            request.status === 'DEFICIENT' && "text-red-700 dark:text-red-400"
-                        )}>
+                        <CardTitle>
                             {request.status === 'PENDING' && 'Pending Verification'}
                             {request.status === 'WAITING_FOR_PAYMENT' && 'Payment Required'}
                             {request.status === 'VERIFYING_PAYMENT' && 'Verifying Payment'}
