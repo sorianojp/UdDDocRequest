@@ -173,7 +173,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'REJECTED' && 'Request Rejected'}
                             {request.status === 'DEFICIENT' && 'Deficiency Found'}
                         </CardTitle>
-                        <CardDescription className="text-base max-w-lg mx-auto">
+                        <CardDescription>
                             {request.status === 'PENDING' && 'We have received your request and the Registrar is currently assessing the fees. Please wait for the assessment.'}
                             {request.status === 'WAITING_FOR_PAYMENT' && 'Your request has been assessed. Please proceed with the payment to continue processing.'}
                             {request.status === 'VERIFYING_PAYMENT' && 'We are checking your payment proof. This usually takes 1-2 business days.'}
