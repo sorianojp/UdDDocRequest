@@ -18,6 +18,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save, Eye } from 'lucide-react';
 
 export default function RequestDetails({
@@ -337,19 +338,19 @@ export default function RequestDetails({
                                 
                                 <h3 className="font-semibold">Requested Documents</h3>
                                 <div className="border rounded-md overflow-hidden dark:border-border">
-                                    <table className="min-w-full divide-y divide-border">
-                                        <thead className="bg-muted/50">
-                                            <tr>
-                                                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Document Type</th>
-                                                <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-card divide-y divide-border">
+                                    <Table>
+                                        <TableHeader className="bg-muted/50">
+                                            <TableRow>
+                                                <TableHead className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Document Type</TableHead>
+                                                <TableHead className="px-4 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Price</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody className="bg-card">
                                             {data.items && data.items.length > 0 ? (
                                                 data.items.map((item: any) => (
-                                                    <tr key={item.id}>
-                                                        <td className="px-4 py-2 text-sm text-foreground">{item.document_type}</td>
-                                                        <td className="px-4 py-2 text-sm text-muted-foreground text-right">
+                                                    <TableRow key={item.id}>
+                                                        <TableCell className="px-4 py-2 text-sm text-foreground">{item.document_type}</TableCell>
+                                                        <TableCell className="px-4 py-2 text-sm text-muted-foreground text-right border-l">
                                                             {data.status === 'PENDING' ? (
                                                                 <div className="flex items-center justify-end gap-1">
                                                                     <span>₱</span>
@@ -363,25 +364,25 @@ export default function RequestDetails({
                                                             ) : (
                                                                 `₱${Number(item.price).toFixed(2)}`
                                                             )}
-                                                        </td>
-                                                    </tr>
+                                                        </TableCell>
+                                                    </TableRow>
                                                 ))
                                             ) : (
-                                                <tr>
-                                                    <td className="px-4 py-2 text-sm text-foreground">{request.document_type}</td>
-                                                    <td className="px-4 py-2 text-sm text-muted-foreground text-right">
+                                                <TableRow>
+                                                    <TableCell className="px-4 py-2 text-sm text-foreground">{request.document_type}</TableCell>
+                                                    <TableCell className="px-4 py-2 text-sm text-muted-foreground text-right border-l">
                                                         ₱{request.amount_due}
-                                                    </td>
-                                                </tr>
+                                                    </TableCell>
+                                                </TableRow>
                                             )}
-                                            <tr className="bg-muted/50 font-medium">
-                                                <td className="px-4 py-2 text-sm text-foreground">Total</td>
-                                                <td className="px-4 py-2 text-sm text-indigo-600 dark:text-indigo-400 text-right">
+                                            <TableRow className="bg-muted/50 font-medium border-t">
+                                                <TableCell className="px-4 py-2 text-sm text-foreground">Total</TableCell>
+                                                <TableCell className="px-4 py-2 text-sm text-indigo-600 dark:text-indigo-400 text-right border-l font-bold">
                                                     ₱{data.items.reduce((sum: number, item: any) => sum + Number(item.price), 0).toFixed(2)}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
                                 </div>
                             </div>
 

@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import registrar from '@/routes/registrar';
 import { BreadcrumbItem, DocumentRequest, SharedData } from '@/types';
@@ -102,53 +103,53 @@ export default function RegistrarDashboard({
                     </CardHeader>
                     <CardContent>
                         {/* ... (existing table) */}
-                        <div className="rounded-md border">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted/50 text-muted-foreground font-medium">
-                                    <tr>
-                                        <th className="px-4 py-3">Reference No.</th>
-                                        <th className="px-4 py-3">Student Name</th>
-                                        <th className="px-4 py-3">Document</th>
-                                        <th className="px-4 py-3">Date Requested</th>
-                                        <th className="px-4 py-3">Status</th>
-                                        <th className="px-4 py-3 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
+                        <div className="rounded-md border overflow-hidden">
+                            <Table>
+                                <TableHeader className="bg-muted/50 text-muted-foreground font-medium">
+                                    <TableRow>
+                                        <TableHead className="px-4 py-3">Reference No.</TableHead>
+                                        <TableHead className="px-4 py-3">Student Name</TableHead>
+                                        <TableHead className="px-4 py-3">Document</TableHead>
+                                        <TableHead className="px-4 py-3">Date Requested</TableHead>
+                                        <TableHead className="px-4 py-3">Status</TableHead>
+                                        <TableHead className="px-4 py-3 text-right">Action</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
                                     {requests.data.length > 0 ? (
                                         requests.data.map((req) => (
-                                            <tr key={req.id} className="hover:bg-muted/50 transition-colors">
-                                                <td className="px-4 py-3 font-mono font-medium">{req.reference_number}</td>
-                                                <td className="px-4 py-3">{req.student_name}</td>
-                                                <td className="px-4 py-3">
+                                            <TableRow key={req.id} className="hover:bg-muted/50 transition-colors">
+                                                <TableCell className="px-4 py-3 font-mono font-medium">{req.reference_number}</TableCell>
+                                                <TableCell className="px-4 py-3">{req.student_name}</TableCell>
+                                                <TableCell className="px-4 py-3">
                                                     <div className="flex items-center gap-2">
                                                         <FileText className="h-4 w-4 text-muted-foreground" />
                                                         {req.document_type}
                                                     </div>
-                                                </td>
-                                                <td className="px-4 py-3 text-muted-foreground">
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-muted-foreground">
                                                     {new Date(req.created_at).toLocaleDateString()}
-                                                </td>
-                                                <td className="px-4 py-3">{getStatusBadge(req.status)}</td>
-                                                <td className="px-4 py-3 text-right">
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3">{getStatusBadge(req.status)}</TableCell>
+                                                <TableCell className="px-4 py-3 text-right">
                                                     <Link href={registrar.show.url(req.id)}>
                                                         <Button variant="ghost" size="sm">
                                                             View
                                                             <ChevronRight className="ml-1 h-4 w-4" />
                                                         </Button>
                                                     </Link>
-                                                </td>
-                                            </tr>
+                                                </TableCell>
+                                            </TableRow>
                                         ))
                                     ) : (
-                                        <tr>
-                                            <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                                        <TableRow>
+                                            <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                                                 No requests found.
-                                            </td>
-                                        </tr>
+                                            </TableCell>
+                                        </TableRow>
                                     )}
-                                </tbody>
-                            </table>
+                                </TableBody>
+                            </Table>
                         </div>
 
                          {/* Simple Pagination */}

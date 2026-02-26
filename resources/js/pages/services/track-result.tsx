@@ -9,6 +9,7 @@ import { FormEventHandler, useState, Fragment } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function TrackResult({ request }: { request: DocumentRequest }) {
     // Payment Logic
@@ -316,39 +317,39 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                         </div>
                         <Separator className="opacity-50" />
                         <div className="rounded-lg border overflow-hidden">
-                            <table className="w-full text-sm">
-                                <thead className="bg-secondary/50 text-secondary-foreground text-xs uppercase tracking-wider">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left font-bold">Document</th>
-                                        <th className="px-4 py-3 text-right font-bold">Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y text-foreground font-medium">
+                            <Table>
+                                <TableHeader className="bg-secondary/50 text-secondary-foreground text-xs uppercase tracking-wider">
+                                    <TableRow>
+                                        <TableHead className="px-4 py-3 font-bold">Document</TableHead>
+                                        <TableHead className="px-4 py-3 text-right font-bold">Price</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="divide-y text-foreground font-medium">
                                     {request.items && request.items.length > 0 ? (
                                         request.items.map((item) => (
-                                            <tr key={item.id} className="bg-background/50">
-                                                <td className="px-4 py-3">{item.document_type}</td>
-                                                <td className="px-4 py-3 text-right">
+                                            <TableRow key={item.id} className="bg-background/50">
+                                                <TableCell className="px-4 py-3">{item.document_type}</TableCell>
+                                                <TableCell className="px-4 py-3 text-right">
                                                     {Number(item.price) > 0 || request.status !== 'PENDING' ? `₱${Number(item.price).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
-                                                </td>
-                                            </tr>
+                                                </TableCell>
+                                            </TableRow>
                                         ))
                                     ) : (
-                                        <tr className="bg-background/50">
-                                            <td className="px-4 py-3">{request.document_type}</td>
-                                            <td className="px-4 py-3 text-right">
+                                        <TableRow className="bg-background/50">
+                                            <TableCell className="px-4 py-3">{request.document_type}</TableCell>
+                                            <TableCell className="px-4 py-3 text-right">
                                                 {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
-                                            </td>
-                                        </tr>
+                                            </TableCell>
+                                        </TableRow>
                                     )}
-                                     <tr className="bg-secondary/20 font-bold border-t-2">
-                                        <td className="px-4 py-3 text-right uppercase text-xs tracking-wider">Total Amount</td>
-                                        <td className="px-4 py-3 text-right text-base text-primary">
+                                     <TableRow className="bg-secondary/20 font-bold border-t-2">
+                                        <TableCell className="px-4 py-3 text-right uppercase text-xs tracking-wider">Total Amount</TableCell>
+                                        <TableCell className="px-4 py-3 text-right text-base text-primary font-bold">
                                             {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
                         </div>
                     </CardContent>
                     <Separator className="opacity-50" />
