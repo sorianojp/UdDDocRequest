@@ -64,6 +64,9 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
 
             <div className="mx-auto max-w-full">
                 <div className="mb-8 text-center text-foreground">
+                    <div className="mx-auto mb-4 p-3 rounded-2xl bg-primary/10 text-primary w-fit">
+                        <FileText className="h-10 w-10" />
+                    </div>
                     <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
                         Document Request Services
                     </h1>

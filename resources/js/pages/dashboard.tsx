@@ -67,7 +67,7 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid gap-4 md:grid-cols-6">
+                <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
                     {stats.map((stat) => (
                         <Card key={stat.label}>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -87,15 +87,17 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
                 </div>
 
                 <div className="max-w-full">
-                     <Card className="border-blue-200 bg-blue-50/50 shadow-md dark:bg-blue-900/10 dark:border-blue-800">
+                     <Card>
                         <CardHeader className="pb-4">
-                            <CardTitle className="text-2xl text-blue-900 flex items-center gap-2 dark:text-blue-100">
-                                <FileCheck className="h-6 w-6" />
-                                Quick Claim
-                            </CardTitle>
-                            <CardDescription className="text-base">
-                                Scan or enter reference number (e.g., R123456) to instantly mark a request as claimed.
-                            </CardDescription>
+                            <div className="flex items-center gap-2 text-foreground">
+                                <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                    <FileCheck className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-2xl font-bold">Claim</CardTitle>
+                                    <CardDescription>Enter reference number (e.g., R123456) to instantly mark a request as claimed.</CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent className="p-6">
                             <form onSubmit={(e) => {
@@ -118,7 +120,7 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
                                     autoFocus
                                     maxLength={7}
                                 />
-                                <Button type="submit" size="lg" className="h-20 px-8 text-xl" title="Mark as Claimed">
+                                <Button type="submit" size="lg" className="h-20 px-8 text-xl font-bold" title="Mark as Claimed">
                                     <CheckCircle className="h-8 w-8 mr-2" />
                                     Claim
                                 </Button>
