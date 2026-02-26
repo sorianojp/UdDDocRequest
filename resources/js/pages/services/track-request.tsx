@@ -43,7 +43,7 @@ export default function TrackRequest() {
                                     required
                                     value={data.reference_number}
                                     onChange={(e) => setData('reference_number', e.target.value)}
-                                    placeholder="REQ-XXXXXXXXXXXXX"
+                                    placeholder="R000000"
                                     className="uppercase h-12 text-center text-lg font-mono tracking-widest border-primary/20 focus:border-primary focus:ring-primary/20"
                                 />
                                 {errors.reference_number && <p className="text-red-500 text-xs text-center mt-2">{errors.reference_number}</p>}
