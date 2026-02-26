@@ -3,7 +3,7 @@ import { DocumentRequest } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight } from 'lucide-react';
+import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { FormEventHandler, useState, Fragment } from 'react';
 import { Label } from '@/components/ui/label';
@@ -59,20 +59,20 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
     const currentStepIndex = getCurrentStepIndex();
 
     return (
-        <div className="min-h-screen bg-gray-50/50 dark:bg-background py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/50 via-background to-primary/50 dark:from-zinc-950 dark:to-zinc-900 py-12 px-4 sm:px-6 lg:px-8">
             <Head title={`Track ${request.reference_number}`} />
 
             <div className="mx-auto max-w-2xl space-y-8">
                 {/* Header Section */}
-                <div className="text-center space-y-4">
-                    <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-2">
-                        <FileText className="h-8 w-8 text-primary" />
+                <div className="text-center space-y-2">
+                    <div className="inline-flex items-center justify-center p-3 bg-secondary text-secondary-foreground rounded-full mb-2">
+                        <FileText className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="text-xl font-bold tracking-tight text-foreground">
                             Request Tracking
                         </h1>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                             Reference Number: <span className="font-mono font-medium text-foreground">{request.reference_number}</span>
                         </p>
                     </div>
@@ -92,8 +92,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     <div className="relative flex flex-col items-center group z-10">
                                         <div className={cn(
                                             "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-background",
-                                            isCompleted ? (isDeficient ? "border-red-600 bg-red-600 text-white" : "border-green-600 bg-green-600 text-white") :
-                                            isCurrent ? (isDeficient ? "border-red-600 text-red-600 ring-4 ring-red-100" : "border-green-600 text-green-600 ring-4 ring-green-100") :
+                                            isCompleted ? (isDeficient ? "border-red-600 bg-red-600 text-white" : "border-primary bg-primary text-primary-foreground") :
+                                            isCurrent ? (isDeficient ? "border-red-600 text-red-600" : "border-primary text-primary ring-4 ring-primary/10") :
                                             "border-muted text-muted-foreground"
                                         )}>
                                             {isCompleted ? <Check className="h-4 w-4" /> :
@@ -101,8 +101,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         </div>
                                         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-max text-center">
                                             <span className={cn(
-                                                "text-xs font-medium transition-colors duration-300 block",
-                                                isCurrent ? (isDeficient ? "text-red-600 font-bold" : "text-green-600 font-bold") : "text-muted-foreground"
+                                                "text-[10px] font-medium transition-colors duration-300 block",
+                                                isCurrent ? "text-primary font-bold" : "text-muted-foreground"
                                             )}>
                                                 {step.label}
                                             </span>
@@ -113,7 +113,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <div className="flex-1 h-1 mx-2 bg-muted relative rounded-full overflow-hidden">
                                             <div className={cn(
                                                     "absolute top-0 left-0 h-full w-full transition-all duration-500 origin-left",
-                                                     isDeficient ? "bg-red-600" : "bg-green-600",
+                                                     isDeficient ? "bg-red-600" : "bg-primary",
                                                      isCompleted ? "scale-x-100" : "scale-x-0"
                                                 )}
                                             />
@@ -126,59 +126,45 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                 </div>
 
                 {/* HERO STATUS CARD */}
-                <Card>
-                    {/* {request.status === 'PENDING' && (
-                        <div className="bg-blue-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'WAITING_FOR_PAYMENT' && (
-                        <div className="bg-orange-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'VERIFYING_PAYMENT' && (
-                        <div className="bg-amber-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'PROCESSING' && (
-                        <div className="bg-indigo-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'DEFICIENT' && (
-                        <div className="bg-red-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'READY' && (
-                        <div className="bg-green-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'CLAIMED' && (
-                        <div className="bg-slate-500/5 absolute inset-0 pointer-events-none" />
-                    )}
-                    {request.status === 'REJECTED' && (
-                        <div className="bg-red-500/10 absolute inset-0 pointer-events-none" />
-                    )} */}
-                    
+                <Card className="overflow-hidden">
                     <CardHeader className="text-center pb-2">
                         <div className="mx-auto mb-4">
-                            {request.status === 'PENDING' && <Loader2 className="h-12 w-12 text-blue-500 animate-spin" />}
-                            {request.status === 'WAITING_FOR_PAYMENT' && <CreditCard className="h-12 w-12 text-orange-500" />}
-                            {request.status === 'VERIFYING_PAYMENT' && <Clock className="h-12 w-12 text-amber-500 animate-pulse" />}
-                            {request.status === 'PROCESSING' && <Loader2 className="h-12 w-12 text-indigo-500 animate-spin" />}
-                            {request.status === 'READY' && <CheckCircle className="h-12 w-12 text-green-500" />}
-                            {request.status === 'CLAIMED' && <FileText className="h-12 w-12 text-slate-500" />}
-                            {request.status === 'REJECTED' && <AlertTriangle className="h-12 w-12 text-red-500" />}
-                            {request.status === 'DEFICIENT' && <AlertCircle className="h-12 w-12 text-red-500" />}
+                            {request.status === 'PENDING' && <Loader2 className="h-10 w-10 text-primary animate-spin" />}
+                            {request.status === 'WAITING_FOR_PAYMENT' && <CreditCard className="h-10 w-10 text-primary" />}
+                            {request.status === 'VERIFYING_PAYMENT' && <Clock className="h-10 w-10 text-primary" />}
+                            {request.status === 'PROCESSING' && <Loader2 className="h-10 w-10 text-primary animate-spin" />}
+                            {request.status === 'READY' && <CheckCircle className="h-10 w-10 text-primary" />}
+                            {request.status === 'CLAIMED' && <FileText className="h-10 w-10 text-muted-foreground" />}
+                            {request.status === 'REJECTED' && <AlertTriangle className="h-10 w-10 text-red-500" />}
+                            {request.status === 'DEFICIENT' && <AlertCircle className="h-10 w-10 text-red-500" />}
                         </div>
-                        <CardTitle>
+                        <CardTitle className="text-xl font-bold">
                             {request.status === 'PENDING' && 'Pending Verification'}
                             {request.status === 'WAITING_FOR_PAYMENT' && 'Payment Required'}
                             {request.status === 'VERIFYING_PAYMENT' && 'Verifying Payment'}
                             {request.status === 'PROCESSING' && 'Processing Request'}
                             {request.status === 'READY' && 'Ready for Pickup'}
-                            {request.status === 'CLAIMED' && 'Request Claimed!'}
+                            {request.status === 'CLAIMED' && (
+                                <div className="space-y-1">
+                                    <p>Request Claimed!</p>
+                                    <p className="text-xs font-normal text-muted-foreground">
+                                        Claimed on {new Date(request.claimed_date!).toLocaleDateString('en-US', { 
+                                            month: 'long', 
+                                            day: 'numeric', 
+                                            year: 'numeric' 
+                                        })}
+                                    </p>
+                                </div>
+                            )}
                             {request.status === 'REJECTED' && 'Request Rejected'}
                             {request.status === 'DEFICIENT' && 'Deficiency Found'}
                         </CardTitle>
-                        <CardDescription>
-                            {request.status === 'PENDING' && 'We have received your request and the Registrar is currently assessing the fees. Please wait for the assessment.'}
-                            {request.status === 'WAITING_FOR_PAYMENT' && 'Your request has been assessed. Please proceed with the payment to continue processing.'}
+                        <CardDescription className="text-sm">
+                            {request.status === 'PENDING' && 'We have received your request and the Registrar is currently assessing the fees.'}
+                            {request.status === 'WAITING_FOR_PAYMENT' && 'Your request has been assessed. Please proceed with the payment.'}
                             {request.status === 'VERIFYING_PAYMENT' && 'We are checking your payment proof. This usually takes 1-2 business days.'}
-                            {request.status === 'PROCESSING' && 'Your documents are being prepared/printed. We will notify you when it is ready.'}
-                            {request.status === 'READY' && `Your documents are ready! You can claim them at the Registrar's Office on ${new Date(request.claiming_date!).toLocaleDateString()}.`}
+                            {request.status === 'PROCESSING' && 'Your documents are being prepared. We will notify you when it is ready.'}
+                            {request.status === 'READY' && `Your documents are ready! You can claim them on ${new Date(request.claiming_date!).toLocaleDateString()}.`}
                             {request.status === 'DEFICIENT' && request.deficiency_remarks}
                         </CardDescription>
                     </CardHeader>
@@ -187,7 +173,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                         {request.status === 'READY' && (
                              <Button 
                                 size="lg" 
-                                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
+                                className="w-full sm:w-auto"
                                 onClick={() => window.open(`/request/${request.reference_number}/print-stub`, '_blank')}
                             >
                                 <FileText className="h-4 w-4 mr-2" />
@@ -197,47 +183,47 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                         
                         {/* PAYMENT SECTION */}
                         {request.status === 'WAITING_FOR_PAYMENT' && (
-                             <div className="w-full space-y-6 mt-4">
-                                <div className="bg-muted/50 p-4 rounded-lg flex justify-between items-center border">
-                                    <span className="font-medium">Amount Due</span>
-                                    <span className="text-xl font-bold text-primary">₱{Number(request.amount_due).toFixed(2)}</span>
+                             <div className="w-full space-y-6">
+                                <div className="bg-secondary/50 p-4 rounded-lg flex justify-between items-center border border-primary/10">
+                                    <span className="text-sm font-medium">Amount Due</span>
+                                    <span className="text-3xl font-bold text-primary">₱{Number(request.amount_due).toFixed(2)}</span>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="bg-card p-4 rounded-md border text-sm">
-                                        <p className="font-bold text-red-600 mb-1">BPI</p>
-                                        <p className="font-mono">0555233884</p>
-                                        <p className="text-xs text-muted-foreground">Universidad de Dagupan, Inc.</p>
+                                    <div className="bg-background p-4 rounded-lg border text-sm space-y-1">
+                                        <p className="font-bold text-2xl uppercase tracking-wider text-red-800">BPI</p>
+                                        <p className="font-mono text-base">0555233884</p>
+                                        <p className="text-muted-foreground">Universidad de Dagupan, Inc.</p>
                                     </div>
-                                    <div className="bg-card p-4 rounded-md border text-sm">
-                                        <p className="font-bold text-green-600 mb-1">LAND BANK</p>
-                                        <p className="font-mono">0822108474</p>
-                                        <p className="text-xs text-muted-foreground">Universidad de Dagupan, Inc.</p>
+                                    <div className="bg-background p-4 rounded-lg border text-sm space-y-1">
+                                        <p className="font-bold text-2xl uppercase tracking-wider text-green-800">LAND BANK</p>
+                                        <p className="font-mono text-base">0822108474</p>
+                                        <p className="text-muted-foreground">Universidad de Dagupan, Inc.</p>
                                     </div>
                                 </div>
 
                                 {isPaymentRejected && (
-                                    <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 text-red-800 text-sm flex items-center gap-2">
+                                    <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
                                         <AlertCircle className="h-4 w-4" />
                                         Previous proof was rejected. Please upload a new one.
                                     </div>
                                 )}
 
-                                <form onSubmit={submitPayment} className="space-y-4 border-t pt-6">
+                                <form onSubmit={submitPayment} className="space-y-4 pt-4 border-t">
                                     <div className="space-y-2">
                                         <Label htmlFor="reference_number">Bank Reference Number</Label>
                                         <Input
                                             id="reference_number"
                                             value={data.reference_number}
                                             onChange={(e) => setData('reference_number', e.target.value)}
-                                            placeholder="Enter reference number from receipt"
+                                            placeholder="Enter reference number"
                                             required
                                         />
                                         {errors.reference_number && <p className="text-red-500 text-xs">{errors.reference_number}</p>}
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Payment Proof (Screenshot/Photo)</Label>
+                                        <Label>Payment Proof</Label>
                                         <Label 
                                             htmlFor="proof-upload" 
                                             className={cn(
@@ -246,9 +232,9 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                             )}
                                         >
                                             {preview ? (
-                                                <div className="relative">
+                                                <div className="relative group/preview">
                                                      <img src={preview} alt="Preview" className="max-h-48 rounded-md shadow-sm" />
-                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity rounded-md text-white font-medium text-xs">Change File</div>
+                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity rounded-md text-white font-medium text-xs">Change File</div>
                                                 </div>
                                             ) : (
                                                 <div className="text-center space-y-2">
@@ -267,8 +253,8 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         {errors.proof && <p className="text-red-500 text-xs">{errors.proof}</p>}
                                     </div>
 
-                                    <Button type="submit" disabled={processing} className="w-full" size="lg">
-                                        {processing ? <Loader2 className="animate-spin mr-2" /> : null}
+                                    <Button type="submit" disabled={processing} className="w-full">
+                                        {processing && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
                                         Submit Payment Proof
                                     </Button>
                                 </form>
@@ -276,65 +262,84 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                         )}
 
                         {request.status === 'VERIFYING_PAYMENT' && request.payment && (
-                            <div className="w-full bg-muted/50 rounded-lg p-4 border space-y-2 mt-4">
-                                <p className="text-sm font-medium text-center">Submitted Payment Details</p>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <span className="text-muted-foreground">Reference:</span>
-                                    <span className="font-mono text-right">{request.payment.reference_number}</span>
-                                    <span className="text-muted-foreground">Proof:</span>
-                                    <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" className="text-primary hover:underline text-right truncate">View Image</a>
+                            <div className="w-full space-y-3 mt-4 pt-4 border-t">
+                                <div className="flex items-center gap-2 text-foreground mb-4">
+                                    <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                        <ReceiptText className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="font-semibold text-lg">Submitted Details</h3>
+                                </div>
+                                <div className="bg-secondary/30 rounded-lg p-4 border text-sm space-y-3">
+                                    <div className="grid grid-cols-2 gap-2 items-center">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Bank Reference:</span>
+                                        <span className="font-bold text-right truncate">{request.payment.reference_number}</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 items-center">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Payment Proof:</span>
+                                        <div className="text-right">
+                                            <a href={`/storage/${request.payment.proof_file_path}`} target="_blank" className="inline-flex items-center gap-1.5 text-primary font-bold hover:underline">
+                                                <FileText className="h-4 w-4" />
+                                                View Receipt
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
-                {/* DETAILS ACCORDION/CARD */}
+                {/* DETAILS CARD */}
                 <Card>
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">Request Summary</CardTitle>
+                        <div className="flex items-center gap-2 text-foreground">
+                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                <ClipboardList className="h-5 w-5" />
+                            </div>
+                            <CardTitle className="text-lg">Request Summary</CardTitle>
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p className="text-muted-foreground">Student Name</p>
-                                <p className="font-medium">{request.student_name}</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                            <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Student Name</p>
+                                <p className="font-semibold text-foreground uppercase">{request.student_name}</p>
                             </div>
-                            <div>
-                                <p className="text-muted-foreground">Student ID</p>
-                                <p className="font-medium">{request.student_id_number}</p>
+                            <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Student ID</p>
+                                <p className="font-semibold text-foreground">{request.student_id_number}</p>
                             </div>
                         </div>
-                        <Separator />
-                        <div className="rounded-md border overflow-hidden">
+                        <Separator className="opacity-50" />
+                        <div className="rounded-lg border overflow-hidden">
                             <table className="w-full text-sm">
-                                <thead className="bg-muted/50 text-muted-foreground">
+                                <thead className="bg-secondary/50 text-secondary-foreground text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th className="px-4 py-2 text-left font-medium">Document</th>
-                                        <th className="px-4 py-2 text-right font-medium">Price</th>
+                                        <th className="px-4 py-3 text-left font-bold">Document</th>
+                                        <th className="px-4 py-3 text-right font-bold">Price</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y">
+                                <tbody className="divide-y text-foreground font-medium">
                                     {request.items && request.items.length > 0 ? (
                                         request.items.map((item) => (
-                                            <tr key={item.id} className="bg-card">
-                                                <td className="px-4 py-2">{item.document_type}</td>
-                                                <td className="px-4 py-2 text-right">
+                                            <tr key={item.id} className="bg-background/50">
+                                                <td className="px-4 py-3">{item.document_type}</td>
+                                                <td className="px-4 py-3 text-right">
                                                     {Number(item.price) > 0 || request.status !== 'PENDING' ? `₱${Number(item.price).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
-                                        <tr className="bg-card">
-                                            <td className="px-4 py-2">{request.document_type}</td>
-                                            <td className="px-4 py-2 text-right">
+                                        <tr className="bg-background/50">
+                                            <td className="px-4 py-3">{request.document_type}</td>
+                                            <td className="px-4 py-3 text-right">
                                                 {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                             </td>
                                         </tr>
                                     )}
-                                     <tr className="bg-muted/20 font-medium">
-                                        <td className="px-4 py-2 text-right">Total</td>
-                                        <td className="px-4 py-2 text-right">
+                                     <tr className="bg-secondary/20 font-bold border-t-2">
+                                        <td className="px-4 py-3 text-right uppercase text-xs tracking-wider">Total Amount</td>
+                                        <td className="px-4 py-3 text-right text-base text-primary">
                                             {Number(request.amount_due) > 0 || request.status !== 'PENDING' ? `₱${Number(request.amount_due).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                         </td>
                                     </tr>
@@ -342,17 +347,16 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             </table>
                         </div>
                     </CardContent>
-                </Card>
-
-                {/* FOOTER */}
-                <div className="text-center text-xs text-muted-foreground">
-                    <p>Issues with your request? Contact the Registrar.</p>
-                    <div className="flex justify-center gap-4 mt-2">
-                        <a href="mailto:registrar@udd.edu.ph" className="hover:text-primary transition-colors">registrar@udd.edu.ph</a>
-                        <span>•</span>
-                        <span>(075) 522-8295</span>
+                    <Separator className="opacity-50" />
+                    <div className="p-4 bg-muted/20 text-center">
+                         <p className="text-xs text-muted-foreground">Issues with your request? Contact the Registrar.</p>
+                         <div className="flex justify-center gap-4 mt-2 text-xs font-medium">
+                            <a href="mailto:registrar@udd.edu.ph" className="text-primary hover:underline transition-colors">registrar@udd.edu.ph</a>
+                            <span className="text-muted-foreground/30">•</span>
+                            <span>(075) 522-8295</span>
+                        </div>
                     </div>
-                </div>
+                </Card>
             </div>
         </div>
     );
