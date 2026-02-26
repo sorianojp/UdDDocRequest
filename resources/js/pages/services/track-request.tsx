@@ -18,21 +18,24 @@ export default function TrackRequest() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/50 via-background to-primary/50 dark:from-zinc-950 dark:to-zinc-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
             <Head title="Track Request" />
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-center">Track Your Request</CardTitle>
-                        <CardDescription className="text-center">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                <Card className="border-primary/10 shadow-huge backdrop-blur-sm bg-background/80">
+                    <CardHeader className="text-center">
+                        <div className="mx-auto mb-4 p-3 rounded-2xl bg-primary/10 text-primary w-fit">
+                            <Search className="h-10 w-10" />
+                        </div>
+                        <CardTitle className="text-2xl font-bold tracking-tight">Track Your Request</CardTitle>
+                        <CardDescription>
                             Enter your reference number to check the status of your document.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="reference_number">Reference Number</Label>
+                                <Label htmlFor="reference_number" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Reference Number</Label>
                                 <Input
                                     id="reference_number"
                                     name="reference_number"
@@ -41,20 +44,20 @@ export default function TrackRequest() {
                                     value={data.reference_number}
                                     onChange={(e) => setData('reference_number', e.target.value)}
                                     placeholder="REQ-XXXXXXXXXXXXX"
-                                    className="uppercase"
+                                    className="uppercase h-12 text-center text-lg font-mono tracking-widest border-primary/20 focus:border-primary focus:ring-primary/20"
                                 />
-                                {errors.reference_number && <p className="text-red-500 text-xs">{errors.reference_number}</p>}
+                                {errors.reference_number && <p className="text-red-500 text-xs text-center mt-2">{errors.reference_number}</p>}
                             </div>
 
-                            <Button type="submit" className="w-full" disabled={processing}>
+                            <Button type="submit" className="w-full h-12 text-base font-bold shadow-lg shadow-primary/25" disabled={processing}>
                                 {processing ? (
                                     <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                                         Checking...
                                     </>
                                 ) : (
                                     <>
-                                        <Search className="mr-2 h-4 w-4" />
+                                        <Search className="mr-2 h-5 w-5" />
                                         Track Request
                                     </>
                                 )}

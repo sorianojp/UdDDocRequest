@@ -3,7 +3,7 @@ import { DocumentRequest } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText } from 'lucide-react';
+import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText, Send } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { FormEventHandler, useState, Fragment } from 'react';
 import { Label } from '@/components/ui/label';
@@ -254,7 +254,11 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     </div>
 
                                     <Button type="submit" disabled={processing} className="w-full">
-                                        {processing && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+                                        {processing ? (
+                                            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                                        ) : (
+                                            <Send className="mr-2 h-4 w-4" />
+                                        )}
                                         Submit Payment Proof
                                     </Button>
                                 </form>
