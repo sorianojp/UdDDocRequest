@@ -10,7 +10,7 @@ return [
         'Certificate of Graduation' => ['label' => 'Certificate of Graduation'],
         'Certificate of Units Earned' => ['label' => 'Certificate of Units Earned'],
         'Certificate of GWA' => ['label' => 'Certificate of General Weighted Average'],
-        'Certificate of Authentication' => ['label' => 'Certificate of General Weighted Average'],
+        'Certificate of Authentication' => ['label' => 'Certificate of Authentication'],
     ],
     'default_price' => 0.00,
 ];
