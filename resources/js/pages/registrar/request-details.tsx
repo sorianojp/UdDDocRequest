@@ -292,6 +292,10 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Student ID</Label>
                                         <p className="font-medium">{request.student_id_number}</p>
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">Course</Label>
+                                        <p className="font-medium">{request.course || 'N/A'}</p>
+                                    </div>
                                     <div>
                                         <Label className="text-muted-foreground">Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>

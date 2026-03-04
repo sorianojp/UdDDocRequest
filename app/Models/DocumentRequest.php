@@ -18,6 +18,7 @@ class DocumentRequest extends Model
         'email',
         'mobile_number',
         'student_id_number',
+        'course',
         'document_type', // Keep for backward compatibility/summary
         'status',
         'deficiency_remarks',

@@ -8,8 +8,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2 } from 'lucide-react';
+import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Pricing {
     [key: string]: {
@@ -17,7 +18,7 @@ interface Pricing {
     };
 }
 
-export default function RequestForm({ pricing }: { pricing: Pricing }) {
+export default function RequestForm({ pricing, courses }: { pricing: Pricing, courses: string[] }) {
     const { data, setData, post, processing, errors } = useForm({
         last_name: '',
         first_name: '',
@@ -25,6 +26,7 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
         email: '',
         mobile_number: '',
         student_id_number: '',
+        course: '',
         document_types: [] as string[],
         school_id: null as File | null,
     });
@@ -181,6 +183,26 @@ export default function RequestForm({ pricing }: { pricing: Pricing }) {
                                                 <IdCard className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                             </div>
                                             {errors.student_id_number && <p className="text-red-500 text-xs font-medium">{errors.student_id_number}</p>}
+                                        </div>
+
+                                        <div className="space-y-2 md:col-span-2">
+                                            <Label htmlFor="course">Course</Label>
+                                            <Select value={data.course} onValueChange={(value) => setData('course', value)}>
+                                                <SelectTrigger id="course" className={cn("pl-9 relative", (errors as any).course && "border-red-500 focus-visible:ring-red-500")}>
+                                                    <div className="absolute left-3 top-2.5">
+                                                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                    <SelectValue placeholder="Select Course" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {courses.map((courseOption) => (
+                                                        <SelectItem key={courseOption} value={courseOption}>
+                                                            {courseOption}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            {(errors as any).course && <p className="text-red-500 text-xs font-medium">{(errors as any).course}</p>}
                                         </div>
                                     </div>
                                 </CardContent>

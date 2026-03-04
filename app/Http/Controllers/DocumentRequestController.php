@@ -16,6 +16,7 @@ class DocumentRequestController extends Controller
     {
         return Inertia::render('services/request-form', [
             'pricing' => config('document_pricing.documents', []),
+            'courses' => config('courses.list', []),
         ]);
     }
 
@@ -30,6 +31,7 @@ class DocumentRequestController extends Controller
             'email' => 'required|email|max:255',
             'mobile_number' => 'required|string|max:20',
             'student_id_number' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
             'document_types' => 'required|array|min:1',
             'document_types.*' => 'string',
             'school_id' => 'required|file|image|max:10240', // 10MB max
@@ -45,6 +47,7 @@ class DocumentRequestController extends Controller
             'email' => $validated['email'],
             'mobile_number' => $validated['mobile_number'],
             'student_id_number' => $validated['student_id_number'],
+            'course' => $validated['course'],
             'document_type' => count($validated['document_types']) > 1 
                 ? 'Multiple Documents' 
                 : $documents[$validated['document_types'][0]]['label'] ?? $validated['document_types'][0],

@@ -314,6 +314,10 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Student ID</p>
                                 <p className="font-semibold text-foreground">{request.student_id_number}</p>
                             </div>
+                            <div className="space-y-1 sm:col-span-2">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Course</p>
+                                <p className="font-semibold text-foreground">{request.course || 'N/A'}</p>
+                            </div>
                         </div>
                         <Separator className="opacity-50" />
                         <div className="rounded-lg border overflow-hidden">
