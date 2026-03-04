@@ -19,7 +19,8 @@ export interface DocumentRequest {
     | 'DEFICIENT'
     | 'READY'
     | 'CLAIMED'
-    | 'REJECTED';
+    | 'REJECTED'
+    | 'CANCELLED';
     deficiency_remarks?: string | null;
     claiming_date?: string | null;
     claimed_date?: string | null;

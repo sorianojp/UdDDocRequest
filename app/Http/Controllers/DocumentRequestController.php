@@ -244,4 +244,19 @@ class DocumentRequestController extends Controller
 
         return redirect()->back()->with('success', 'Request ' . $documentRequest->reference_number . ' marked as CLAIMED.');
     }
+
+    public function cancel($id)
+    {
+        $documentRequest = DocumentRequest::findOrFail($id);
+
+        if ($documentRequest->status !== 'PENDING') {
+            return redirect()->back()->with('error', 'Only pending requests can be cancelled.');
+        }
+
+        $documentRequest->update([
+            'status' => 'CANCELLED',
+        ]);
+
+        return redirect()->back()->with('success', 'Request cancelled successfully.');
+    }
 }

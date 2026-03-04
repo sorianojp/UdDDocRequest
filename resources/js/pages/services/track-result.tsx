@@ -3,7 +3,7 @@ import { DocumentRequest } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText, Send } from 'lucide-react';
+import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText, Send, XCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { FormEventHandler, useState, Fragment } from 'react';
 import { Label } from '@/components/ui/label';
@@ -137,6 +137,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'READY' && <CheckCircle className="h-10 w-10 text-primary" />}
                             {request.status === 'CLAIMED' && <FileText className="h-10 w-10 text-muted-foreground" />}
                             {request.status === 'REJECTED' && <AlertTriangle className="h-10 w-10 text-red-500" />}
+                            {request.status === 'CANCELLED' && <XCircle className="h-10 w-10 text-red-500" />}
                             {request.status === 'DEFICIENT' && <AlertCircle className="h-10 w-10 text-red-500" />}
                         </div>
                         <CardTitle className="text-xl font-bold">
@@ -158,6 +159,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 </div>
                             )}
                             {request.status === 'REJECTED' && 'Request Rejected'}
+                            {request.status === 'CANCELLED' && 'Request Cancelled'}
                             {request.status === 'DEFICIENT' && 'Deficiency Found'}
                         </CardTitle>
                         <CardDescription className="text-sm">
@@ -167,6 +169,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'PROCESSING' && 'Your documents are being prepared. We will notify you when it is ready.'}
                             {request.status === 'READY' && `Your documents are ready! You can claim them on ${new Date(request.claiming_date!).toLocaleDateString()}.`}
                             {request.status === 'DEFICIENT' && request.deficiency_remarks}
+                            {request.status === 'CANCELLED' && 'This request has been cancelled.'}
                         </CardDescription>
                     </CardHeader>
 
@@ -179,6 +182,23 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             >
                                 <FileText className="h-4 w-4 mr-2" />
                                 Download Claim Stub
+                            </Button>
+                        )}
+
+                        {request.status === 'PENDING' && (
+                             <Button 
+                                variant="destructive"
+                                size="lg" 
+                                className="w-full sm:w-auto"
+                                onClick={() => {
+                                    if (confirm('Are you sure you want to cancel this request?')) {
+                                        post(`/request/${request.id}/cancel`);
+                                    }
+                                }}
+                                disabled={processing}
+                            >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Cancel Request
                             </Button>
                         )}
                         

@@ -18,6 +18,7 @@ Route::get('/track', [DocumentRequestController::class, 'track'])->name('request
 Route::post('/track', [DocumentRequestController::class, 'checkStatus'])->name('request.check-status');
 Route::get('/track/{reference_number}', [DocumentRequestController::class, 'showStatus'])->name('request.show-status');
 Route::get('/request/{reference_number}/print-stub', [DocumentRequestController::class, 'printStub'])->name('request.print-stub');
+Route::post('/request/{id}/cancel', [DocumentRequestController::class, 'cancel'])->name('request.cancel');
 
 Route::get('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'show'])->name('request.payment');
 Route::post('/requests/{request}/payment', [App\Http\Controllers\PaymentController::class, 'store'])->name('request.payment.store');
