@@ -245,8 +245,8 @@ export default function RequestDetails({
                 {/* Show if no payment - Added for Admin visibility */}
 
 
-                <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-2/3 space-y-6">
+                <div className="flex flex-col gap-6">
+                <div className="w-full space-y-6">
                     <Card className={
                         data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : 
                         data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : 
@@ -286,17 +286,17 @@ export default function RequestDetails({
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                      <div>
                                         <Label className="text-muted-foreground">Student Name</Label>
-                                        <p className="font-medium">{request.student_name}</p>
+                                        <p className="font-bold text-xl">{request.student_name}</p>
                                     </div>
                                     <div>
                                         <Label className="text-muted-foreground">Student ID</Label>
-                                        <p className="font-medium">{request.student_id_number}</p>
+                                        <p className="font-bold text-xl">{request.student_id_number}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">Course</Label>
                                         <p className="font-medium">{request.course || 'N/A'}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
                                     </div>
@@ -312,15 +312,15 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Birthplace</Label>
                                         <p className="font-medium">{request.birthplace || 'N/A'}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">High School</Label>
                                         <p className="font-medium">{request.higschool || 'N/A'}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">High School Graduation Year</Label>
                                         <p className="font-medium">{request.hs_grad_year || 'N/A'}</p>
                                     </div>
-                                    <div className="md:col-span-2">
+                                    <div>
                                         <Label className="text-muted-foreground">Previous School</Label>
                                         <p className="font-medium">{request.prev_school || 'N/A'}</p>
                                     </div>
@@ -407,7 +407,7 @@ export default function RequestDetails({
 
                 </div>
 
-                <div className="w-full md:w-1/3 space-y-6">
+                <div className="w-full space-y-6">
                     {renderPaymentDetails()}
                     {/* Deficiency Card */}
                     {(() => {
@@ -446,23 +446,40 @@ export default function RequestDetails({
                                     <Label className="text-red-800 dark:text-red-300 flex items-center gap-1">
                                         <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
                                     </Label>
-                                    <div className="space-y-2">
-                                        {deficiencyOptions.map((option) => (
-                                            <div key={option} className="flex items-center space-x-2">
-                                                <Checkbox
-                                                    id={`deficiency-${option}`}
-                                                    checked={selectedDeficiencies.includes(option)}
-                                                    disabled={isReadOnly}
-                                                    onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
-                                                />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                                        {deficiencyOptions.map((option) => {
+                                            const isSelected = selectedDeficiencies.includes(option);
+                                            return (
                                                 <label
+                                                    key={option}
                                                     htmlFor={`deficiency-${option}`}
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    className={`flex items-start space-x-3 p-3 border rounded-md transition-colors cursor-pointer
+                                                        ${isSelected 
+                                                            ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/50' 
+                                                            : 'hover:bg-muted/50 border-border'}
+                                                        ${isReadOnly ? 'opacity-70 cursor-not-allowed' : ''}
+                                                    `}
                                                 >
-                                                    {option}
+                                                    <Checkbox
+                                                        id={`deficiency-${option}`}
+                                                        checked={isSelected}
+                                                        disabled={isReadOnly}
+                                                        onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
+                                                        className="mt-1"
+                                                    />
+                                                    <span className="text-sm leading-tight text-balance flex-1">
+                                                        {option.includes(':') ? (
+                                                            <>
+                                                                <span className="font-bold">{option.split(':')[0]}:</span>
+                                                                <span className="font-light italic text-muted-foreground ml-1">{option.split(':').slice(1).join(':')}</span>
+                                                            </>
+                                                        ) : (
+                                                            <span className="font-medium">{option}</span>
+                                                        )}
+                                                    </span>
                                                 </label>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
                                 </div>
