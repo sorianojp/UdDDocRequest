@@ -115,8 +115,12 @@ class DocumentRequestController extends Controller
         if ($status) {
             $normalizedStatus = strtoupper($status);
             $query->where('status', $normalizedStatus);
-        } elseif ($request->has('status') && $request->status !== 'ALL') {
+        } elseif ($request->filled('status') && $request->status !== 'ALL') {
              $query->where('status', $request->status);
+        }
+
+        if ($request->filled('course') && $request->course !== 'ALL') {
+            $query->where('course', $request->course);
         }
 
         if ($request->search) {
@@ -132,9 +136,11 @@ class DocumentRequestController extends Controller
 
         return Inertia::render('registrar/dashboard', [
             'requests' => $requests,
+            'courses' => config('courses.list', []),
             'filters' => [
                 'status' => $status ? strtoupper($status) : ($request->status ?? null),
                 'search' => $request->search,
+                'course' => $request->course,
             ],
         ]);
     }

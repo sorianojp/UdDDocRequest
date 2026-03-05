@@ -26,27 +26,30 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function RegistrarDashboard({
     requests,
     filters,
+    courses = [],
 }: {
-    requests: { data: DocumentRequest[]; links: any[] };
-    filters: { status?: string; search?: string };
+    requests: { data: DocumentRequest[]; links: any[]; total: number };
+    filters: { status?: string; search?: string; course?: string };
+    courses?: string[];
 }) {
     const { auth } = usePage<SharedData>().props;
     const [search, setSearch] = useState(filters.search || '');
+    const [courseFilter, setCourseFilter] = useState(filters.course || 'ALL');
 
-    // Debounce search
+    // Debounce search and course
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (search !== (filters.search || '')) {
+            if (search !== (filters.search || '') || courseFilter !== (filters.course || 'ALL')) {
                 router.get(
                     '/registrar/requests',
-                    { status: filters.status, search: search },
+                    { status: filters.status, search: search, course: courseFilter === 'ALL' ? '' : courseFilter },
                     { preserveState: true, preserveScroll: true, replace: true }
                 );
             }
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [search, filters.status]);
+    }, [search, courseFilter, filters.status]);
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -91,15 +94,28 @@ export default function RegistrarDashboard({
                        <CardTitle>
                            {filters.status 
                                ? `${filters.status.charAt(0).toUpperCase() + filters.status.slice(1).toLowerCase()} Requests`
-                               : 'All Requests'}
+                               : 'All Requests'} {`(${requests.total})`}
                        </CardTitle>
-                       <div className="w-full sm:w-auto">
+                       <div className="flex flex-col w-full sm:flex-row sm:w-auto items-center gap-2">
+                           <div className="w-full sm:w-auto">
+                               <Select value={courseFilter} onValueChange={setCourseFilter}>
+                                   <SelectTrigger className="w-full sm:w-auto min-w-[250px] max-w-full sm:max-w-[400px] lg:max-w-[600px]">
+                                       <SelectValue placeholder="Department/Course" />
+                                   </SelectTrigger>
+                                   <SelectContent className="max-w-[90vw] sm:max-w-none">
+                                       <SelectItem value="ALL">All Departments</SelectItem>
+                                       {courses?.map(c => (
+                                           <SelectItem key={c} value={c}>{c}</SelectItem>
+                                       ))}
+                                   </SelectContent>
+                               </Select>
+                           </div>
                            <Input 
                                type="search" 
                                placeholder="Search name, ID, or ref..." 
                                value={search}
                                onChange={(e) => setSearch(e.target.value)}
-                               className="max-w-xs"
+                               className="w-full sm:w-[250px]"
                            />
                        </div>
                     </CardHeader>
