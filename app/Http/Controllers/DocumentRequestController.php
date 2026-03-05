@@ -119,7 +119,28 @@ class DocumentRequestController extends Controller
              $query->where('status', $request->status);
         }
 
-        if ($request->filled('course') && $request->course !== 'ALL') {
+        if ($request->filled('category') && $request->category !== 'ALL') {
+            $coursesConfig = config('courses.list', []);
+            $categories = array_keys($coursesConfig);
+            
+            // Validate that the requested category exists in the config
+            if (in_array($request->category, $categories)) {
+                $coursesInCategory = $coursesConfig[$request->category] ?? [];
+                
+                // If a specific course is also filled, ensure it belongs to this category
+                if ($request->filled('course') && $request->course !== 'ALL') {
+                    if (in_array($request->course, $coursesInCategory)) {
+                        $query->where('course', $request->course);
+                    } else {
+                        // Edge case: someone filtered category UG but specific course is PG. Should return 0.
+                        $query->where('course', 'INVALID_COURSE_PREVENTION'); 
+                    }
+                } else {
+                    // Filter by all courses in this category
+                    $query->whereIn('course', $coursesInCategory);
+                }
+            }
+        } elseif ($request->filled('course') && $request->course !== 'ALL') {
             $query->where('course', $request->course);
         }
 
@@ -141,6 +162,7 @@ class DocumentRequestController extends Controller
                 'status' => $status ? strtoupper($status) : ($request->status ?? null),
                 'search' => $request->search,
                 'course' => $request->course,
+                'category' => $request->category,
             ],
         ]);
     }

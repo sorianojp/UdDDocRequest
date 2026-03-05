@@ -10,15 +10,15 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 interface Pricing {
     [key: string]: {
         label: string;
     };
 }
 
-export default function RequestForm({ pricing, courses }: { pricing: Pricing, courses: string[] }) {
+export default function RequestForm({ pricing, courses }: { pricing: Pricing, courses: Record<string, string[]> }) {
     const { data, setData, post, processing, errors } = useForm({
         last_name: '',
         first_name: '',
@@ -46,6 +46,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
     };
 
     const [preview, setPreview] = useState<string | null>(null);
+    const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -185,24 +186,47 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                             {errors.student_id_number && <p className="text-red-500 text-xs font-medium">{errors.student_id_number}</p>}
                                         </div>
 
-                                        <div className="space-y-2 md:col-span-2">
-                                            <Label htmlFor="course">Course</Label>
-                                            <Select value={data.course} onValueChange={(value) => setData('course', value)}>
-                                                <SelectTrigger id="course" className={cn("pl-9 relative", (errors as any).course && "border-red-500 focus-visible:ring-red-500")}>
-                                                    <div className="absolute left-3 top-2.5">
-                                                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                        <div className="space-y-4 md:col-span-2">
+                                            <div className="space-y-3">
+                                                <Label>Course Level</Label>
+                                                <RadioGroup 
+                                                    value={courseCategory} 
+                                                    onValueChange={(val) => {
+                                                        setCourseCategory(val);
+                                                        setData('course', ''); // Reset current selection
+                                                    }}
+                                                    className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0"
+                                                >
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="Undergraduate" id="r1" />
+                                                        <Label htmlFor="r1" className="font-normal cursor-pointer">Undergraduate</Label>
                                                     </div>
-                                                    <SelectValue placeholder="Select Course" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {courses.map((courseOption) => (
-                                                        <SelectItem key={courseOption} value={courseOption}>
-                                                            {courseOption}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {(errors as any).course && <p className="text-red-500 text-xs font-medium">{(errors as any).course}</p>}
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="Postgraduate" id="r2" />
+                                                        <Label htmlFor="r2" className="font-normal cursor-pointer">Postgraduate</Label>
+                                                    </div>
+                                                </RadioGroup>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label htmlFor="course">Course</Label>
+                                                <Select value={data.course} onValueChange={(value) => setData('course', value)}>
+                                                    <SelectTrigger id="course" className={cn("pl-9 relative", (errors as any).course && "border-red-500 focus-visible:ring-red-500")}>
+                                                        <div className="absolute left-3 top-2.5">
+                                                            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                                        </div>
+                                                        <SelectValue placeholder={`Select ${courseCategory} Course`} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {courses[courseCategory]?.map((courseOption) => (
+                                                            <SelectItem key={courseOption} value={courseOption}>
+                                                                {courseOption}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                {(errors as any).course && <p className="text-red-500 text-xs font-medium">{(errors as any).course}</p>}
+                                            </div>
                                         </div>
                                     </div>
                                 </CardContent>

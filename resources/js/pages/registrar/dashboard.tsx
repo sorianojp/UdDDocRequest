@@ -9,7 +9,9 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { ChevronRight, FileText, Filter } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -26,30 +28,36 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function RegistrarDashboard({
     requests,
     filters,
-    courses = [],
+    courses = {},
 }: {
     requests: { data: DocumentRequest[]; links: any[]; total: number };
-    filters: { status?: string; search?: string; course?: string };
-    courses?: string[];
+    filters: { status?: string; search?: string; course?: string; category?: string };
+    courses?: Record<string, string[]>;
 }) {
     const { auth } = usePage<SharedData>().props;
     const [search, setSearch] = useState(filters.search || '');
+    const [courseCategory, setCourseCategory] = useState<string>(filters.category || 'ALL');
     const [courseFilter, setCourseFilter] = useState(filters.course || 'ALL');
 
     // Debounce search and course
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (search !== (filters.search || '') || courseFilter !== (filters.course || 'ALL')) {
+            if (search !== (filters.search || '') || courseFilter !== (filters.course || 'ALL') || courseCategory !== (filters.category || 'ALL')) {
                 router.get(
                     '/registrar/requests',
-                    { status: filters.status, search: search, course: courseFilter === 'ALL' ? '' : courseFilter },
+                    { 
+                        status: filters.status, 
+                        search: search, 
+                        course: courseFilter === 'ALL' ? '' : courseFilter,
+                        category: courseCategory === 'ALL' ? '' : courseCategory
+                    },
                     { preserveState: true, preserveScroll: true, replace: true }
                 );
             }
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [search, courseFilter, filters.status]);
+    }, [search, courseFilter, courseCategory, filters.status]);
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -100,16 +108,50 @@ export default function RegistrarDashboard({
                            <div className="w-full sm:w-auto">
                                <Select value={courseFilter} onValueChange={setCourseFilter}>
                                    <SelectTrigger className="w-full sm:w-auto min-w-[250px] max-w-full sm:max-w-[400px] lg:max-w-[600px]">
-                                       <SelectValue placeholder="Department/Course" />
+                                       <SelectValue placeholder={courseCategory === 'ALL' ? "Department/Course" : `${courseCategory} Courses`} />
                                    </SelectTrigger>
                                    <SelectContent className="max-w-[90vw] sm:max-w-none">
                                        <SelectItem value="ALL">All Departments</SelectItem>
-                                       {courses?.map(c => (
-                                           <SelectItem key={c} value={c}>{c}</SelectItem>
-                                       ))}
+                                       {courseCategory === 'ALL' ? (
+                                           Object.entries(courses || {}).map(([category, crsList]) => (
+                                               <SelectGroup key={category}>
+                                                   <SelectLabel>{category}</SelectLabel>
+                                                   {crsList.map((c: string) => (
+                                                       <SelectItem key={c} value={c}>{c}</SelectItem>
+                                                   ))}
+                                               </SelectGroup>
+                                           ))
+                                       ) : (
+                                           courses[courseCategory]?.map((c: string) => (
+                                               <SelectItem key={c} value={c}>{c}</SelectItem>
+                                           ))
+                                       )}
                                    </SelectContent>
                                </Select>
                            </div>
+                           
+                           <RadioGroup 
+                               value={courseCategory} 
+                               onValueChange={(val) => {
+                                   setCourseCategory(val);
+                                   setCourseFilter('ALL'); // Reset specific course when changing category
+                               }}
+                               className="flex items-center space-x-4 border rounded-md px-3 h-9"
+                           >
+                               <div className="flex items-center space-x-2">
+                                   <RadioGroupItem value="ALL" id="cat-all" />
+                                   <Label htmlFor="cat-all" className="cursor-pointer">All Categories</Label>
+                               </div>
+                               <div className="flex items-center space-x-2">
+                                   <RadioGroupItem value="Undergraduate" id="cat-ug" />
+                                   <Label htmlFor="cat-ug" className="cursor-pointer">Undergrad</Label>
+                               </div>
+                               <div className="flex items-center space-x-2">
+                                   <RadioGroupItem value="Postgraduate" id="cat-pg" />
+                                   <Label htmlFor="cat-pg" className="cursor-pointer">Postgrad</Label>
+                               </div>
+                           </RadioGroup>
+
                            <Input 
                                type="search" 
                                placeholder="Search name, ID, or ref..." 
