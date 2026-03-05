@@ -3,7 +3,7 @@ import { DocumentRequest } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText, Send, XCircle } from 'lucide-react';
+import { FileText, Info, Clock, AlertTriangle, CheckCircle, Upload, AlertCircle, Check, Circle, CreditCard, Loader2, ArrowRight, ClipboardList, ReceiptText, Send, XCircle, User, IdCard, GraduationCap, Mail, MapPin, Building, Calendar } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { FormEventHandler, useState, Fragment } from 'react';
 import { Label } from '@/components/ui/label';
@@ -168,7 +168,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'VERIFYING_PAYMENT' && 'We are checking your payment proof. This usually takes 1-2 business days.'}
                             {request.status === 'PROCESSING' && 'Your documents are being prepared. We will notify you when it is ready.'}
                             {request.status === 'READY' && `Your documents are ready! You can claim them on ${new Date(request.claiming_date!).toLocaleDateString()}.`}
-                            {request.status === 'DEFICIENT' && request.deficiency_remarks}
+                            {request.status === 'DEFICIENT' && 'Please address the requirements below to proceed.'}
                             {request.status === 'CANCELLED' && 'This request has been cancelled.'}
                         </CardDescription>
                     </CardHeader>
@@ -201,8 +201,37 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 Cancel Request
                             </Button>
                         )}
-                        
-                        {/* PAYMENT SECTION */}
+
+                        {/* DEFICIENCY SECTION */}
+                        {request.status === 'DEFICIENT' && request.deficiency_remarks && (
+                            <div className="w-full space-y-4">
+                                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-xl p-5">
+                                    <div className="flex items-center gap-3 mb-4 text-red-800 dark:text-red-400">
+                                        <AlertCircle className="h-5 w-5" />
+                                        <h3 className="font-bold">Required Actions</h3>
+                                    </div>
+                                    
+                                    <div className="space-y-3">
+                                        {request.deficiency_remarks.split('|').map((remark, i) => (remark.trim() && (
+                                            <div key={i} className="flex gap-3 text-sm text-red-700 dark:text-red-300 bg-white/50 dark:bg-black/20 p-4 rounded-lg border border-red-100 dark:border-red-900/20 shadow-sm">
+                                                <div className="mt-1">
+                                                    <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                                                </div>
+                                                <p className="leading-relaxed font-medium">{remark.trim()}</p>
+                                            </div>
+                                        )))}
+                                    </div>
+
+                                    <div className="mt-6 pt-4 border-t border-red-200 dark:border-red-900/30">
+                                        <div className="flex items-start gap-2 text-xs text-red-600 dark:text-red-400 italic">
+                                            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                                            <p>Please coordinate with the Registrar's Office to resolve these deficiencies. Your request will remain on hold until cleared.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                        )}
                         {request.status === 'WAITING_FOR_PAYMENT' && (
                              <div className="w-full space-y-6">
                                 <div className="bg-secondary/50 p-4 rounded-lg flex justify-between items-center border border-primary/10">
@@ -292,7 +321,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
                                         <ReceiptText className="h-5 w-5" />
                                     </div>
-                                    <h3 className="font-semibold text-lg">Submitted Details</h3>
+                                    <h3 className="font-semibold">Submitted Details</h3>
                                 </div>
                                 <div className="bg-secondary/30 rounded-lg p-4 border text-sm space-y-3">
                                     <div className="grid grid-cols-2 gap-2 items-center">
@@ -321,48 +350,93 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
                                 <ClipboardList className="h-5 w-5" />
                             </div>
-                            <CardTitle className="text-lg">Request Summary</CardTitle>
+                            <CardTitle>Request Summary</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                            <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Student Name</p>
-                                <p className="font-semibold text-foreground uppercase">{request.student_name}</p>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <FileText className="h-3 w-3" /> Tracking Number
+                                    </p>
+                                    <p className="font-mono font-bold text-primary">{request.reference_number}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <Calendar className="h-3 w-3" /> Date Requested
+                                    </p>
+                                    <p className="font-semibold text-foreground">
+                                        {new Date(request.created_at).toLocaleDateString('en-US', { 
+                                            month: 'long', 
+                                            day: 'numeric', 
+                                            year: 'numeric' 
+                                        })}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Student ID</p>
-                                <p className="font-semibold text-foreground">{request.student_id_number}</p>
+                            <Separator className="opacity-50" />
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                    <User className="h-5 w-5" />
+                                </div>
+                                <h3 className="font-semibold">Student Information</h3>
                             </div>
-                            <div className="space-y-1 sm:col-span-2">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Course</p>
-                                <p className="font-semibold text-foreground">{request.course || 'N/A'}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <User className="h-3 w-3" /> Student Name
+                                    </p>
+                                    <p className="font-semibold text-foreground uppercase">{request.student_name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <IdCard className="h-3 w-3" /> Student ID
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.student_id_number}</p>
+                                </div>
+                                <div className="space-y-1 sm:col-span-2">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <GraduationCap className="h-3 w-3" /> Course
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.course || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1 sm:col-span-2">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <MapPin className="h-3 w-3" /> Address
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.address || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <Calendar className="h-3 w-3" /> Birthdate
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.birthdate || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <MapPin className="h-3 w-3" /> Birthplace
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.birthplace || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1 sm:col-span-2">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <Building className="h-3 w-3" /> High School
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.higschool || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1 sm:col-span-2">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <Calendar className="h-3 w-3" /> High School Graduation Year
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.hs_grad_year || 'N/A'}</p>
+                                </div>
+                                <div className="space-y-1 sm:col-span-2">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <Building className="h-3 w-3" /> Previous School
+                                    </p>
+                                    <p className="font-semibold text-foreground">{request.prev_school || 'N/A'}</p>
+                                </div>
                             </div>
-                            <div className="space-y-1 sm:col-span-2">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Address</p>
-                                <p className="font-semibold text-foreground">{request.address || 'N/A'}</p>
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Birthdate</p>
-                                <p className="font-semibold text-foreground">{request.birthdate || 'N/A'}</p>
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Birthplace</p>
-                                <p className="font-semibold text-foreground">{request.birthplace || 'N/A'}</p>
-                            </div>
-                            <div className="space-y-1 sm:col-span-2">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">High School</p>
-                                <p className="font-semibold text-foreground">{request.higschool || 'N/A'}</p>
-                            </div>
-                            <div className="space-y-1 sm:col-span-2">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">High School Graduation Year</p>
-                                <p className="font-semibold text-foreground">{request.hs_grad_year || 'N/A'}</p>
-                            </div>
-                            <div className="space-y-1 sm:col-span-2">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Previous School</p>
-                                <p className="font-semibold text-foreground">{request.prev_school || 'N/A'}</p>
-                            </div>
-                        </div>
                         <Separator className="opacity-50" />
                         <div className="rounded-lg border overflow-hidden">
                             <Table>
@@ -376,8 +450,15 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     {request.items && request.items.length > 0 ? (
                                         request.items.map((item) => (
                                             <TableRow key={item.id} className="bg-background/50">
-                                                <TableCell className="px-4 py-3">{item.document_type}</TableCell>
-                                                <TableCell className="px-4 py-3 text-right">
+                                                <TableCell className="px-4 py-3">
+                                                    <div>{item.document_type}</div>
+                                                    {item.purpose && (
+                                                        <div className="text-xs text-muted-foreground mt-1 italic">
+                                                            <span className="font-semibold not-italic">Purpose:</span> {item.purpose}
+                                                        </div>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-right align-top">
                                                     {Number(item.price) > 0 || request.status !== 'PENDING' ? `₱${Number(item.price).toFixed(2)}` : <span className="text-xs text-muted-foreground italic">Computing...</span>}
                                                 </TableCell>
                                             </TableRow>

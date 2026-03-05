@@ -19,7 +19,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save, Eye } from 'lucide-react';
+import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Save, Eye, User, FileText, GraduationCap, Mail, MapPin, Building, CreditCard, PackageCheck, ClipboardList, IdCard } from 'lucide-react';
 
 export default function RequestDetails({
     request,
@@ -58,7 +58,7 @@ export default function RequestDetails({
 
     const getSelectedDeficiencies = (): string[] => {
         if (!data.deficiency_remarks) return [];
-        return data.deficiency_remarks.split(',').map((s: string) => s.trim()).filter(Boolean);
+        return data.deficiency_remarks.split('|').map((s: string) => s.trim()).filter(Boolean);
     };
 
     const autoSave = (updates: Partial<typeof data>) => {
@@ -81,7 +81,7 @@ export default function RequestDetails({
         } else {
             current = current.filter((item: string) => item !== option);
         }
-        const newRemarks = current.join(', ');
+        const newRemarks = current.join('|');
         autoSave({ deficiency_remarks: newRemarks });
     };
 
@@ -159,9 +159,14 @@ export default function RequestDetails({
             }>
                 <CardHeader>
                     <div className="flex justify-between items-start">
-                        <div>
-                            <CardTitle>Payment Details</CardTitle>
-                            <CardDescription>Payment information and proof.</CardDescription>
+                        <div className="flex items-center gap-2 text-foreground">
+                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                <CreditCard className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <CardTitle>Payment Details</CardTitle>
+                                <CardDescription>Payment information and proof.</CardDescription>
+                            </div>
                         </div>
                         <Badge variant={
                             request.payment.status === 'verified' ? 'success' : 
@@ -175,11 +180,11 @@ export default function RequestDetails({
                     <div className="grid grid-cols-1 gap-4 items-start">
                         <div>
                             <Label className="text-muted-foreground">Amount</Label>
-                            <p className="font-medium">₱{request.payment.amount}</p>
+                            <p className="font-bold">₱{request.payment.amount}</p>
                         </div>
                         <div>
                             <Label className="text-muted-foreground">Bank Reference No.</Label>
-                            <p className="font-mono text-sm font-medium">{request.payment.reference_number}</p>
+                            <p className="font-mono text-sm font-bold">{request.payment.reference_number}</p>
                         </div>
                         <div>
                             <Label className="text-muted-foreground">Proof of Payment</Label>
@@ -246,8 +251,9 @@ export default function RequestDetails({
 
 
                 <div className="flex flex-col gap-6">
-                <div className="w-full space-y-6">
-                    <Card className={
+                    {renderPaymentDetails()}
+                    <div className="w-full space-y-6">
+                        <Card className={
                         data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : 
                         data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : 
                         data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : 
@@ -258,11 +264,16 @@ export default function RequestDetails({
                     }>
                         <CardHeader>
                             <div className="flex justify-between items-start">
-                                <div>
-                                    <CardTitle>Request Details</CardTitle>
-                                    <CardDescription>
-                                        Detailed information about the student request.
-                                    </CardDescription>
+                                <div className="flex items-center gap-2 text-foreground">
+                                    <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                        <FileText className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <CardTitle>Request Details</CardTitle>
+                                        <CardDescription>
+                                            Detailed information about the student request.
+                                        </CardDescription>
+                                    </div>
                                 </div>
                                 {getStatusBadge(request.status)}
                             </div>
@@ -270,65 +281,75 @@ export default function RequestDetails({
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label className="text-muted-foreground">Reference Number</Label>
-                                    <p className="font-mono text-lg font-medium">{request.reference_number}</p>
+                                    <Label className="text-muted-foreground flex items-center gap-1.5"><IdCard className="h-3.5 w-3.5" /> Reference Number</Label>
+                                    <p className="font-mono text-lg font-bold">{request.reference_number}</p>
                                 </div>
                                 <div>
-                                    <Label className="text-muted-foreground">Date Requested</Label>
-                                    <p className="text-lg">{new Date(request.created_at).toLocaleDateString()}</p>
+                                    <Label className="text-muted-foreground flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> Date Requested</Label>
+                                    <p className="text-lg font-bold">{new Date(request.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>
 
                             <Separator />
 
                             <div className="space-y-4">
-                                <h3 className="font-semibold">Student Information</h3>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                        <User className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="font-semibold">Student Information</h3>
+                                </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                      <div>
-                                        <Label className="text-muted-foreground">Student Name</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><User className="h-3.5 w-3.5" /> Student Name</Label>
                                         <p className="font-bold text-xl">{request.student_name}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Student ID</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><IdCard className="h-3.5 w-3.5" /> Student ID</Label>
                                         <p className="font-bold text-xl">{request.student_id_number}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Course</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5" /> Course</Label>
                                         <p className="font-medium">{request.course || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Email</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <Label className="text-muted-foreground">Address</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Address</Label>
                                         <p className="font-medium">{request.address || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Birthdate</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> Birthdate</Label>
                                         <p className="font-medium">{request.birthdate || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Birthplace</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Birthplace</Label>
                                         <p className="font-medium">{request.birthplace || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">High School</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><Building className="h-3.5 w-3.5" /> High School</Label>
                                         <p className="font-medium">{request.higschool || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">High School Graduation Year</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> High School Graduation Year</Label>
                                         <p className="font-medium">{request.hs_grad_year || 'N/A'}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-muted-foreground">Previous School</Label>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><Building className="h-3.5 w-3.5" /> Previous School</Label>
                                         <p className="font-medium">{request.prev_school || 'N/A'}</p>
                                     </div>
                                 </div>
                                 
                                 <Separator />
                                 
-                                <h3 className="font-semibold">Requested Documents</h3>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                        <ClipboardList className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="font-semibold text-lg">Requested Documents</h3>
+                                </div>
                                 <div className="border rounded-md overflow-hidden dark:border-border">
                                     <Table>
                                         <TableHeader className="bg-muted/50">
@@ -415,7 +436,6 @@ export default function RequestDetails({
                 </div>
 
                 <div className="w-full space-y-6">
-                    {renderPaymentDetails()}
                     {/* Deficiency Card */}
                     {(() => {
                         const isDeficiencyDisabled = isReadOnly || (data.status !== 'PENDING' && data.status !== 'DEFICIENT');
@@ -442,6 +462,9 @@ export default function RequestDetails({
                                     }
                                 }}
                             />
+                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                <AlertTriangle className="h-5 w-5" />
+                            </div>
                             <div>
                                 <CardTitle>Has deficiency?</CardTitle>
                                 <CardDescription>Check if documents are missing.</CardDescription>
@@ -454,27 +477,33 @@ export default function RequestDetails({
                                         <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
                                     </Label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                                        {deficiencyOptions.map((option) => {
+                                        {deficiencyOptions.map((option, index) => {
                                             const isSelected = selectedDeficiencies.includes(option);
+                                            const checkboxId = `deficiency-${index}`;
                                             return (
-                                                <label
-                                                    key={option}
-                                                    htmlFor={`deficiency-${option}`}
-                                                    className={`flex items-start space-x-3 p-3 border rounded-md transition-colors cursor-pointer
+                                                <div
+                                                    key={index}
+                                                    className={`relative flex items-start space-x-3 p-3 border rounded-md transition-colors
                                                         ${isSelected 
                                                             ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/50' 
                                                             : 'hover:bg-muted/50 border-border'}
-                                                        ${isReadOnly ? 'opacity-70 cursor-not-allowed' : ''}
+                                                        ${isReadOnly ? 'opacity-70' : 'cursor-pointer'}
                                                     `}
+                                                    onClick={() => !isReadOnly && toggleDeficiency(option, !isSelected)}
                                                 >
                                                     <Checkbox
-                                                        id={`deficiency-${option}`}
+                                                        id={checkboxId}
                                                         checked={isSelected}
                                                         disabled={isReadOnly}
                                                         onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
                                                         className="mt-1"
+                                                        onClick={(e) => e.stopPropagation()} // Prevent double toggle
                                                     />
-                                                    <span className="text-sm leading-tight text-balance flex-1">
+                                                    <Label
+                                                        htmlFor={checkboxId}
+                                                        className="text-sm leading-tight text-balance flex-1 cursor-pointer select-none"
+                                                        onClick={(e) => e.stopPropagation()} // Let the div handle it or the label handle it
+                                                    >
                                                         {option.includes(':') ? (
                                                             <>
                                                                 <span className="font-bold">{option.split(':')[0]}:</span>
@@ -483,8 +512,8 @@ export default function RequestDetails({
                                                         ) : (
                                                             <span className="font-medium">{option}</span>
                                                         )}
-                                                    </span>
-                                                </label>
+                                                    </Label>
+                                                </div>
                                             );
                                         })}
                                     </div>
@@ -499,9 +528,14 @@ export default function RequestDetails({
                     {/* Ready for Pickup Card */}
                     {/* Ready for Pickup Card */}
                     <Card className={`${data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : ''} ${isActionsDisabled ? 'bg-muted/50' : ''}`}>
-                        <CardHeader className="pb-3">
-                            <CardTitle>Ready for pickup</CardTitle>
-                            <CardDescription>Set a date for claiming.</CardDescription>
+                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-3">
+                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                <Calendar className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <CardTitle>Ready for pickup</CardTitle>
+                                <CardDescription>Set a date for claiming.</CardDescription>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -528,7 +562,10 @@ export default function RequestDetails({
                     {/* Claimed Card */}
                     {/* Claimed Card */}
                     <Card className={`${data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : ''} ${isActionsDisabled ? 'bg-muted/50' : ''}`}>
-                        <CardHeader className="pb-3">
+                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-3">
+                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                <PackageCheck className="h-5 w-5" />
+                            </div>
                             <CardTitle>Claimed?</CardTitle>
                         </CardHeader>
                         <CardContent>

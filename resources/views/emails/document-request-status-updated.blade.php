@@ -80,7 +80,7 @@
             @if($documentRequest->status === 'DEFICIENT' && $documentRequest->deficiency_remarks)
                 <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-top: 10px;">
                     <strong>Deficiency Remarks:</strong><br>
-                    {{ $documentRequest->deficiency_remarks }}
+                    {!! str_replace('|', ', ', e($documentRequest->deficiency_remarks)) !!}
                 </div>
             @endif
 
