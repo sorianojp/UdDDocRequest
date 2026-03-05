@@ -23,11 +23,9 @@ import { AlertTriangle, Calendar, CheckCircle, Clock, Plus, X, ExternalLink, Sav
 
 export default function RequestDetails({
     request,
-    school_id_url,
     deficiencies,
 }: {
     request: DocumentRequest;
-    school_id_url: string;
     deficiencies: string[];
 }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -298,45 +296,9 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Course</Label>
                                         <p className="font-medium">{request.course || 'N/A'}</p>
                                     </div>
-                                    <div>
+                                    <div className="md:col-span-2">
                                         <Label className="text-muted-foreground">Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <Label className="text-muted-foreground">School ID</Label>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="outline" size="sm" className="w-full mt-1">
-                                                    <Eye className="mr-2 h-4 w-4" /> Verify ID
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-3xl">
-                                                <DialogHeader>
-                                                    <DialogTitle>School ID Verification</DialogTitle>
-                                                    <DialogDescription>
-                                                        Student ID: {request.student_id_number}
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="flex justify-center p-4 bg-muted/50 rounded-lg">
-                                                    <img
-                                                        src={school_id_url}
-                                                        alt="Student School ID"
-                                                        className="max-h-[80vh] object-contain rounded"
-                                                    />
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                        
-                                        {data.status === 'PENDING' && !isReadOnly && (
-                                            <Button 
-                                                variant="destructive" 
-                                                size="sm" 
-                                                className="w-full mt-2"
-                                                onClick={handleRejectRequest}
-                                            >
-                                                <X className="mr-2 h-4 w-4" /> Reject
-                                            </Button>
-                                        )}
                                     </div>
                                 </div>
                                 
@@ -537,6 +499,18 @@ export default function RequestDetails({
                             )}
                         </CardContent>
                     </Card>
+
+                    {data.status === 'PENDING' && !isReadOnly && (
+                        <div>
+                            <Button 
+                                variant="destructive" 
+                                className="w-full"
+                                onClick={handleRejectRequest}
+                            >
+                                <X className="mr-2 h-4 w-4" /> Reject Request
+                            </Button>
+                        </div>
+                    )}
 
                 </div>
             </div>

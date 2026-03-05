@@ -34,10 +34,7 @@ class DocumentRequestController extends Controller
             'course' => 'required|string|max:255',
             'document_types' => 'required|array|min:1',
             'document_types.*' => 'string',
-            'school_id' => 'required|file|image|max:10240', // 10MB max
         ]);
-
-        $path = $request->file('school_id')->store('school_ids', 'public');
 
         // Create the main request (summary style for document_type)
         $documentRequest = DocumentRequest::create([
@@ -51,7 +48,7 @@ class DocumentRequestController extends Controller
             'document_type' => count($validated['document_types']) > 1 
                 ? 'Multiple Documents' 
                 : $documents[$validated['document_types'][0]]['label'] ?? $validated['document_types'][0],
-            'school_id_path' => $path,
+            'school_id_path' => 'N/A',
         ]);
 
         // Create items
@@ -173,7 +170,6 @@ class DocumentRequestController extends Controller
         
         return Inertia::render('registrar/request-details', [
             'request' => $request,
-            'school_id_url' => Storage::url($request->school_id_path),
             'deficiencies' => config('deficiencies.list', []),
         ]);
     }

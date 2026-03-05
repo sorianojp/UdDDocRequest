@@ -28,7 +28,6 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
         student_id_number: '',
         course: '',
         document_types: [] as string[],
-        school_id: null as File | null,
     });
 
     const documents = Object.entries(pricing).map(([id, details]) => ({
@@ -45,7 +44,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
         }
     };
 
-    const [preview, setPreview] = useState<string | null>(null);
+
     const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
 
     const submit: FormEventHandler = (e) => {
@@ -53,13 +52,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
         post(request.store.url());
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setData('school_id', file);
-            setPreview(URL.createObjectURL(file));
-        }
-    };
+
 
     return (
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/50 via-background to-primary/50 dark:from-zinc-950 dark:to-zinc-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -232,48 +225,6 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                 </CardContent>
                             </Card>
 
-                            {/* ID Upload Card */}
-                            <Card>
-                                <CardHeader className="pb-4">
-                                     <div className="flex items-center gap-2 text-foreground">
-                                        <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
-                                            <IdCard className="h-5 w-5" />
-                                        </div>
-                                        <div>
-                                            <CardTitle>Identity Verification</CardTitle>
-                                            <CardDescription>Upload a clear copy of your School ID</CardDescription>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="relative">
-                                        <Label
-                                            htmlFor="file-upload"
-                                            className={cn(
-                                                "flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed rounded-xl cursor-pointer transition-colors bg-muted/20 hover:bg-muted/50",
-                                                errors.school_id ? "border-red-300" : "border-muted-foreground/25"
-                                            )}
-                                        >
-                                            {preview ? (
-                                                <div className="relative group">
-                                                    <img src={preview} alt="ID Preview" className="h-40 w-auto rounded-lg shadow-md object-cover" />
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg text-white font-medium text-xs">
-                                                        Change File
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="text-center space-y-2">
-                                                    <Upload className="mx-auto h-8 w-8 text-muted-foreground/50" />
-                                                    <div className="text-sm font-medium text-primary">Click to upload or drag and drop</div>
-                                                    <p className="text-xs text-muted-foreground">PNG, JPG or PDF (MAX. 10MB)</p>
-                                                </div>
-                                            )}
-                                            <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept="image/*,.pdf" />
-                                        </Label>
-                                    </div>
-                                    {errors.school_id && <p className="mt-2 text-red-500 text-xs font-medium text-center">{errors.school_id}</p>}
-                                </CardContent>
-                            </Card>
                         </div>
 
                         {/* Right Section: Document Selection */}

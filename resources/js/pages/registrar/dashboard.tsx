@@ -98,13 +98,45 @@ export default function RegistrarDashboard({
 
 
                 <Card>
-                    <CardHeader className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 pb-4">
-                       <CardTitle>
+                    <CardHeader className="flex flex-col sm:flex-row items-start justify-between space-y-4 sm:space-y-0 pb-4">
+                       <CardTitle className="pt-2">
                            {filters.status 
                                ? `${filters.status.charAt(0).toUpperCase() + filters.status.slice(1).toLowerCase()} Requests`
                                : 'All Requests'} {`(${requests.total})`}
                        </CardTitle>
-                       <div className="flex flex-col w-full sm:flex-row sm:w-auto items-center gap-2">
+                       <div className="flex flex-col w-full sm:w-auto items-start sm:items-end gap-3">
+                           <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-2">
+                               <RadioGroup 
+                                   value={courseCategory} 
+                                   onValueChange={(val) => {
+                                       setCourseCategory(val);
+                                       setCourseFilter('ALL'); // Reset specific course when changing category
+                                   }}
+                                   className="flex items-center space-x-4 border rounded-md px-3 h-9 w-full sm:w-auto justify-center sm:justify-start"
+                               >
+                                   <div className="flex items-center space-x-2">
+                                       <RadioGroupItem value="ALL" id="cat-all" />
+                                       <Label htmlFor="cat-all" className="cursor-pointer">All</Label>
+                                   </div>
+                                   <div className="flex items-center space-x-2">
+                                       <RadioGroupItem value="Undergraduate" id="cat-ug" />
+                                       <Label htmlFor="cat-ug" className="cursor-pointer">Undergrad</Label>
+                                   </div>
+                                   <div className="flex items-center space-x-2">
+                                       <RadioGroupItem value="Postgraduate" id="cat-pg" />
+                                       <Label htmlFor="cat-pg" className="cursor-pointer">Postgrad</Label>
+                                   </div>
+                               </RadioGroup>
+
+                               <Input 
+                                   type="search" 
+                                   placeholder="Search name, ID, or ref..." 
+                                   value={search}
+                                   onChange={(e) => setSearch(e.target.value)}
+                                   className="w-full sm:w-[250px]"
+                               />
+                           </div>
+                           
                            <div className="w-full sm:w-auto">
                                <Select value={courseFilter} onValueChange={setCourseFilter}>
                                    <SelectTrigger className="w-full sm:w-auto min-w-[250px] max-w-full sm:max-w-[400px] lg:max-w-[600px]">
@@ -129,36 +161,6 @@ export default function RegistrarDashboard({
                                    </SelectContent>
                                </Select>
                            </div>
-                           
-                           <RadioGroup 
-                               value={courseCategory} 
-                               onValueChange={(val) => {
-                                   setCourseCategory(val);
-                                   setCourseFilter('ALL'); // Reset specific course when changing category
-                               }}
-                               className="flex items-center space-x-4 border rounded-md px-3 h-9"
-                           >
-                               <div className="flex items-center space-x-2">
-                                   <RadioGroupItem value="ALL" id="cat-all" />
-                                   <Label htmlFor="cat-all" className="cursor-pointer">All Categories</Label>
-                               </div>
-                               <div className="flex items-center space-x-2">
-                                   <RadioGroupItem value="Undergraduate" id="cat-ug" />
-                                   <Label htmlFor="cat-ug" className="cursor-pointer">Undergrad</Label>
-                               </div>
-                               <div className="flex items-center space-x-2">
-                                   <RadioGroupItem value="Postgraduate" id="cat-pg" />
-                                   <Label htmlFor="cat-pg" className="cursor-pointer">Postgrad</Label>
-                               </div>
-                           </RadioGroup>
-
-                           <Input 
-                               type="search" 
-                               placeholder="Search name, ID, or ref..." 
-                               value={search}
-                               onChange={(e) => setSearch(e.target.value)}
-                               className="w-full sm:w-[250px]"
-                           />
                        </div>
                     </CardHeader>
                     <CardContent>
