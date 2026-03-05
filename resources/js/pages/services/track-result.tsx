@@ -380,9 +380,9 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                     <div className="p-4 bg-muted/20 text-center">
                          <p className="text-xs text-muted-foreground">Issues with your request? Contact the Registrar.</p>
                          <div className="flex justify-center gap-4 mt-2 text-xs font-medium">
-                            <a href="mailto:registrar@udd.edu.ph" className="text-primary hover:underline transition-colors">registrar@udd.edu.ph</a>
+                            <a href="mailto:info@cdd.edu.ph" className="text-primary hover:underline transition-colors">registrar@udd.edu.ph</a>
                             <span className="text-muted-foreground/30">•</span>
-                            <span>(075) 522-8295</span>
+                            <span>(075) 523 2000</span>
                         </div>
                     </div>
                 </Card>
