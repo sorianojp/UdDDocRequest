@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap } from 'lucide-react';
+import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap, MapPin, Calendar, Building } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -27,6 +27,12 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
         mobile_number: '',
         student_id_number: '',
         course: '',
+        address: '',
+        birthdate: '',
+        birthplace: '',
+        higschool: '',
+        hs_grad_year: '',
+        prev_school: '',
         document_types: [] as string[],
     });
 
@@ -171,12 +177,106 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                                     id="student_id_number"
                                                     value={data.student_id_number}
                                                     onChange={(e) => setData('student_id_number', e.target.value)}
-                                                    placeholder="2023-12345"
+                                                    placeholder="26-1234-567"
                                                     className={cn("pl-9", errors.student_id_number && "border-red-500 focus-visible:ring-red-500")}
                                                 />
                                                 <IdCard className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                             </div>
                                             {errors.student_id_number && <p className="text-red-500 text-xs font-medium">{errors.student_id_number}</p>}
+                                        </div>
+
+                                        <Separator className="md:col-span-2 opacity-50" />
+
+                                        <div className="space-y-2 md:col-span-2">
+                                            <Label htmlFor="address">Address</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="address"
+                                                    value={data.address}
+                                                    onChange={(e) => setData('address', e.target.value)}
+                                                    placeholder="123 Main St, City"
+                                                    className={cn("pl-9", (errors as any).address && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).address && <p className="text-red-500 text-xs font-medium">{(errors as any).address}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="birthdate">Birthdate</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="birthdate"
+                                                    type="date"
+                                                    value={data.birthdate}
+                                                    onChange={(e) => setData('birthdate', e.target.value)}
+                                                    className={cn("pl-9", (errors as any).birthdate && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).birthdate && <p className="text-red-500 text-xs font-medium">{(errors as any).birthdate}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="birthplace">Birthplace</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="birthplace"
+                                                    value={data.birthplace}
+                                                    onChange={(e) => setData('birthplace', e.target.value)}
+                                                    placeholder="City, Province"
+                                                    className={cn("pl-9", (errors as any).birthplace && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).birthplace && <p className="text-red-500 text-xs font-medium">{(errors as any).birthplace}</p>}
+                                        </div>
+
+                                        <Separator className="md:col-span-2 opacity-50" />
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="higschool">High School</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="higschool"
+                                                    value={data.higschool}
+                                                    onChange={(e) => setData('higschool', e.target.value)}
+                                                    placeholder="High School Name"
+                                                    className={cn("pl-9", (errors as any).higschool && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Building className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).higschool && <p className="text-red-500 text-xs font-medium">{(errors as any).higschool}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="hs_grad_year">HS Graduation Year</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="hs_grad_year"
+                                                    value={data.hs_grad_year}
+                                                    onChange={(e) => setData('hs_grad_year', e.target.value)}
+                                                    placeholder="2020"
+                                                    className={cn("pl-9", (errors as any).hs_grad_year && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).hs_grad_year && <p className="text-red-500 text-xs font-medium">{(errors as any).hs_grad_year}</p>}
+                                        </div>
+
+                                        <div className="space-y-2 md:col-span-2">
+                                            <Label htmlFor="prev_school">Previous School</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="prev_school"
+                                                    value={data.prev_school}
+                                                    onChange={(e) => setData('prev_school', e.target.value)}
+                                                    placeholder="Previous School Name"
+                                                    className={cn("pl-9", (errors as any).prev_school && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <Building className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            {(errors as any).prev_school && <p className="text-red-500 text-xs font-medium">{(errors as any).prev_school}</p>}
                                         </div>
 
                                         <div className="space-y-4 md:col-span-2">
@@ -236,7 +336,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                             <IdCard className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <CardTitle>Requirements</CardTitle>
+                                            <CardTitle>Documents</CardTitle>
                                             <CardDescription>Select the documents you wish to request.</CardDescription>
                                         </div>
                                     </div>

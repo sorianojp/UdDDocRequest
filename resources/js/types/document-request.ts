@@ -10,6 +10,12 @@ export interface DocumentRequest {
     middle_name?: string | null;
     email?: string | null;
     student_id_number: string;
+    address: string;
+    birthdate: string;
+    birthplace: string;
+    higschool?: string | null;
+    hs_grad_year?: string | null;
+    prev_school?: string | null;
     course: string;
     document_type: string;
     status: 'PENDING'

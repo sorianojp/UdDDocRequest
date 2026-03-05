@@ -300,6 +300,30 @@ export default function RequestDetails({
                                         <Label className="text-muted-foreground">Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">Address</Label>
+                                        <p className="font-medium">{request.address || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Birthdate</Label>
+                                        <p className="font-medium">{request.birthdate || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-muted-foreground">Birthplace</Label>
+                                        <p className="font-medium">{request.birthplace || 'N/A'}</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">High School</Label>
+                                        <p className="font-medium">{request.higschool || 'N/A'}</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">High School Graduation Year</Label>
+                                        <p className="font-medium">{request.hs_grad_year || 'N/A'}</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <Label className="text-muted-foreground">Previous School</Label>
+                                        <p className="font-medium">{request.prev_school || 'N/A'}</p>
+                                    </div>
                                 </div>
                                 
                                 <Separator />

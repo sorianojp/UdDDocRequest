@@ -338,6 +338,30 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                 <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Course</p>
                                 <p className="font-semibold text-foreground">{request.course || 'N/A'}</p>
                             </div>
+                            <div className="space-y-1 sm:col-span-2">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Address</p>
+                                <p className="font-semibold text-foreground">{request.address || 'N/A'}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Birthdate</p>
+                                <p className="font-semibold text-foreground">{request.birthdate || 'N/A'}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Birthplace</p>
+                                <p className="font-semibold text-foreground">{request.birthplace || 'N/A'}</p>
+                            </div>
+                            <div className="space-y-1 sm:col-span-2">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">High School</p>
+                                <p className="font-semibold text-foreground">{request.higschool || 'N/A'}</p>
+                            </div>
+                            <div className="space-y-1 sm:col-span-2">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">High School Graduation Year</p>
+                                <p className="font-semibold text-foreground">{request.hs_grad_year || 'N/A'}</p>
+                            </div>
+                            <div className="space-y-1 sm:col-span-2">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Previous School</p>
+                                <p className="font-semibold text-foreground">{request.prev_school || 'N/A'}</p>
+                            </div>
                         </div>
                         <Separator className="opacity-50" />
                         <div className="rounded-lg border overflow-hidden">

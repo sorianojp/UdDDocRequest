@@ -18,6 +18,12 @@ class DocumentRequest extends Model
         'email',
         'mobile_number',
         'student_id_number',
+        'address',
+        'birthdate',
+        'birthplace',
+        'higschool',
+        'hs_grad_year',
+        'prev_school',
         'course',
         'document_type', // Keep for backward compatibility/summary
         'status',

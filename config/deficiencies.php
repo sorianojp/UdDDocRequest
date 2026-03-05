@@ -3,15 +3,6 @@
 return [
     'list' => [
         'OTR FROM PREVIOUS SCHOOL',
-        'FORM 137',
-        'EXIT INTERVIEW FORM (GUIDANCE)',
-        'INTERVIEW AND SIGNATURE (DEAN)',
-        'CLEARANCE FORM (REGISTRAR)',
-        'APPROVAL FORM FOR BOARD EXAM (REGISTRAR)',
-        'FINAL APPROVAL BY PRESIDENT (ACAD)',
-        'AFFIDAVIT OF LOST/DAMAGED ID',
-        'AFFDAVIT OF MUTILATION',
-        'DIPLOMA',
-        'SUMMARY OF RLE',
+        'FORM 137'
     ],
 ];
