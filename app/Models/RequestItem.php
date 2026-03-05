@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RequestItem extends Model
 {
-    protected $fillable = ['document_request_id', 'document_type', 'price'];
+    protected $fillable = ['document_request_id', 'document_type', 'price', 'purpose'];
 
     public function documentRequest()
     {

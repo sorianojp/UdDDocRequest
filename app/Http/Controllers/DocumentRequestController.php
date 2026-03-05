@@ -40,6 +40,8 @@ class DocumentRequestController extends Controller
             'course' => 'required|string|max:255',
             'document_types' => 'required|array|min:1',
             'document_types.*' => 'string',
+            'purposes' => 'required|array',
+            'purposes.*' => 'required|string|max:1000',
         ]);
 
         // Create the main request (summary style for document_type)
@@ -68,6 +70,7 @@ class DocumentRequestController extends Controller
         foreach ($validated['document_types'] as $type) {
             $documentRequest->items()->create([
                 'document_type' => $documents[$type]['label'] ?? $type,
+                'purpose' => $validated['purposes'][$type] ?? null,
                 'price' => 0.00, // Registrar sets this later
             ]);
         }

@@ -34,6 +34,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
         hs_grad_year: '',
         prev_school: '',
         document_types: [] as string[],
+        purposes: {} as Record<string, string>,
     });
 
     const documents = Object.entries(pricing).map(([id, details]) => ({
@@ -42,13 +43,32 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
     }));
 
     const toggleDocument = (id: string, checked: boolean) => {
-        const current = [...data.document_types];
+        const currentTypes = [...data.document_types];
         if (checked) {
-            setData('document_types', [...current, id]);
+            setData('document_types', [...currentTypes, id]);
         } else {
-            setData('document_types', current.filter(item => item !== id));
+            const nextPurposes = { ...data.purposes };
+            delete nextPurposes[id];
+            
+            setData(prev => ({
+                ...prev,
+                document_types: currentTypes.filter(item => item !== id),
+                purposes: nextPurposes
+            }));
         }
     };
+
+    const handlePurposeChange = (id: string, value: string) => {
+        setData(prev => ({
+            ...prev,
+            purposes: {
+                ...prev.purposes,
+                [id]: value
+            }
+        }));
+    };
+
+    const isSubmitDisabled = processing || data.document_types.length === 0 || data.document_types.some(id => !data.purposes[id] || data.purposes[id].trim() === '');
 
 
     const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
@@ -345,25 +365,52 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                     <Badge>
                                         {data.document_types.length} Selected
                                     </Badge>
-                                    <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                                         {documents.map((doc) => {
                                             const isSelected = data.document_types.includes(doc.id);
+                                            const purposeError = (errors as any)[`purposes.${doc.id}`];
+                                            
                                             return (
-                                                <div
-                                                    key={doc.id}
-                                                    className={cn(
-                                                        "flex items-center space-x-2 p-2 rounded-lg",
-                                                        isSelected
-                                                            ? "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80"
-                                                            : "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"
+                                                <div key={doc.id} className="space-y-2">
+                                                    <div
+                                                        className={cn(
+                                                            "flex items-center space-x-2 p-3 rounded-lg transition-colors",
+                                                            isSelected
+                                                                ? "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80"
+                                                                : "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"
+                                                        )}
+                                                    >
+                                                        <Checkbox
+                                                            id={`doc-${doc.id}`}
+                                                            checked={isSelected}
+                                                            onCheckedChange={(checked) => toggleDocument(doc.id, checked === true)}
+                                                        />
+                                                        <Label htmlFor={`doc-${doc.id}`} className="cursor-pointer flex-1 font-medium select-none text-base">
+                                                            {doc.label}
+                                                        </Label>
+                                                    </div>
+                                                    
+                                                    {isSelected && (
+                                                        <div className="pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200">
+                                                            <div className="space-y-1.5">
+                                                                <Label htmlFor={`purpose-${doc.id}`} className="text-xs text-muted-foreground ml-1">
+                                                                    Purpose of Request <span className="text-red-500">*</span>
+                                                                </Label>
+                                                                <textarea
+                                                                    id={`purpose-${doc.id}`}
+                                                                    value={data.purposes[doc.id] || ''}
+                                                                    onChange={(e) => handlePurposeChange(doc.id, e.target.value)}
+                                                                    placeholder="e.g. Board Examination, Employment, Abroad, Verification, Evaluation..."
+                                                                    className={cn(
+                                                                        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                                                                        purposeError && "border-red-500 focus-visible:ring-red-500",
+                                                                        "resize-none overflow-auto"
+                                                                    )}
+                                                                />
+                                                                {purposeError && <p className="text-red-500 text-xs font-medium ml-1">{purposeError}</p>}
+                                                            </div>
+                                                        </div>
                                                     )}
-                                                >
-                                                    <Checkbox
-                                                        id={`doc-${doc.id}`}
-                                                        checked={isSelected}
-                                                        onCheckedChange={(checked) => toggleDocument(doc.id, checked === true)}
-                                                    />
-                                                    <Label htmlFor={`doc-${doc.id}`}>{doc.label}</Label>
                                                 </div>
                                             );
                                         })}
@@ -378,7 +425,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                     <div className="">
                                         <Button
                                             type="submit"
-                                            disabled={processing || data.document_types.length === 0}
+                                            disabled={isSubmitDisabled}
                                             className="w-full"
                                         >
                                             {processing ? (
