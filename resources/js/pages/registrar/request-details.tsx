@@ -243,16 +243,10 @@ export default function RequestDetails({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Request ${request.reference_number}`} />
 
-            <div className="flex flex-col gap-6 p-6">
-                {/* Show at top if pending - REMOVED */ }
-
-
-                {/* Show if no payment - Added for Admin visibility */}
-
-
-                <div className="flex flex-col gap-6">
-                    {renderPaymentDetails()}
-                    <div className="w-full space-y-6">
+            <div className="p-6 max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                    {/* Left Column: Request Details */}
+                    <div className="lg:col-span-2 space-y-6">
                         <Card className={
                         data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : 
                         data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : 
@@ -433,9 +427,13 @@ export default function RequestDetails({
                     </Card>
 
 
-                </div>
 
-                <div className="w-full space-y-6">
+                    </div>
+
+                    {/* Right Column: Actions, Status & Payment */}
+                    <div className="space-y-6 lg:sticky lg:top-6">
+                        {renderPaymentDetails()}
+                        
                     {/* Deficiency Card */}
                     {(() => {
                         const isDeficiencyDisabled = isReadOnly || (data.status !== 'PENDING' && data.status !== 'DEFICIENT');
@@ -476,7 +474,7 @@ export default function RequestDetails({
                                     <Label className="text-red-800 dark:text-red-300 flex items-center gap-1">
                                         <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
                                     </Label>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                                    <div className="grid grid-cols-1 gap-3 mt-3">
                                         {deficiencyOptions.map((option, index) => {
                                             const isSelected = selectedDeficiencies.includes(option);
                                             const checkboxId = `deficiency-${index}`;
@@ -572,10 +570,8 @@ export default function RequestDetails({
                         </div>
                     )}
 
+                    </div>
                 </div>
-            </div>
-            
-            {/* request.payment check removed from here */}
             </div>
         </AppLayout>
     );
