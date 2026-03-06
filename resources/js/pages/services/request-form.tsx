@@ -396,17 +396,39 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                                                 <Label htmlFor={`purpose-${doc.id}`} className="text-xs text-muted-foreground ml-1">
                                                                     Purpose of Request <span className="text-red-500">*</span>
                                                                 </Label>
-                                                                <textarea
-                                                                    id={`purpose-${doc.id}`}
-                                                                    value={data.purposes[doc.id] || ''}
-                                                                    onChange={(e) => handlePurposeChange(doc.id, e.target.value)}
-                                                                    placeholder="e.g. Board Examination, Employment, Abroad, Verification, Evaluation..."
-                                                                    className={cn(
-                                                                        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-                                                                        purposeError && "border-red-500 focus-visible:ring-red-500",
-                                                                        "resize-none overflow-auto"
-                                                                    )}
-                                                                />
+                                                                {doc.id.includes('Certificate') ? (
+                                                                    <Select 
+                                                                        value={data.purposes[doc.id] || ''} 
+                                                                        onValueChange={(value) => handlePurposeChange(doc.id, value)}
+                                                                    >
+                                                                        <SelectTrigger 
+                                                                            id={`purpose-${doc.id}`} 
+                                                                            className={cn("w-full bg-transparent", purposeError && "border-red-500 focus-visible:ring-red-500")}
+                                                                        >
+                                                                            <SelectValue placeholder="Select purpose" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="Ranking">Ranking</SelectItem>
+                                                                            <SelectItem value="Promotion">Promotion</SelectItem>
+                                                                            <SelectItem value="Evaluation">Evaluation</SelectItem>
+                                                                            <SelectItem value="Verification">Verification</SelectItem>
+                                                                            <SelectItem value="Employment">Employment</SelectItem>
+                                                                            <SelectItem value="For Abroad">For Abroad</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                ) : (
+                                                                    <textarea
+                                                                        id={`purpose-${doc.id}`}
+                                                                        value={data.purposes[doc.id] || ''}
+                                                                        onChange={(e) => handlePurposeChange(doc.id, e.target.value)}
+                                                                        placeholder="e.g. Board Examination, Employment, Abroad, Verification, Evaluation..."
+                                                                        className={cn(
+                                                                            "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                                                                            purposeError && "border-red-500 focus-visible:ring-red-500",
+                                                                            "resize-none overflow-auto"
+                                                                        )}
+                                                                    />
+                                                                )}
                                                                 {purposeError && <p className="text-red-500 text-xs font-medium ml-1">{purposeError}</p>}
                                                             </div>
                                                         </div>
