@@ -257,6 +257,12 @@ export default function RequestDetails({
                                 </p>
                             </div>
                         </div>
+                        {request.handler?.window && (
+                            <div className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border flex items-center gap-1.5 ${isHandler ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800/40' : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800/40'}`}>
+                                <Building className="w-3 h-3" />
+                                Window: {request.handler.window}
+                            </div>
+                        )}
                     </div>
                 )}
                 

@@ -20,6 +20,7 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'window' => 'nullable|string|max:255',
         ]);
 
         \App\Models\User::create([
@@ -27,6 +28,7 @@ class AdminUserController extends Controller
             'email' => $validated['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
             'role' => 'registrar',
+            'window' => $validated['window'] ?? null,
         ]);
 
         return redirect()->back()->with('success', 'Registrar account created successfully.');

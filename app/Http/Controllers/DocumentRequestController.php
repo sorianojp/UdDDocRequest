@@ -126,7 +126,7 @@ class DocumentRequestController extends Controller
             'reference_number' => 'required|string|exists:document_requests,reference_number',
         ]);
 
-        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $request->reference_number)->firstOrFail();
+        $documentRequest = DocumentRequest::with(['payment', 'items', 'handler'])->where('reference_number', $request->reference_number)->firstOrFail();
 
         return Inertia::render('services/track-result', [
             'request' => $documentRequest,
@@ -135,7 +135,7 @@ class DocumentRequestController extends Controller
 
     public function showStatus($reference_number)
     {
-        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $reference_number)->firstOrFail();
+        $documentRequest = DocumentRequest::with(['payment', 'items', 'handler'])->where('reference_number', $reference_number)->firstOrFail();
 
         return Inertia::render('services/track-result', [
             'request' => $documentRequest,

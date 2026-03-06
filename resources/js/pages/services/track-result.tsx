@@ -168,6 +168,21 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'DEFICIENT' && 'Please address the requirements below to proceed.'}
                             {request.status === 'CANCELLED' && 'This request has been cancelled.'}
                         </CardDescription>
+
+                        {request.handler && (
+                            <div className="mt-4 flex flex-col items-center justify-center gap-1 text-sm text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20 px-6 py-3 rounded-2xl mx-auto w-fit border border-indigo-200 dark:border-indigo-800/50">
+                                <div className="flex items-center gap-2">
+                                    <User className="h-4 w-4" />
+                                    <span>Handling Registrar: <strong className="font-semibold">{request.handler.name}</strong></span>
+                                </div>
+                                {request.handler.window && (
+                                    <div className="flex items-center gap-1.5 text-sm bg-indigo-100/50 dark:bg-indigo-950/50 px-3 py-1 rounded-full mt-1">
+                                        <Building className="h-3 w-3" />
+                                        <span>Window: <strong className="font-semibold">{request.handler.window}</strong></span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </CardHeader>
 
                     <CardContent className="pt-4 flex flex-col items-center gap-4">

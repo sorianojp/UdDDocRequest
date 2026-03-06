@@ -16,6 +16,7 @@ interface User {
     name: string;
     email: string;
     role: string;
+    window?: string | null;
     created_at: string;
 }
 
@@ -29,6 +30,7 @@ export default function Index({ users }: Props) {
         name: '',
         email: '',
         password: '',
+        window: '',
     });
 
     const submit = (e: React.FormEvent) => {
@@ -119,6 +121,16 @@ export default function Index({ users }: Props) {
                                         />
                                         {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                                     </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="window">Window Assignment (Optional)</Label>
+                                        <Input
+                                            id="window"
+                                            value={data.window}
+                                            onChange={(e) => setData('window', e.target.value)}
+                                            placeholder="e.g. Window 1, R1, etc."
+                                        />
+                                        {errors.window && <p className="text-sm text-red-500">{errors.window}</p>}
+                                    </div>
                                     <DialogFooter>
                                         <Button type="submit" disabled={processing}>
                                             {processing ? 'Creating...' : 'Create Account'}
@@ -136,6 +148,7 @@ export default function Index({ users }: Props) {
                                         <TableHead className="w-[200px]">Name</TableHead>
                                         <TableHead className="w-[250px]">Email</TableHead>
                                         <TableHead>Role</TableHead>
+                                        <TableHead>Window</TableHead>
                                         <TableHead>Created At</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
@@ -149,6 +162,15 @@ export default function Index({ users }: Props) {
                                                 <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                                                     {user.role}
                                                 </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                {user.window ? (
+                                                    <span className="font-mono text-xs bg-secondary px-2 py-1 rounded">
+                                                        {user.window}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-muted-foreground text-xs italic">Unassigned</span>
+                                                )}
                                             </TableCell>
                                             <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
                                             <TableCell className="text-right">

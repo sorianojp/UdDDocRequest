@@ -8,6 +8,7 @@ export type User = {
     created_at: string;
     updated_at: string;
     role: string;
+    window?: string | null;
     [key: string]: unknown;
 };
 

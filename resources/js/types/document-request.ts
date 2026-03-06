@@ -39,5 +39,6 @@ export interface DocumentRequest {
         id: number;
         name: string;
         email: string;
+        window?: string | null;
     } | null;
 }
