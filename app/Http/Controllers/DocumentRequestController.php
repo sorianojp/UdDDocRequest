@@ -267,7 +267,7 @@ class DocumentRequestController extends Controller
 
     public function printStub($reference_number)
     {
-        $documentRequest = DocumentRequest::with(['payment', 'items'])->where('reference_number', $reference_number)->firstOrFail();
+        $documentRequest = DocumentRequest::with(['payment', 'items', 'handler'])->where('reference_number', $reference_number)->firstOrFail();
 
         if ($documentRequest->status !== 'READY' && $documentRequest->status !== 'CLAIMED') {
             abort(403, 'Claim stub is only available for ready or claimed requests.');

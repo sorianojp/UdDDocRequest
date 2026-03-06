@@ -141,6 +141,18 @@
                 <span class="value">{{ $request->claiming_date->format('F j, Y') }}</span>
             </div>
             @endif
+            @if($request->handler)
+            <div class="row">
+                <span class="label">Handler:</span>
+                <span class="value">{{ $request->handler->name }}</span>
+            </div>
+            @if($request->handler->window)
+            <div class="row">
+                <span class="label">Window:</span>
+                <span class="value">{{ $request->handler->window }}</span>
+            </div>
+            @endif
+            @endif
         </div>
 
         <div class="document-list">
