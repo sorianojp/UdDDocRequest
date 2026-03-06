@@ -14,9 +14,14 @@ class DocumentRequestController extends Controller
 {
     public function create()
     {
+        $dailyLimit = \App\Models\Setting::get('daily_request_limit', 3);
+        $todayRequestsCount = DocumentRequest::whereDate('created_at', today())->count();
+
         return Inertia::render('services/request-form', [
             'pricing' => config('document_pricing.documents', []),
             'courses' => config('courses.list', []),
+            'dailyLimit' => (int) $dailyLimit,
+            'todayRequestsCount' => $todayRequestsCount,
         ]);
     }
 

@@ -18,7 +18,7 @@ interface Pricing {
     };
 }
 
-export default function RequestForm({ pricing, courses }: { pricing: Pricing, courses: Record<string, string[]> }) {
+export default function RequestForm({ pricing, courses, dailyLimit = 1000, todayRequestsCount = 0 }: { pricing: Pricing, courses: Record<string, string[]>, dailyLimit?: number, todayRequestsCount?: number }) {
     const { data, setData, post, processing, errors } = useForm({
         last_name: '',
         first_name: '',
@@ -115,8 +115,25 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                     </div>
                 )}
 
-                <form onSubmit={submit} className="space-y-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {todayRequestsCount >= dailyLimit ? (
+                    <div className="max-w-2xl mx-auto mt-8 animate-in fade-in zoom-in-95 duration-500">
+                        <Card className="border-destructive/30 shadow-xl overflow-hidden relative">
+                            <div className="absolute top-0 left-0 w-full h-1.5 bg-destructive" />
+                            <CardContent className="flex flex-col items-center text-center p-10 pt-12">
+                                <AlertTriangle className="h-16 w-16 text-destructive mb-6" />
+                                <h2 className="text-3xl font-extrabold mb-4">Daily Limit Reached</h2>
+                                <p className="text-lg text-muted-foreground mb-8 max-w-md">
+                                    We have reached our maximum capacity of {dailyLimit} document requests for today. Please return tomorrow to submit your request.
+                                </p>
+                                <Button size="lg" variant="outline" onClick={() => window.location.reload()}>
+                                    Refresh Page
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                ) : (
+                    <form onSubmit={submit} className="space-y-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Left Section: Information */}
                         <div className="lg:col-span-2 space-y-6">
                             <Card>
@@ -414,7 +431,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                                                 <Label htmlFor={`purpose-${doc.id}`} className="text-xs text-muted-foreground ml-1">
                                                                     Purpose of Request <span className="text-red-500">*</span>
                                                                 </Label>
-                                                                {doc.id.includes('Certificate') ? (
+                                                                {(doc.id.includes('Certificate') || doc.id === 'Transcript of Records' || doc.id === 'Diploma') ? (
                                                                     <Select 
                                                                         value={data.purposes[doc.id] || ''} 
                                                                         onValueChange={(value) => handlePurposeChange(doc.id, value)}
@@ -432,6 +449,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                                                             <SelectItem value="Verification">Verification</SelectItem>
                                                                             <SelectItem value="Employment">Employment</SelectItem>
                                                                             <SelectItem value="For Abroad">For Abroad</SelectItem>
+                                                                            <SelectItem value="Board Examination">Board Examination</SelectItem>
                                                                         </SelectContent>
                                                                     </Select>
                                                                 ) : (
@@ -481,8 +499,9 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                 </CardContent>
                             </Card>
                         </div>
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                )}
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `
