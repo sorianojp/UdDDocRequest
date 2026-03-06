@@ -44,6 +44,16 @@ class DocumentRequestController extends Controller
             'purposes.*' => 'required|string|max:1000',
         ]);
 
+        // Check global daily request limit
+        $dailyLimit = \App\Models\Setting::get('daily_request_limit', 3);
+        $todayRequestsCount = DocumentRequest::whereDate('created_at', today())->count();
+            
+        if ($todayRequestsCount >= $dailyLimit) {
+            return back()->withErrors([
+                'submit_limit' => "The daily limit of {$dailyLimit} total document requests has been reached. Please try again tomorrow."
+            ]);
+        }
+
         // Prevent duplicate requests: Check if there's an active request with the exact same documents
         $activeStatuses = ['PENDING', 'WAITING_FOR_PAYMENT', 'VERIFYING_PAYMENT', 'PROCESSING'];
         $existingRequests = DocumentRequest::with('items')

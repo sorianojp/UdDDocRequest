@@ -105,6 +105,15 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                         </Badge>
                     </div>
                 )}
+                {/* Use optional chaining and array bracket notation to bypass strict typescript checking for custom/general errors from backend */}
+                {errors['submit_limit' as keyof typeof errors] && (
+                    <div className="flex justify-center mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <Badge variant="destructive" className="px-4 py-2 text-sm gap-2 border-2 shadow-lg bg-red-600 text-white">
+                            <AlertTriangle className="h-4 w-4" />
+                            {errors['submit_limit' as keyof typeof errors]}
+                        </Badge>
+                    </div>
+                )}
 
                 <form onSubmit={submit} className="space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

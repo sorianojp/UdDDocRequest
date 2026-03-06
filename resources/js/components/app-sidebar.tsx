@@ -15,7 +15,7 @@ import admin from '@/routes/admin';
 import registrar from '@/routes/registrar';
 import type { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle, CreditCard, Banknote, Users } from 'lucide-react';
+import { BookOpen, FileText, Folder, LayoutGrid, Clock, Loader2, AlertTriangle, CheckCircle, FileCheck, XCircle, CreditCard, Banknote, Users, Settings2 } from 'lucide-react';
 import AppLogo from './app-logo';
 
 import { usePage } from '@inertiajs/react';
@@ -91,6 +91,11 @@ export function AppSidebar() {
             title: 'Users',
             href: admin.users.index.url(),
             icon: Users,
+        });
+        mainNavItems.push({
+            title: 'Settings',
+            href: admin.settings.index.url(),
+            icon: Settings2,
         });
     }
 

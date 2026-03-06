@@ -48,6 +48,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users', [\App\Http\Controllers\AdminUserController::class, 'index'])->name('users.index');
         Route::post('/users', [\App\Http\Controllers\AdminUserController::class, 'store'])->name('users.store');
         Route::delete('/users/{user}', [\App\Http\Controllers\AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        // Settings Routes
+        Route::get('/settings', [\App\Http\Controllers\AdminSettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [\App\Http\Controllers\AdminSettingController::class, 'update'])->name('settings.update');
     });
 });
 
