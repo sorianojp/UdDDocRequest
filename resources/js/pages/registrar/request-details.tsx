@@ -559,31 +559,6 @@ export default function RequestDetails({
                         </CardContent>
                     </Card>
 
-                    {/* Claimed Card */}
-                    {/* Claimed Card */}
-                    <Card className={`${data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : ''} ${isActionsDisabled ? 'bg-muted/50' : ''}`}>
-                        <CardHeader className="flex flex-row items-center space-y-0 gap-3 pb-3">
-                            <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
-                                <PackageCheck className="h-5 w-5" />
-                            </div>
-                            <CardTitle>Claimed?</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Button 
-                                variant={data.status === 'CLAIMED' ? 'secondary' : 'outline'}
-                                className="w-full"
-                                onClick={() => autoSave({ status: 'CLAIMED' })}
-                                disabled={data.status === 'CLAIMED' || isActionsDisabled}
-                            >
-                                {data.status === 'CLAIMED' ? 'Status: Claimed' : 'Mark as Claimed'}
-                            </Button>
-                            {data.status === 'CLAIMED' && request.claimed_date && (
-                                <p className="text-sm text-center text-muted-foreground mt-2">
-                                    Claimed on: <span className="font-medium">{new Date(request.claimed_date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
-                                </p>
-                            )}
-                        </CardContent>
-                    </Card>
 
                     {data.status === 'PENDING' && !isReadOnly && (
                         <div>
