@@ -54,6 +54,14 @@ class PaymentController extends Controller
 
     public function update(Request $httpRequest, Payment $payment)
     {
+        $documentRequest = $payment->documentRequest;
+
+        if (!$documentRequest->handled_by) {
+            $documentRequest->update(['handled_by' => auth()->id()]);
+        } elseif ($documentRequest->handled_by !== auth()->id()) {
+            abort(403, 'Another registrar is already managing this request.');
+        }
+
         $httpRequest->validate([
             'status' => 'required|in:verified,rejected,pending',
         ]);

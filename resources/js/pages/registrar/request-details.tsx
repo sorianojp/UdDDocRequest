@@ -139,8 +139,12 @@ export default function RequestDetails({
         }
     };
     
-    // Disable actions if payment is missing, pending, or rejected
-    const isReadOnly = data.status === 'CANCELLED';
+    // Disable actions if payment is missing, pending, or rejected, OR if another registrar is handling this
+    const authUser = usePage<SharedData>().props.auth.user;
+    const hasHandler = !!request.handled_by;
+    const isHandler = hasHandler ? request.handled_by === authUser.id : true;
+    
+    const isReadOnly = data.status === 'CANCELLED' || (hasHandler && !isHandler);
     const isActionsDisabled = isReadOnly || !request.payment || request.payment.status === 'pending' || request.payment.status === 'rejected';
 
     const renderPaymentDetails = () => (
@@ -236,6 +240,26 @@ export default function RequestDetails({
             <Head title={`Request ${request.reference_number}`} />
 
             <div className="p-6 max-w-7xl mx-auto">
+                {hasHandler && (
+                    <div className={`mb-6 p-4 rounded-lg flex items-center justify-between border-2 ${isHandler ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800/50' : 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800/50'}`}>
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-full ${isHandler ? 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-300' : 'bg-amber-100 text-amber-600 dark:bg-amber-800 dark:text-amber-300'}`}>
+                                <User className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <h3 className={`font-semibold ${isHandler ? 'text-blue-900 dark:text-blue-100' : 'text-amber-900 dark:text-amber-100'}`}>
+                                    {isHandler ? 'You are managing this request' : 'Managed by another Registrar'}
+                                </h3>
+                                <p className={`text-sm ${isHandler ? 'text-blue-700 dark:text-blue-300' : 'text-amber-700 dark:text-amber-300'}`}>
+                                    {isHandler 
+                                        ? 'As the assigned registrar, only you can modify the status, deficiencies, and prices for this request.' 
+                                        : `This request is currently being handled by ${request.handler?.name}. You have read-only access.`}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                     {/* Left Column: Request Details */}
                     <div className="lg:col-span-2 space-y-6">

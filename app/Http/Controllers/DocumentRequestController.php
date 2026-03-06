@@ -203,7 +203,7 @@ class DocumentRequestController extends Controller
 
     public function show($id)
     {
-        $request = DocumentRequest::with(['payment', 'items'])->findOrFail($id);
+        $request = DocumentRequest::with(['payment', 'items', 'handler'])->findOrFail($id);
         
         return Inertia::render('registrar/request-details', [
             'request' => $request,
@@ -214,6 +214,12 @@ class DocumentRequestController extends Controller
     public function update(Request $request, $id)
     {
         $documentRequest = DocumentRequest::findOrFail($id);
+
+        if (!$documentRequest->handled_by) {
+            $documentRequest->update(['handled_by' => auth()->id()]);
+        } elseif ($documentRequest->handled_by !== auth()->id()) {
+            abort(403, 'Another registrar is already managing this request.');
+        }
 
         $validated = $request->validate([
             'status' => 'required|in:PENDING,WAITING_FOR_PAYMENT,VERIFYING_PAYMENT,PROCESSING,DEFICIENT,READY,CLAIMED,CANCELLED',

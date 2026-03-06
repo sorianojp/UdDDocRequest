@@ -34,4 +34,10 @@ export interface DocumentRequest {
     payment?: Payment;
     items?: RequestItem[];
     amount_due: number;
+    handled_by?: number | null;
+    handler?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
 }

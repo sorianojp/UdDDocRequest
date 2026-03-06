@@ -31,12 +31,18 @@ class DocumentRequest extends Model
         'claiming_date',
         'claimed_date',
         'school_id_path',
+        'handled_by',
     ];
 
     protected $casts = [
         'claiming_date' => 'datetime',
         'claimed_date' => 'datetime',
     ];
+
+    public function handler()
+    {
+        return $this->belongsTo(User::class, 'handled_by');
+    }
 
     public function payment()
     {
