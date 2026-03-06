@@ -54,13 +54,6 @@ export default function Dashboard({ counts }: { counts: Record<string, number> }
             color: 'text-gray-500 dark:text-gray-400',
             bg: 'bg-gray-50 dark:bg-gray-800/50',
         },
-        {
-            label: 'Rejected',
-            value: counts.REJECTED || 0,
-            icon: XCircle,
-            color: 'text-red-900 dark:text-red-300',
-            bg: 'bg-red-100 dark:bg-red-900/30',
-        },
     ];
 
     return (

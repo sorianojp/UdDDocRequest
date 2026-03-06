@@ -99,12 +99,6 @@ export default function RequestDetails({
         });
     };
 
-    const handleRejectRequest = () => {
-        if (confirm('Are you sure you want to REJECT this entire request? This action cannot be undone.')) {
-            autoSave({ status: 'REJECTED' });
-        }
-    };
-
     const handlePriceChange = (id: number, newPrice: string) => {
         const updatedItems = data.items.map((item: any) => 
             item.id === id ? { ...item, price: newPrice } : item
@@ -138,8 +132,6 @@ export default function RequestDetails({
                 return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
-            case 'REJECTED':
-                return <Badge variant="destructive">Rejected</Badge>;
             case 'CANCELLED':
                 return <Badge variant="destructive">Cancelled</Badge>;
             default:
@@ -148,7 +140,7 @@ export default function RequestDetails({
     };
     
     // Disable actions if payment is missing, pending, or rejected
-    const isReadOnly = data.status === 'REJECTED';
+    const isReadOnly = data.status === 'CANCELLED';
     const isActionsDisabled = isReadOnly || !request.payment || request.payment.status === 'pending' || request.payment.status === 'rejected';
 
     const renderPaymentDetails = () => (
@@ -251,7 +243,7 @@ export default function RequestDetails({
                         data.status === 'DEFICIENT' ? 'border-red-500 border-2 dark:border-red-700' : 
                         data.status === 'READY' ? 'border-green-500 border-2 dark:border-green-700' : 
                         data.status === 'CLAIMED' ? 'border-slate-500 border-2 dark:border-slate-700' : 
-                        data.status === 'REJECTED' ? 'border-red-500 border-2 dark:border-red-700' : 
+                        data.status === 'CANCELLED' ? 'border-red-500 border-2 dark:border-red-700' : 
                         data.status === 'WAITING_FOR_PAYMENT' ? 'border-yellow-500 border-2 dark:border-yellow-700' : 
                         data.status === 'VERIFYING_PAYMENT' ? 'border-orange-500 border-2 dark:border-orange-700' : 
                         data.status === 'PROCESSING' ? 'border-blue-500 border-2 dark:border-blue-700' : ''
@@ -342,7 +334,7 @@ export default function RequestDetails({
                                     <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
                                         <ClipboardList className="h-5 w-5" />
                                     </div>
-                                    <h3 className="font-semibold text-lg">Requested Documents</h3>
+                                    <h3 className="font-semibold">Requested Documents</h3>
                                 </div>
                                 <div className="border rounded-md overflow-hidden dark:border-border">
                                     <Table>
@@ -425,9 +417,6 @@ export default function RequestDetails({
                             )}
                         </CardContent>
                     </Card>
-
-
-
                     </div>
 
                     {/* Right Column: Actions, Status & Payment */}
@@ -556,19 +545,6 @@ export default function RequestDetails({
                             </div>
                         </CardContent>
                     </Card>
-
-
-                    {data.status === 'PENDING' && !isReadOnly && (
-                        <div>
-                            <Button 
-                                variant="destructive" 
-                                className="w-full"
-                                onClick={handleRejectRequest}
-                            >
-                                <X className="mr-2 h-4 w-4" /> Reject Request
-                            </Button>
-                        </div>
-                    )}
 
                     </div>
                 </div>

@@ -53,7 +53,6 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
         if (request.status === 'PROCESSING') return 2;
         if (request.status === 'READY') return 3;
         if (request.status === 'CLAIMED') return 4;
-        if (request.status === 'REJECTED') return -1;
         return 0;
     };
 
@@ -136,7 +135,6 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             {request.status === 'PROCESSING' && <Loader2 className="h-10 w-10 text-primary animate-spin" />}
                             {request.status === 'READY' && <CheckCircle className="h-10 w-10 text-primary" />}
                             {request.status === 'CLAIMED' && <FileText className="h-10 w-10 text-muted-foreground" />}
-                            {request.status === 'REJECTED' && <AlertTriangle className="h-10 w-10 text-red-500" />}
                             {request.status === 'CANCELLED' && <XCircle className="h-10 w-10 text-red-500" />}
                             {request.status === 'DEFICIENT' && <AlertCircle className="h-10 w-10 text-red-500" />}
                         </div>
@@ -158,7 +156,6 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                     </p>
                                 </div>
                             )}
-                            {request.status === 'REJECTED' && 'Request Rejected'}
                             {request.status === 'CANCELLED' && 'Request Cancelled'}
                             {request.status === 'DEFICIENT' && 'Deficiency Found'}
                         </CardTitle>

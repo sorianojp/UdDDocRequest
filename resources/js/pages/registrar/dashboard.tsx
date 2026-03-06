@@ -75,8 +75,6 @@ export default function RegistrarDashboard({
                 return <Badge variant="success">Ready</Badge>;
             case 'CLAIMED':
                 return <Badge variant="outline">Claimed</Badge>;
-            case 'REJECTED':
-                return <Badge variant="destructive">Rejected</Badge>;
             case 'CANCELLED':
                 return <Badge variant="destructive">Cancelled</Badge>;
             default:
