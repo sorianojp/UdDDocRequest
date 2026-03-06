@@ -349,10 +349,13 @@ export default function RequestDetails({
                                                 data.items.map((item: any) => (
                                                     <TableRow key={item.id}>
                                                         <TableCell className="px-4 py-2 text-sm text-foreground">
-                                                            <div>{item.document_type}</div>
+                                                            <div className="font-bold">{item.document_type}</div>
                                                             {item.purpose && (
-                                                                <div className="text-xs text-muted-foreground mt-1 italic">
-                                                                    <span className="font-semibold not-italic">Purpose:</span> {item.purpose}
+                                                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider shrink-0">Purpose</span>
+                                                                    <Badge variant="info" className="font-normal text-[11px] py-0.5 px-2 whitespace-normal h-auto leading-tight break-words max-w-[250px]">
+                                                                        {item.purpose}
+                                                                    </Badge>
                                                                 </div>
                                                             )}
                                                         </TableCell>

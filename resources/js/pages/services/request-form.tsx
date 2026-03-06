@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap, MapPin, Calendar, Building } from 'lucide-react';
+import { Send, Loader2, Upload, FileText, User, Mail, Phone, IdCard, CheckCircle2, GraduationCap, MapPin, Calendar, Building, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -96,6 +96,15 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                         Official document requests made simple and efficient.
                     </p>
                 </div>
+                
+                {errors.document_types && (
+                    <div className="flex justify-center mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <Badge variant="destructive" className="px-4 py-2 text-sm gap-2 border-2 shadow-lg">
+                            <AlertTriangle className="h-4 w-4" />
+                            {errors.document_types}
+                        </Badge>
+                    </div>
+                )}
 
                 <form onSubmit={submit} className="space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -365,7 +374,7 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                     <Badge>
                                         {data.document_types.length} Selected
                                     </Badge>
-                                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <div className="space-y-4 pr-2">
                                         {documents.map((doc) => {
                                             const isSelected = data.document_types.includes(doc.id);
                                             const purposeError = (errors as any)[`purposes.${doc.id}`];
@@ -437,12 +446,6 @@ export default function RequestForm({ pricing, courses }: { pricing: Pricing, co
                                             );
                                         })}
                                     </div>
-
-                                    {errors.document_types && (
-                                        <p className="text-red-300 text-xs font-medium bg-red-950/30 p-2 rounded-md border border-red-500/50">
-                                            {errors.document_types}
-                                        </p>
-                                    )}
 
                                     <div className="">
                                         <Button

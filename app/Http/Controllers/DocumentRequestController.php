@@ -44,6 +44,28 @@ class DocumentRequestController extends Controller
             'purposes.*' => 'required|string|max:1000',
         ]);
 
+        // Prevent duplicate requests: Check if there's an active request with the exact same documents
+        $activeStatuses = ['PENDING', 'WAITING_FOR_PAYMENT', 'VERIFYING_PAYMENT', 'PROCESSING'];
+        $existingRequests = DocumentRequest::with('items')
+            ->where('student_id_number', $validated['student_id_number'])
+            ->whereIn('status', $activeStatuses)
+            ->get();
+
+        foreach ($existingRequests as $existingRequest) {
+            $existingTypes = $existingRequest->items->pluck('document_type')->toArray();
+            
+            $requestedTypes = array_map(function($type) use ($documents) {
+                return $documents[$type]['label'] ?? $type;
+            }, $validated['document_types']);
+
+            sort($existingTypes);
+            sort($requestedTypes);
+
+            if ($existingTypes === $requestedTypes) {
+                return back()->withErrors(['document_types' => 'You already have an active request for these exact documents. Please wait for it to be processed.']);
+            }
+        }
+
         // Create the main request (summary style for document_type)
         $documentRequest = DocumentRequest::create([
             'last_name' => $validated['last_name'],

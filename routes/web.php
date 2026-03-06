@@ -12,7 +12,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/request', [DocumentRequestController::class, 'create'])->name('request.create');
-Route::post('/request', [DocumentRequestController::class, 'store'])->name('request.store');
+Route::post('/request', [DocumentRequestController::class, 'store'])->name('request.store')->middleware('throttle:3,1');
 Route::get('/request/success/{reference_number}', [DocumentRequestController::class, 'success'])->name('request.success');
 Route::get('/track', [DocumentRequestController::class, 'track'])->name('request.track');
 Route::post('/track', [DocumentRequestController::class, 'checkStatus'])->name('request.check-status');

@@ -347,7 +347,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
                                 <ClipboardList className="h-5 w-5" />
                             </div>
-                            <CardTitle>Request Summary</CardTitle>
+                            <CardTitle>Request Details</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -439,7 +439,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                             <Table>
                                 <TableHeader className="bg-secondary/50 text-secondary-foreground text-xs uppercase tracking-wider">
                                     <TableRow>
-                                        <TableHead className="px-4 py-3 font-bold">Document</TableHead>
+                                        <TableHead className="px-4 py-3 font-bold">Document Type</TableHead>
                                         <TableHead className="px-4 py-3 text-right font-bold">Price</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -448,10 +448,13 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         request.items.map((item) => (
                                             <TableRow key={item.id} className="bg-background/50">
                                                 <TableCell className="px-4 py-3">
-                                                    <div>{item.document_type}</div>
+                                                    <div className="font-bold">{item.document_type}</div>
                                                     {item.purpose && (
-                                                        <div className="text-xs text-muted-foreground mt-1 italic">
-                                                            <span className="font-semibold not-italic">Purpose:</span> {item.purpose}
+                                                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider shrink-0">Purpose</span>
+                                                            <Badge variant="info" className="font-normal text-[11px] py-0.5 px-2 whitespace-normal h-auto leading-tight break-words max-w-[250px]">
+                                                                {item.purpose}
+                                                            </Badge>
                                                         </div>
                                                     )}
                                                 </TableCell>
