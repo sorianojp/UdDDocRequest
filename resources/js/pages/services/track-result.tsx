@@ -223,17 +223,10 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <h3 className="font-bold">Required Actions</h3>
                                     </div>
                                     
-                                    <div className="space-y-3">
-                                        {request.deficiency_remarks.split('|').map((remark, i) => (remark.trim() && (
-                                            <div key={i} className="flex gap-3 text-sm text-red-700 dark:text-red-300 bg-white/50 dark:bg-black/20 p-4 rounded-lg border border-red-100 dark:border-red-900/20 shadow-sm">
-                                                <div className="mt-1">
-                                                    <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                                                </div>
-                                                <p className="leading-relaxed font-medium">
-                                                    {remark.trim().startsWith('Remark: ') ? remark.trim().substring(8) : remark.trim()}
-                                                </p>
-                                            </div>
-                                        )))}
+                                    <div className="bg-white/50 dark:bg-black/20 p-4 rounded-lg border border-red-100 dark:border-red-900/20 shadow-sm">
+                                        <p className="text-sm text-red-700 dark:text-red-300 whitespace-pre-wrap leading-relaxed font-medium">
+                                            {request.deficiency_remarks.replace(/\|/g, '\n').replace(/Remark: /g, '')}
+                                        </p>
                                     </div>
 
                                     <div className="mt-6 pt-4 border-t border-red-200 dark:border-red-900/30">

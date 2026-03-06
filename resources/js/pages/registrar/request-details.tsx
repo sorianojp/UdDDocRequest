@@ -52,15 +52,6 @@ export default function RequestDetails({
         },
     ];
 
-    // Sort deficiencies alphabetically or by ID as needed, but standard ones first?
-    // For now, simple list.
-    const deficiencyOptions = deficiencies;
-
-    const getSelectedDeficiencies = (): string[] => {
-        if (!data.deficiency_remarks) return [];
-        return data.deficiency_remarks.split('|').map((s: string) => s.trim()).filter(Boolean);
-    };
-
     const autoSave = (updates: Partial<typeof data>) => {
         const newData = { ...data, ...updates };
         setData(newData);
@@ -74,24 +65,8 @@ export default function RequestDetails({
         });
     };
 
-    const toggleDeficiency = (option: string, checked: boolean) => {
-        let current = getSelectedDeficiencies();
-        if (checked) {
-            if (!current.includes(option)) current.push(option);
-        } else {
-            current = current.filter((item: string) => item !== option);
-        }
-        const newRemarks = current.join('|');
-        autoSave({ deficiency_remarks: newRemarks });
-    };
-
-    const handleCustomRemarkBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-        const text = e.target.value.trim();
-        let current = getSelectedDeficiencies().filter((item: string) => !item.startsWith('Remark: '));
-        if (text) {
-            current.push(`Remark: ${text}`);
-        }
-        autoSave({ deficiency_remarks: current.join('|') });
+    const handleRemarkBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+        autoSave({ deficiency_remarks: e.target.value });
     };
 
     const handlePaymentUpdate = (status: 'verified' | 'rejected') => {
@@ -121,9 +96,6 @@ export default function RequestDetails({
          autoSave({ status: 'WAITING_FOR_PAYMENT', items: data.items });
     };
 
-    // Derived state for formatting
-    const selectedDeficiencies = getSelectedDeficiencies();
-    
     // Status Badge Helper
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -503,58 +475,17 @@ export default function RequestDetails({
                             <CardContent className="pt-0 animate-in slide-in-from-top-2 fade-in">
                                 <div className="space-y-3 pt-4 border-t">
                                     <Label className="text-red-800 dark:text-red-300 flex items-center gap-1">
-                                        <AlertTriangle className="h-3 w-3" /> Deficiency Checklist
+                                        <AlertTriangle className="h-3 w-3" /> Deficiency Remarks
                                     </Label>
-                                    <div className="grid grid-cols-1 gap-3 mt-3">
-                                        {deficiencyOptions.map((option, index) => {
-                                            const isSelected = selectedDeficiencies.includes(option);
-                                            const checkboxId = `deficiency-${index}`;
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className={`relative flex items-start space-x-3 p-3 border rounded-md transition-colors
-                                                        ${isSelected 
-                                                            ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/50' 
-                                                            : 'hover:bg-muted/50 border-border'}
-                                                        ${isReadOnly ? 'opacity-70' : 'cursor-pointer'}
-                                                    `}
-                                                    onClick={() => !isReadOnly && toggleDeficiency(option, !isSelected)}
-                                                >
-                                                    <Checkbox
-                                                        id={checkboxId}
-                                                        checked={isSelected}
-                                                        disabled={isReadOnly}
-                                                        onCheckedChange={(checked) => toggleDeficiency(option, checked as boolean)}
-                                                        className="mt-1"
-                                                        onClick={(e) => e.stopPropagation()} // Prevent double toggle
-                                                    />
-                                                    <Label
-                                                        htmlFor={checkboxId}
-                                                        className="text-sm leading-tight text-balance flex-1 cursor-pointer select-none"
-                                                        onClick={(e) => e.stopPropagation()} // Let the div handle it or the label handle it
-                                                    >
-                                                        {option.includes(':') ? (
-                                                            <>
-                                                                <span className="font-bold">{option.split(':')[0]}:</span>
-                                                                <span className="font-light italic text-muted-foreground ml-1">{option.split(':').slice(1).join(':')}</span>
-                                                            </>
-                                                        ) : (
-                                                            <span className="font-medium">{option}</span>
-                                                        )}
-                                                    </Label>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
                                     
                                     <div className="mt-4 space-y-2">
-                                        <Label htmlFor="custom-remark" className="text-sm font-medium">Additional Remarks</Label>
+                                        <p className="text-sm text-muted-foreground">Please provide clear details regarding the deficiencies of this request so the student can fulfill them.</p>
                                         <textarea 
-                                            id="custom-remark"
-                                            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                                            placeholder="Add any additional remarks or details here..."
-                                            defaultValue={getSelectedDeficiencies().find(item => item.startsWith('Remark: '))?.substring(8) || ''}
-                                            onBlur={handleCustomRemarkBlur}
+                                            id="deficiency-remark"
+                                            className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
+                                            placeholder="Enter requested requirements and other remarks here..."
+                                            defaultValue={data.deficiency_remarks}
+                                            onBlur={handleRemarkBlur}
                                             disabled={isReadOnly}
                                         />
                                     </div>
