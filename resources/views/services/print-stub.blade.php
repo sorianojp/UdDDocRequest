@@ -153,7 +153,14 @@
                 <tbody>
                     @foreach($request->items as $item)
                         <tr>
-                            <td>{{ $item->document_type }}</td>
+                            <td>
+                                <div>{{ $item->document_type }}</div>
+                                @if($item->purpose)
+                                    <div style="font-size: 11px; color: #666; margin-top: 2px;">
+                                        <strong>Purpose:</strong> {{ $item->purpose }}
+                                    </div>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
