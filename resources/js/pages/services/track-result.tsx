@@ -185,7 +185,7 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                         )}
                     </CardHeader>
 
-                    <CardContent className="pt-4 flex flex-col items-center gap-4">
+                    <CardContent className="flex flex-col items-center gap-4">
                         {request.status === 'READY' && (
                              <Button 
                                 size="lg" 
