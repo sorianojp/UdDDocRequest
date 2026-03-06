@@ -172,6 +172,7 @@ export default function RegistrarDashboard({
                                         <TableHead className="px-4 py-3">Document</TableHead>
                                         <TableHead className="px-4 py-3">Date Requested</TableHead>
                                         <TableHead className="px-4 py-3">Status</TableHead>
+                                        <TableHead className="px-4 py-3">Handler</TableHead>
                                         <TableHead className="px-4 py-3 text-right">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -191,6 +192,18 @@ export default function RegistrarDashboard({
                                                     {new Date(req.created_at).toLocaleDateString()}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3">{getStatusBadge(req.status)}</TableCell>
+                                                <TableCell className="px-4 py-3">
+                                                    {req.handler ? (
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-medium">{req.handler.name}</span>
+                                                            {req.handler.window && (
+                                                                <span className="text-xs text-muted-foreground">{req.handler.window}</span>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-muted-foreground text-xs italic">Unassigned</span>
+                                                    )}
+                                                </TableCell>
                                                 <TableCell className="px-4 py-3 text-right">
                                                     <Link href={registrar.show.url(req.id)}>
                                                         <Button variant="ghost" size="sm">

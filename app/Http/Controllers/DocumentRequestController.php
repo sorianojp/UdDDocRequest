@@ -144,7 +144,7 @@ class DocumentRequestController extends Controller
 
     public function index(Request $request, $status = null)
     {
-        $query = DocumentRequest::query();
+        $query = DocumentRequest::with('handler');
 
         if ($status) {
             $normalizedStatus = strtoupper($status);
