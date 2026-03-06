@@ -229,7 +229,9 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                                 <div className="mt-1">
                                                     <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                                                 </div>
-                                                <p className="leading-relaxed font-medium">{remark.trim()}</p>
+                                                <p className="leading-relaxed font-medium">
+                                                    {remark.trim().startsWith('Remark: ') ? remark.trim().substring(8) : remark.trim()}
+                                                </p>
                                             </div>
                                         )))}
                                     </div>

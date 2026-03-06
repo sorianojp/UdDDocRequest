@@ -85,6 +85,15 @@ export default function RequestDetails({
         autoSave({ deficiency_remarks: newRemarks });
     };
 
+    const handleCustomRemarkBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+        const text = e.target.value.trim();
+        let current = getSelectedDeficiencies().filter((item: string) => !item.startsWith('Remark: '));
+        if (text) {
+            current.push(`Remark: ${text}`);
+        }
+        autoSave({ deficiency_remarks: current.join('|') });
+    };
+
     const handlePaymentUpdate = (status: 'verified' | 'rejected') => {
         if (!request.payment) return;
         router.put(`/registrar/payments/${request.payment.id}`, { status }, {
@@ -537,7 +546,20 @@ export default function RequestDetails({
                                             );
                                         })}
                                     </div>
-                                    {errors.deficiency_remarks && <p className="text-red-500 text-xs">{errors.deficiency_remarks}</p>}
+                                    
+                                    <div className="mt-4 space-y-2">
+                                        <Label htmlFor="custom-remark" className="text-sm font-medium">Additional Remarks</Label>
+                                        <textarea 
+                                            id="custom-remark"
+                                            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
+                                            placeholder="Add any additional remarks or details here..."
+                                            defaultValue={getSelectedDeficiencies().find(item => item.startsWith('Remark: '))?.substring(8) || ''}
+                                            onBlur={handleCustomRemarkBlur}
+                                            disabled={isReadOnly}
+                                        />
+                                    </div>
+
+                                    {errors.deficiency_remarks && <p className="text-red-500 text-xs mt-2">{errors.deficiency_remarks}</p>}
                                 </div>
                             </CardContent>
                         )}
