@@ -76,14 +76,17 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
     const isUndergraduate = courseCategory === 'Undergraduate';
     const isPostgraduate = courseCategory === 'Postgraduate';
     
-    // Transferee: Undergrad with a previous school
-    const isTransferee = isUndergraduate && !!data.prev_school;
+    // Freshman: Undergraduate AND (no previous school OR typed "N/A")
+    const isFreshman = isUndergraduate && (!data.prev_school || data.prev_school.toLowerCase().trim() === 'n/a');
+    
+    // Transferee: Undergraduate who is not a freshman
+    const isTransferee = isUndergraduate && !isFreshman;
     
     // Postgrad or Transferee (but not from UdD) Needs OTR
     const needsOTR = (isPostgraduate || isTransferee) && !isUdDAlumni;
     
-    // Freshman: Undergrad with NO previous school. Needs Form 137.
-    const needsForm137 = isUndergraduate && !data.prev_school;
+    // Needs Form 137 if Freshman
+    const needsForm137 = isFreshman;
 
     const isSubmitDisabled = processing 
         || data.document_types.length === 0 
@@ -340,7 +343,7 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <Label htmlFor="prev_school">Previous School</Label>
+                                            <Label htmlFor="prev_school">Previous School <span className="text-[10px] font-normal text-muted-foreground">(For Transferee and Postgrad)</span></Label>
                                             <div className="relative">
                                                 <Input
                                                     id="prev_school"
@@ -351,6 +354,9 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
                                                 />
                                                 <Building className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                             </div>
+                                            <p className="text-[11px] text-muted-foreground italic">
+                                                * Type <span className="font-bold">N/A</span> if you came straight from High School.
+                                            </p>
                                             {(errors as any).prev_school && <p className="text-red-500 text-xs font-medium">{(errors as any).prev_school}</p>}
                                         </div>
 
