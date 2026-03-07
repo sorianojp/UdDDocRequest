@@ -73,7 +73,10 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
 
     const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
 
-    const isUdDAlumni = data.prev_school.toLowerCase().includes('universidad de dagupan') || data.prev_school.toLowerCase().includes('udd');
+    const isUdDAlumni = data.prev_school.toLowerCase().includes('universidad de dagupan') || 
+                        data.prev_school.toLowerCase().includes('udd') ||
+                        data.prev_school.toLowerCase().includes('colegio de dagupan') ||
+                        data.prev_school.toLowerCase().includes('cdd');
     
     // Transferee or Postgrad (but not from UdD) Needs OTR
     const needsOTR = (data.student_type === 'Transferee' || data.student_type === 'Postgraduate') && !isUdDAlumni;

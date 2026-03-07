@@ -57,6 +57,26 @@ class DocumentRequestController extends Controller
             return back()->withErrors(['prev_school' => 'The previous school field is required for ' . $validated['student_type'] . ' students.'])->withInput();
         }
 
+        // Alumni check for UdD (including old name)
+        $isUdDAlumni = false;
+        if (!empty($validated['prev_school'])) {
+            $prevSchoolLower = strtolower($validated['prev_school']);
+            $isUdDAlumni = str_contains($prevSchoolLower, 'universidad de dagupan') || 
+                           str_contains($prevSchoolLower, 'udd') ||
+                           str_contains($prevSchoolLower, 'colegio de dagupan') ||
+                           str_contains($prevSchoolLower, 'cdd');
+        }
+
+        // Require Form 137 for Freshmen
+        if ($validated['student_type'] === 'Freshman' && empty($request->file('form_137'))) {
+            return back()->withErrors(['form_137' => 'The Form 137 file is required for Freshman students.'])->withInput();
+        }
+
+        // Require OTR Copy for Transferee/Postgrad (if not UdD alumni)
+        if (in_array($validated['student_type'], ['Transferee', 'Postgraduate']) && !$isUdDAlumni && empty($request->file('otr_copy'))) {
+            return back()->withErrors(['otr_copy' => 'The Receiving Copy of OTR is required for Transferee or Postgraduate students from other schools.'])->withInput();
+        }
+
         // Check global daily request limit
         $dailyLimit = \App\Models\Setting::get('daily_request_limit', 3);
         $todayRequestsCount = DocumentRequest::whereDate('created_at', today())->count();

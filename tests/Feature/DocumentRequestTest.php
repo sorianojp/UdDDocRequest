@@ -38,6 +38,7 @@ class DocumentRequestTest extends TestCase
             'higschool' => 'Sample HS',
             'hs_grad_year' => '2018',
             'prev_school' => 'Sample Prev',
+            'form_137' => UploadedFile::fake()->image('form137.jpg'),
         ]);
 
         $request = DocumentRequest::first();
@@ -207,5 +208,34 @@ class DocumentRequestTest extends TestCase
 
         Storage::disk('public')->assertExists($request->otr_copy_path);
         Storage::disk('public')->assertExists($request->form_137_path);
+    }
+
+    public function test_colegio_de_dagupan_alumni_not_required_otr()
+    {
+        Storage::fake('public');
+
+        $response = $this->post(route('request.store'), [
+            'last_name' => 'Alumni',
+            'first_name' => 'Test',
+            'middle_name' => 'D',
+            'email' => 'alumni@example.com',
+            'student_id_number' => '11112222',
+            'document_types' => ['OTR'],
+            'purposes' => ['OTR' => 'Board Exam'],
+            'mobile_number' => '09123456789',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'student_type' => 'Transferee',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Colegio de Dagupan', 
+        ]);
+
+        $response->assertStatus(302);
+        $request = DocumentRequest::where('student_id_number', '11112222')->first();
+        $this->assertNotNull($request);
+        $this->assertNull($request->otr_copy_path);
     }
 }
