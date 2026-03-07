@@ -167,4 +167,43 @@ class DocumentRequestTest extends TestCase
 
         $response->assertSessionHasErrors('status');
     }
+
+    public function test_student_can_upload_otr_and_form_137()
+    {
+        Storage::fake('public');
+
+        $otrFile = UploadedFile::fake()->create('otr_copy.pdf', 100);
+        $form137File = UploadedFile::fake()->create('form_137.jpg', 100);
+
+        $response = $this->post(route('request.store'), [
+            'last_name' => 'Doe',
+            'first_name' => 'John',
+            'middle_name' => 'D',
+            'email' => 'john@example.com',
+            'student_id_number' => '12345678',
+            'document_types' => ['OTR'],
+            'purposes' => ['OTR' => 'Employment'],
+            'mobile_number' => '09123456789',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
+            'otr_copy' => $otrFile,
+            'form_137' => $form137File,
+        ]);
+
+        $response->assertStatus(302);
+
+        $request = DocumentRequest::where('student_id_number', '12345678')->first();
+        $this->assertNotNull($request, "Request was not created");
+
+        $this->assertNotNull($request->otr_copy_path);
+        $this->assertNotNull($request->form_137_path);
+
+        Storage::disk('public')->assertExists($request->otr_copy_path);
+        Storage::disk('public')->assertExists($request->form_137_path);
+    }
 }

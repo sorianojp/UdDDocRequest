@@ -33,6 +33,8 @@ class DocumentRequest extends Model
         'school_id_path',
         'handled_by',
         'deficiency_pic',
+        'otr_copy_path',
+        'form_137_path',
     ];
 
     protected $casts = [

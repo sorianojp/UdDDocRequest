@@ -36,6 +36,8 @@ export interface DocumentRequest {
     items?: RequestItem[];
     amount_due: number;
     handled_by?: number | null;
+    otr_copy_path?: string | null;
+    form_137_path?: string | null;
     handler?: {
         id: number;
         name: string;

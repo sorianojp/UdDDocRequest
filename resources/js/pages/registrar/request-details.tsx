@@ -341,6 +341,58 @@ export default function RequestDetails({
                                     </div>
                                 </div>
                                 
+                                {(request.otr_copy_path || request.form_137_path) && (
+                                    <>
+                                        <Separator />
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 mb-4">
+                                                <div className="p-2 rounded-lg bg-secondary text-secondary-foreground">
+                                                    <FileText className="h-5 w-5" />
+                                                </div>
+                                                <h3 className="font-semibold">Supporting Documents</h3>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {request.otr_copy_path && (
+                                                    <div className="p-4 border rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800/30 flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded text-blue-600 dark:text-blue-300">
+                                                                <FileText className="h-4 w-4" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">OTR Copy</p>
+                                                                <p className="text-xs text-blue-700 dark:text-blue-300">Copy for Universidad de Dagupan</p>
+                                                            </div>
+                                                        </div>
+                                                        <Button variant="ghost" size="sm" asChild>
+                                                            <a href={`/storage/${request.otr_copy_path}`} target="_blank" rel="noopener noreferrer">
+                                                                <ExternalLink className="h-4 w-4" />
+                                                            </a>
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                                {request.form_137_path && (
+                                                    <div className="p-4 border rounded-lg bg-green-50/50 dark:bg-green-900/10 border-green-100 dark:border-green-800/30 flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="p-2 bg-green-100 dark:bg-green-800 rounded text-green-600 dark:text-green-300">
+                                                                <FileText className="h-4 w-4" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-green-900 dark:text-green-100">Form 137</p>
+                                                                <p className="text-xs text-green-700 dark:text-green-300">High School Record</p>
+                                                            </div>
+                                                        </div>
+                                                        <Button variant="ghost" size="sm" asChild>
+                                                            <a href={`/storage/${request.form_137_path}`} target="_blank" rel="noopener noreferrer">
+                                                                <ExternalLink className="h-4 w-4" />
+                                                            </a>
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
                                 <Separator />
                                 
                                 <div className="flex items-center gap-2 mb-4">

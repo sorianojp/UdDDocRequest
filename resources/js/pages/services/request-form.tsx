@@ -35,6 +35,8 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
         prev_school: '',
         document_types: [] as string[],
         purposes: {} as Record<string, string>,
+        otr_copy: null as File | null,
+        form_137: null as File | null,
     });
 
     const documents = Object.entries(pricing).map(([id, details]) => ({
@@ -68,14 +70,32 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
         }));
     };
 
-    const isSubmitDisabled = processing || data.document_types.length === 0 || data.document_types.some(id => !data.purposes[id] || data.purposes[id].trim() === '');
-
-
     const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
+
+    const isUdDAlumni = data.prev_school.toLowerCase().includes('universidad de dagupan') || data.prev_school.toLowerCase().includes('udd');
+    const isUndergraduate = courseCategory === 'Undergraduate';
+    const isPostgraduate = courseCategory === 'Postgraduate';
+    
+    // Transferee: Undergrad with a previous school
+    const isTransferee = isUndergraduate && !!data.prev_school;
+    
+    // Postgrad or Transferee (but not from UdD) Needs OTR
+    const needsOTR = (isPostgraduate || isTransferee) && !isUdDAlumni;
+    
+    // Freshman: Undergrad with NO previous school. Needs Form 137.
+    const needsForm137 = isUndergraduate && !data.prev_school;
+
+    const isSubmitDisabled = processing 
+        || data.document_types.length === 0 
+        || data.document_types.some(id => !data.purposes[id] || data.purposes[id].trim() === '')
+        || (needsOTR && !data.otr_copy)
+        || (needsForm137 && !data.form_137);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(request.store.url());
+        post(request.store.url(), {
+            forceFormData: true,
+        });
     };
 
 
@@ -375,6 +395,44 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
                                                 </Select>
                                                 {(errors as any).course && <p className="text-red-500 text-xs font-medium">{(errors as any).course}</p>}
                                             </div>
+
+                                            {needsOTR && (
+                                                <div className="space-y-2 mt-4 animate-in slide-in-from-top-2 fade-in duration-300">
+                                                    <Label htmlFor="otr_copy" className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1.5">
+                                                        <FileText className="h-4 w-4" /> Receiving Copy of OTR <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <p className="text-sm text-muted-foreground pb-1">
+                                                        As a Transferee or Postgraduate student, please upload your "Copy for Universidad de Dagupan" OTR.
+                                                    </p>
+                                                    <Input
+                                                        id="otr_copy"
+                                                        type="file"
+                                                        accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                                        onChange={(e) => setData('otr_copy', e.target.files ? e.target.files[0] : null)}
+                                                        className={cn("cursor-pointer", (errors as any).otr_copy && "border-red-500 focus-visible:ring-red-500")}
+                                                    />
+                                                    {(errors as any).otr_copy && <p className="text-red-500 text-xs font-medium">{(errors as any).otr_copy}</p>}
+                                                </div>
+                                            )}
+
+                                            {needsForm137 && (
+                                                <div className="space-y-2 mt-4 animate-in slide-in-from-top-2 fade-in duration-300">
+                                                    <Label htmlFor="form_137" className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1.5">
+                                                        <FileText className="h-4 w-4" /> Form 137 <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <p className="text-sm text-muted-foreground pb-1">
+                                                        As a Freshman student coming from High School, please upload your Form 137.
+                                                    </p>
+                                                    <Input
+                                                        id="form_137"
+                                                        type="file"
+                                                        accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                                        onChange={(e) => setData('form_137', e.target.files ? e.target.files[0] : null)}
+                                                        className={cn("cursor-pointer", (errors as any).form_137 && "border-red-500 focus-visible:ring-red-500")}
+                                                    />
+                                                    {(errors as any).form_137 && <p className="text-red-500 text-xs font-medium">{(errors as any).form_137}</p>}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </CardContent>

@@ -47,6 +47,8 @@ class DocumentRequestController extends Controller
             'document_types.*' => 'string',
             'purposes' => 'required|array',
             'purposes.*' => 'required|string|max:1000',
+            'otr_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'form_137' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         // Check global daily request limit
@@ -81,6 +83,17 @@ class DocumentRequestController extends Controller
             }
         }
 
+        // File initializations
+        $otrCopyPath = null;
+        if ($request->hasFile('otr_copy')) {
+            $otrCopyPath = $request->file('otr_copy')->store('student_documents', 'public');
+        }
+
+        $form137Path = null;
+        if ($request->hasFile('form_137')) {
+            $form137Path = $request->file('form_137')->store('student_documents', 'public');
+        }
+
         // Create the main request (summary style for document_type)
         $documentRequest = DocumentRequest::create([
             'last_name' => $validated['last_name'],
@@ -100,6 +113,8 @@ class DocumentRequestController extends Controller
                 ? 'Multiple Documents' 
                 : $documents[$validated['document_types'][0]]['label'] ?? $validated['document_types'][0],
             'school_id_path' => 'N/A',
+            'otr_copy_path' => $otrCopyPath,
+            'form_137_path' => $form137Path,
         ]);
 
         // Create items
