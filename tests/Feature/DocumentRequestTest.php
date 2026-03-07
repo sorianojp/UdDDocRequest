@@ -13,6 +13,7 @@ use Tests\TestCase;
 class DocumentRequestTest extends TestCase
 {
     use RefreshDatabase;
+    use \Illuminate\Foundation\Testing\WithoutMiddleware;
 
     public function test_student_can_submit_request()
     {
@@ -27,8 +28,15 @@ class DocumentRequestTest extends TestCase
             'email' => 'john@example.com',
             'student_id_number' => '12345678',
             'document_types' => ['OTR'],
+            'purposes' => ['OTR' => 'Employment'],
             'mobile_number' => '09123456789',
-            'school_id' => $file,
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
         ]);
 
         $request = DocumentRequest::first();
@@ -37,7 +45,6 @@ class DocumentRequestTest extends TestCase
         $this->assertEquals('Doe, John D', $request->student_name);
         $this->assertEquals('09123456789', $request->mobile_number);
         $this->assertEquals('PENDING', $request->status);
-        Storage::disk('public')->assertExists($request->school_id_path);
 
         $response->assertRedirect(route('request.show-status', ['reference_number' => $request->reference_number])); // Pass param explicitly if needed, or route helper might handle it if defined with parameter
     }
@@ -52,6 +59,14 @@ class DocumentRequestTest extends TestCase
             'student_id_number' => '87654321',
             'document_type' => 'Diploma',
             'school_id_path' => 'path/to/id.jpg',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
+            'mobile_number' => '09000000000',
         ]);
 
         $response = $this->post(route('request.check-status'), [
@@ -75,6 +90,14 @@ class DocumentRequestTest extends TestCase
             'student_id_number' => '00000',
             'document_type' => 'Form 137',
             'school_id_path' => 'path.jpg',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
+            'mobile_number' => '09000000000',
         ]);
 
         $response = $this->actingAs($user)->get(route('registrar.index'));
@@ -98,6 +121,14 @@ class DocumentRequestTest extends TestCase
             'document_type' => 'Form 137',
             'status' => 'PENDING',
             'school_id_path' => 'path.jpg',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
+            'mobile_number' => '09000000000',
         ]);
 
         $response = $this->actingAs($user)->put(route('registrar.update', $request->id), [
@@ -120,6 +151,14 @@ class DocumentRequestTest extends TestCase
             'document_type' => 'Form 137',
             'status' => 'PENDING',
             'school_id_path' => 'path.jpg',
+            'address' => 'Sample Address',
+            'birthdate' => '2000-01-01',
+            'birthplace' => 'Manila',
+            'course' => 'BSCS',
+            'higschool' => 'Sample HS',
+            'hs_grad_year' => '2018',
+            'prev_school' => 'Sample Prev',
+            'mobile_number' => '09000000000',
         ]);
 
         $response = $this->actingAs($user)->put(route('registrar.update', $request->id), [

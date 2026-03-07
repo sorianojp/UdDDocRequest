@@ -27,6 +27,7 @@ export interface DocumentRequest {
     | 'CLAIMED'
     | 'CANCELLED';
     deficiency_remarks?: string | null;
+    deficiency_pic?: string | null;
     claiming_date?: string | null;
     claimed_date?: string | null;
     created_at: string;

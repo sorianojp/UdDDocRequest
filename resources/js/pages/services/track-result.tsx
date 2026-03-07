@@ -227,6 +227,11 @@ export default function TrackResult({ request }: { request: DocumentRequest }) {
                                         <p className="text-sm text-red-700 dark:text-red-300 whitespace-pre-wrap leading-relaxed font-medium">
                                             {request.deficiency_remarks.replace(/\|/g, '\n').replace(/Remark: /g, '')}
                                         </p>
+                                        {request.deficiency_pic && (
+                                            <div className="mt-4 border-t border-red-100 dark:border-red-900/30 pt-4 flex justify-center">
+                                                <img src={`/storage/${request.deficiency_pic}`} alt="Deficiency Context" className="max-h-64 rounded-lg shadow-sm border border-red-200 dark:border-red-900/50" />
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="mt-6 pt-4 border-t border-red-200 dark:border-red-900/30">

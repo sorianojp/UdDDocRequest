@@ -32,6 +32,7 @@ class DocumentRequest extends Model
         'claimed_date',
         'school_id_path',
         'handled_by',
+        'deficiency_pic',
     ];
 
     protected $casts = [

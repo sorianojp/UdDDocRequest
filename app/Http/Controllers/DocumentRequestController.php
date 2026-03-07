@@ -239,6 +239,7 @@ class DocumentRequestController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:PENDING,WAITING_FOR_PAYMENT,VERIFYING_PAYMENT,PROCESSING,DEFICIENT,READY,CLAIMED,CANCELLED',
             'deficiency_remarks' => 'nullable|required_if:status,DEFICIENT|string',
+            'deficiency_pic' => 'nullable|image|max:5120',
             'claiming_date' => 'nullable|required_if:status,READY|date',
             'items' => 'nullable|array',
             'items.*.id' => 'required|exists:request_items,id',
@@ -261,6 +262,19 @@ class DocumentRequestController extends Controller
             'deficiency_remarks' => $validated['status'] === 'DEFICIENT' ? $validated['deficiency_remarks'] : null,
             'claimed_date' => $validated['status'] === 'CLAIMED' ? now() : null,
         ];
+        
+        if ($validated['status'] === 'DEFICIENT') {
+            if ($request->hasFile('deficiency_pic')) {
+                // Delete old picture if exists
+                if ($documentRequest->deficiency_pic) {
+                    Storage::disk('public')->delete($documentRequest->deficiency_pic);
+                }
+                $updateData['deficiency_pic'] = $request->file('deficiency_pic')->store('deficiencies', 'public');
+            }
+        } else {
+            // Nullify picture when status is no longer deficient
+            $updateData['deficiency_pic'] = null;
+        }
 
         // Only update claiming_date if status is READY (set it) or if status is NOT CLAIMED (clear it).
         // If status IS CLAIMED, we want to Keep the existing claiming_date.

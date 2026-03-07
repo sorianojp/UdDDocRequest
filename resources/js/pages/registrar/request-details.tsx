@@ -31,6 +31,7 @@ export default function RequestDetails({
     const { data, setData, put, processing, errors } = useForm({
         status: request.status,
         deficiency_remarks: request.deficiency_remarks || '',
+        deficiency_pic: null as File | null,
         claiming_date: request.claiming_date ? request.claiming_date.split('T')[0] : '',
         items: (request.items || []) as any[], // Add items to form state
     });
@@ -56,7 +57,8 @@ export default function RequestDetails({
         const newData = { ...data, ...updates };
         setData(newData);
         
-        router.put(registrar.update.url(request.id), newData, {
+        router.post(registrar.update.url(request.id), { ...newData, _method: 'put' } as any, {
+            forceFormData: true,
             preserveScroll: true,
             onError: (errors) => {
                 // Ideally handle errors, but for auto-save maybe just console or toast
@@ -491,6 +493,34 @@ export default function RequestDetails({
                                     </div>
 
                                     {errors.deficiency_remarks && <p className="text-red-500 text-xs mt-2">{errors.deficiency_remarks}</p>}
+                                    
+                                    <div className="mt-4 space-y-2 border-t pt-4">
+                                        <Label className="text-red-800 dark:text-red-300 flex items-center gap-1">
+                                            <AlertTriangle className="h-3 w-3" />Deficiency Picture (Optional)
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">Attach a picture showing the deficiency if necessary.</p>
+                                        <Input 
+                                            id="deficiency_pic" 
+                                            type="file" 
+                                            accept="image/*"
+                                            disabled={isReadOnly}
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0] || null;
+                                                autoSave({ deficiency_pic: file });
+                                            }}
+                                        />
+                                        {request.deficiency_pic && !data.deficiency_pic && (
+                                            <div className="mt-2 flex justify-start">
+                                                <img src={`/storage/${request.deficiency_pic}`} alt="Deficiency" className="max-h-48 rounded-lg shadow-sm border border-red-200 dark:border-red-900" />
+                                            </div>
+                                        )}
+                                        {data.deficiency_pic && (
+                                            <div className="mt-2 flex justify-start">
+                                                <img src={URL.createObjectURL(data.deficiency_pic)} alt="Deficiency Preview" className="max-h-48 rounded-lg shadow-sm border border-red-200 dark:border-red-900" />
+                                            </div>
+                                        )}
+                                        {errors.deficiency_pic && <p className="text-red-500 text-xs mt-1">{errors.deficiency_pic}</p>}
+                                    </div>
                                 </div>
                             </CardContent>
                         )}
