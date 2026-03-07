@@ -312,6 +312,10 @@ export default function RequestDetails({
                                         <p className="font-medium">{request.course || 'N/A'}</p>
                                     </div>
                                     <div>
+                                        <Label className="text-muted-foreground flex items-center gap-1.5"><User className="h-3.5 w-3.5" /> Student Type</Label>
+                                        <p className="font-medium">{request.student_type || 'N/A'}</p>
+                                    </div>
+                                    <div>
                                         <Label className="text-muted-foreground flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
                                         <p className="font-medium">{request.email || 'N/A'}</p>
                                     </div>

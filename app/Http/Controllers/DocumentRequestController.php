@@ -43,6 +43,7 @@ class DocumentRequestController extends Controller
             'hs_grad_year' => 'nullable|string|max:255',
             'prev_school' => 'nullable|string|max:255',
             'course' => 'required|string|max:255',
+            'student_type' => 'required|string|in:Freshman,Transferee,Postgraduate',
             'document_types' => 'required|array|min:1',
             'document_types.*' => 'string',
             'purposes' => 'required|array',
@@ -50,6 +51,11 @@ class DocumentRequestController extends Controller
             'otr_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'form_137' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
+
+        // Custom conditional validation for prev_school
+        if (in_array($validated['student_type'], ['Transferee', 'Postgraduate']) && empty($validated['prev_school'])) {
+            return back()->withErrors(['prev_school' => 'The previous school field is required for ' . $validated['student_type'] . ' students.'])->withInput();
+        }
 
         // Check global daily request limit
         $dailyLimit = \App\Models\Setting::get('daily_request_limit', 3);
@@ -107,8 +113,9 @@ class DocumentRequestController extends Controller
             'birthplace' => $validated['birthplace'],
             'higschool' => $validated['higschool'] ?? null,
             'hs_grad_year' => $validated['hs_grad_year'] ?? null,
-            'prev_school' => $validated['prev_school'] ?? null,
+            'prev_school' => $validated['student_type'] === 'Freshman' ? null : ($validated['prev_school'] ?? null),
             'course' => $validated['course'],
+            'student_type' => $validated['student_type'],
             'document_type' => count($validated['document_types']) > 1 
                 ? 'Multiple Documents' 
                 : $documents[$validated['document_types'][0]]['label'] ?? $validated['document_types'][0],

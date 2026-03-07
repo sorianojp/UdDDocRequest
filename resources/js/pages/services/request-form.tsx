@@ -35,6 +35,7 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
         prev_school: '',
         document_types: [] as string[],
         purposes: {} as Record<string, string>,
+        student_type: 'Freshman' as 'Freshman' | 'Transferee' | 'Postgraduate',
         otr_copy: null as File | null,
         form_137: null as File | null,
     });
@@ -73,26 +74,19 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
     const [courseCategory, setCourseCategory] = useState<string>('Undergraduate');
 
     const isUdDAlumni = data.prev_school.toLowerCase().includes('universidad de dagupan') || data.prev_school.toLowerCase().includes('udd');
-    const isUndergraduate = courseCategory === 'Undergraduate';
-    const isPostgraduate = courseCategory === 'Postgraduate';
     
-    // Freshman: Undergraduate AND (no previous school OR typed "N/A")
-    const isFreshman = isUndergraduate && (!data.prev_school || data.prev_school.toLowerCase().trim() === 'n/a');
+    // Transferee or Postgrad (but not from UdD) Needs OTR
+    const needsOTR = (data.student_type === 'Transferee' || data.student_type === 'Postgraduate') && !isUdDAlumni;
     
-    // Transferee: Undergraduate who is not a freshman
-    const isTransferee = isUndergraduate && !isFreshman;
-    
-    // Postgrad or Transferee (but not from UdD) Needs OTR
-    const needsOTR = (isPostgraduate || isTransferee) && !isUdDAlumni;
-    
-    // Needs Form 137 if Freshman
-    const needsForm137 = isFreshman;
+    // Freshman Needs Form 137
+    const needsForm137 = data.student_type === 'Freshman';
 
     const isSubmitDisabled = processing 
         || data.document_types.length === 0 
         || data.document_types.some(id => !data.purposes[id] || data.purposes[id].trim() === '')
         || (needsOTR && !data.otr_copy)
-        || (needsForm137 && !data.form_137);
+        || (needsForm137 && !data.form_137)
+        || (data.student_type !== 'Freshman' && !data.prev_school);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -342,48 +336,82 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
                                             {(errors as any).hs_grad_year && <p className="text-red-500 text-xs font-medium">{(errors as any).hs_grad_year}</p>}
                                         </div>
 
-                                        <div className="space-y-2 md:col-span-2">
-                                            <Label htmlFor="prev_school">Previous School <span className="text-[10px] font-normal text-muted-foreground">(For Transferee and Postgrad)</span></Label>
-                                            <div className="relative">
-                                                <Input
-                                                    id="prev_school"
-                                                    value={data.prev_school}
-                                                    onChange={(e) => setData('prev_school', e.target.value)}
-                                                    placeholder="Previous School Name"
-                                                    className={cn("pl-9", (errors as any).prev_school && "border-red-500 focus-visible:ring-red-500")}
-                                                />
-                                                <Building className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                            </div>
-                                            <p className="text-[11px] text-muted-foreground italic">
-                                                * Type <span className="font-bold">N/A</span> if you came straight from High School.
-                                            </p>
-                                            {(errors as any).prev_school && <p className="text-red-500 text-xs font-medium">{(errors as any).prev_school}</p>}
-                                        </div>
+                                        <Separator className="md:col-span-2 opacity-50" />
 
                                         <div className="space-y-4 md:col-span-2">
                                             <div className="space-y-3">
-                                                <Label>Course Level</Label>
-                                                <RadioGroup 
-                                                    value={courseCategory} 
-                                                    onValueChange={(val) => {
-                                                        setCourseCategory(val);
-                                                        setData('course', ''); // Reset current selection
-                                                    }}
-                                                    className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0"
-                                                >
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="Undergraduate" id="r1" />
-                                                        <Label htmlFor="r1" className="font-normal cursor-pointer">Undergraduate</Label>
+                                                <Label className="text-blue-600 dark:text-blue-400 font-semibold">Course Level & Student Type</Label>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="space-y-3">
+                                                        <Label className="text-xs text-muted-foreground uppercase tracking-wider font-bold">1. Select Course Level</Label>
+                                                        <RadioGroup 
+                                                            value={courseCategory} 
+                                                            onValueChange={(val) => {
+                                                                setCourseCategory(val);
+                                                                setData((oldData) => ({
+                                                                    ...oldData,
+                                                                    course: '',
+                                                                    student_type: val === 'Postgraduate' ? 'Postgraduate' : 'Freshman'
+                                                                }));
+                                                            }}
+                                                            className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0"
+                                                        >
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="Undergraduate" id="r1" />
+                                                                <Label htmlFor="r1" className="font-normal cursor-pointer">Undergraduate</Label>
+                                                            </div>
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="Postgraduate" id="r2" />
+                                                                <Label htmlFor="r2" className="font-normal cursor-pointer">Postgraduate</Label>
+                                                            </div>
+                                                        </RadioGroup>
                                                     </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="Postgraduate" id="r2" />
-                                                        <Label htmlFor="r2" className="font-normal cursor-pointer">Postgraduate</Label>
-                                                    </div>
-                                                </RadioGroup>
+
+                                                    {courseCategory === 'Undergraduate' && (
+                                                        <div className="space-y-3 animate-in fade-in slide-in-from-left-2 duration-300">
+                                                            <Label className="text-xs text-muted-foreground uppercase tracking-wider font-bold">2. Are you a Freshman or Transferee?</Label>
+                                                            <RadioGroup 
+                                                                value={data.student_type} 
+                                                                onValueChange={(val: any) => setData('student_type', val)}
+                                                                className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0"
+                                                            >
+                                                                <div className="flex items-center space-x-2">
+                                                                    <RadioGroupItem value="Freshman" id="st1" />
+                                                                    <Label htmlFor="st1" className="font-normal cursor-pointer">Freshman (from HS)</Label>
+                                                                </div>
+                                                                <div className="flex items-center space-x-2">
+                                                                    <RadioGroupItem value="Transferee" id="st2" />
+                                                                    <Label htmlFor="st2" className="font-normal cursor-pointer">Transferee</Label>
+                                                                </div>
+                                                            </RadioGroup>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
 
+                                            {data.student_type !== 'Freshman' && (
+                                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                    <Label htmlFor="prev_school" className="flex items-center gap-1.5">
+                                                        Previous School <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <div className="relative">
+                                                        <Input
+                                                            id="prev_school"
+                                                            value={data.prev_school}
+                                                            onChange={(e) => setData('prev_school', e.target.value)}
+                                                            placeholder="University/College Name"
+                                                            className={cn("pl-9", (errors as any).prev_school && "border-red-500 focus-visible:ring-red-500")}
+                                                            required
+                                                        />
+                                                        <Building className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                    <p className="text-[11px] text-muted-foreground italic">Required for Transferee and Postgraduate students.</p>
+                                                    {(errors as any).prev_school && <p className="text-red-500 text-xs font-medium">{(errors as any).prev_school}</p>}
+                                                </div>
+                                            )}
+
                                             <div className="space-y-2">
-                                                <Label htmlFor="course">Course</Label>
+                                                <Label htmlFor="course">Course <span className="text-red-500">*</span></Label>
                                                 <Select value={data.course} onValueChange={(value) => setData('course', value)}>
                                                     <SelectTrigger id="course" className={cn("pl-9 relative", (errors as any).course && "border-red-500 focus-visible:ring-red-500")}>
                                                         <div className="absolute left-3 top-2.5">

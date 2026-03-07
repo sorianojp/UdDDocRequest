@@ -17,6 +17,7 @@ export interface DocumentRequest {
     hs_grad_year?: string | null;
     prev_school?: string | null;
     course: string;
+    student_type: string;
     document_type: string;
     status: 'PENDING'
     | 'WAITING_FOR_PAYMENT'

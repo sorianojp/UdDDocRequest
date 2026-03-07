@@ -25,6 +25,7 @@ class DocumentRequest extends Model
         'hs_grad_year',
         'prev_school',
         'course',
+        'student_type',
         'document_type', // Keep for backward compatibility/summary
         'status',
         'deficiency_remarks',
