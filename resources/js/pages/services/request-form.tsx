@@ -343,8 +343,8 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
 
                                         <div className="space-y-4 md:col-span-2">
                                             <div className="space-y-3">
-                                                <Label className="text-blue-600 dark:text-blue-400 font-semibold">Course Level & Student Type</Label>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <Label className="text-blue-600 dark:text-blue-400 font-semibold text-lg">Course Level & Admission Type</Label>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl bg-accent/30 border border-accent/50">
                                                     <div className="space-y-3">
                                                         <Label className="text-xs text-muted-foreground uppercase tracking-wider font-bold">1. Select Course Level</Label>
                                                         <RadioGroup 
@@ -372,7 +372,7 @@ export default function RequestForm({ pricing, courses, dailyLimit = 1000, today
 
                                                     {courseCategory === 'Undergraduate' && (
                                                         <div className="space-y-3 animate-in fade-in slide-in-from-left-2 duration-300">
-                                                            <Label className="text-xs text-muted-foreground uppercase tracking-wider font-bold">2. Are you a Freshman or Transferee?</Label>
+                                                            <Label className="text-xs text-muted-foreground uppercase tracking-wider font-bold">2. Did you enter UdD as a Freshman or Transferee?</Label>
                                                             <RadioGroup 
                                                                 value={data.student_type} 
                                                                 onValueChange={(val: any) => setData('student_type', val)}
